@@ -1,0 +1,220 @@
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap");
+@import "tailwindcss";
+
+/* FontAwesome imports */
+@import url("../assets/fontawesome/css/all.min.css");
+
+/* Theme CSS Variables - These will be dynamically updated by the theme system */
+:root {
+  /* Font variables */
+  --flysoft-font-default: "Instrument Sans", sans-serif;
+  --flysoft-font-size-default: 16px;
+  --flysoft-font-color-default: #030712;
+
+  /* Primary colors */
+  --flysoft-primary: #007aff;
+  --flysoft-primary-contrast: #ffffff;
+  --flysoft-primary-dark: #0064d1;
+  --flysoft-primary-light: #4da6ff;
+
+  /* Secondary colors */
+  --flysoft-secondary: #6b7280;
+  --flysoft-secondary-contrast: #ffffff;
+  --flysoft-secondary-dark: #4b5563;
+  --flysoft-secondary-light: #9ca3af;
+
+  /* Success colors */
+  --flysoft-success: #10b981;
+  --flysoft-success-contrast: #ffffff;
+  --flysoft-success-dark: #059669;
+  --flysoft-success-light: #34d399;
+
+  /* Warning colors */
+  --flysoft-warning: #f59e0b;
+  --flysoft-warning-contrast: #ffffff;
+  --flysoft-warning-dark: #d97706;
+  --flysoft-warning-light: #fbbf24;
+
+  /* Danger colors */
+  --flysoft-danger: #ef4444;
+  --flysoft-danger-contrast: #ffffff;
+  --flysoft-danger-dark: #dc2626;
+  --flysoft-danger-light: #f87171;
+
+  /* Info colors */
+  --flysoft-info: #06b6d4;
+  --flysoft-info-contrast: #ffffff;
+  --flysoft-info-dark: #0891b2;
+  --flysoft-info-light: #22d3ee;
+
+  /* Neutral colors */
+  --flysoft-gray-50: #f9fafb;
+  --flysoft-gray-100: #f3f4f6;
+  --flysoft-gray-200: #e5e7eb;
+  --flysoft-gray-300: #d1d5db;
+  --flysoft-gray-400: #9ca3af;
+  --flysoft-gray-500: #6b7280;
+  --flysoft-gray-600: #4b5563;
+  --flysoft-gray-700: #374151;
+  --flysoft-gray-800: #1f2937;
+  --flysoft-gray-900: #111827;
+
+  /* Border colors */
+  --flysoft-border-default: var(--flysoft-gray-200);
+  --flysoft-border-focus: var(--flysoft-primary);
+  --flysoft-border-error: var(--flysoft-danger);
+
+  /* Background colors */
+  --flysoft-bg-default: #ffffff;
+  --flysoft-bg-secondary: var(--flysoft-gray-50);
+  --flysoft-bg-disabled: var(--flysoft-gray-100);
+
+  /* Text colors */
+  --flysoft-text-primary: var(--flysoft-gray-900);
+  --flysoft-text-secondary: var(--flysoft-gray-700);
+  --flysoft-text-muted: var(--flysoft-gray-500);
+  --flysoft-text-disabled: var(--flysoft-gray-400);
+
+  /* Shadow */
+  --flysoft-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --flysoft-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --flysoft-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* Border radius */
+  --flysoft-radius-sm: 0.375rem;
+  --flysoft-radius-md: 0.5rem;
+  --flysoft-radius-lg: 0.75rem;
+  --flysoft-radius-full: 9999px;
+
+  /* Spacing */
+  --flysoft-spacing-xs: 0.25rem;
+  --flysoft-spacing-sm: 0.5rem;
+  --flysoft-spacing-md: 1rem;
+  --flysoft-spacing-lg: 1.5rem;
+  --flysoft-spacing-xl: 2rem;
+}
+
+/* Legacy CSS variables for backward compatibility */
+@theme {
+  --font-default: var(--flysoft-font-default);
+  --font-size-default: var(--flysoft-font-size-default);
+  --font-color-default: var(--flysoft-font-color-default);
+
+  /* Primary colors */
+  --color-primary: var(--flysoft-primary);
+  --color-primary-contrast: var(--flysoft-primary-contrast);
+  --color-primary-dark: var(--flysoft-primary-dark);
+  --color-primary-light: var(--flysoft-primary-light);
+
+  /* Secondary colors */
+  --color-secondary: var(--flysoft-secondary);
+  --color-secondary-contrast: var(--flysoft-secondary-contrast);
+  --color-secondary-dark: var(--flysoft-secondary-dark);
+  --color-secondary-light: var(--flysoft-secondary-light);
+
+  /* Success colors */
+  --color-success: var(--flysoft-success);
+  --color-success-contrast: var(--flysoft-success-contrast);
+  --color-success-dark: var(--flysoft-success-dark);
+  --color-success-light: var(--flysoft-success-light);
+
+  /* Warning colors */
+  --color-warning: var(--flysoft-warning);
+  --color-warning-contrast: var(--flysoft-warning-contrast);
+  --color-warning-dark: var(--flysoft-warning-dark);
+  --color-warning-light: var(--flysoft-warning-light);
+
+  /* Danger colors */
+  --color-danger: var(--flysoft-danger);
+  --color-danger-contrast: var(--flysoft-danger-contrast);
+  --color-danger-dark: var(--flysoft-danger-dark);
+  --color-danger-light: var(--flysoft-danger-light);
+
+  /* Info colors */
+  --color-info: var(--flysoft-info);
+  --color-info-contrast: var(--flysoft-info-contrast);
+  --color-info-dark: var(--flysoft-info-dark);
+  --color-info-light: var(--flysoft-info-light);
+
+  /* Neutral colors */
+  --color-gray-50: var(--flysoft-gray-50);
+  --color-gray-100: var(--flysoft-gray-100);
+  --color-gray-200: var(--flysoft-gray-200);
+  --color-gray-300: var(--flysoft-gray-300);
+  --color-gray-400: var(--flysoft-gray-400);
+  --color-gray-500: var(--flysoft-gray-500);
+  --color-gray-600: var(--flysoft-gray-600);
+  --color-gray-700: var(--flysoft-gray-700);
+  --color-gray-800: var(--flysoft-gray-800);
+  --color-gray-900: var(--flysoft-gray-900);
+
+  /* Border colors */
+  --color-border-default: var(--flysoft-border-default);
+  --color-border-focus: var(--flysoft-border-focus);
+  --color-border-error: var(--flysoft-border-error);
+
+  /* Background colors */
+  --color-bg-default: var(--flysoft-bg-default);
+  --color-bg-secondary: var(--flysoft-bg-secondary);
+  --color-bg-disabled: var(--flysoft-bg-disabled);
+
+  /* Text colors */
+  --color-text-primary: var(--flysoft-text-primary);
+  --color-text-secondary: var(--flysoft-text-secondary);
+  --color-text-muted: var(--flysoft-text-muted);
+  --color-text-disabled: var(--flysoft-text-disabled);
+
+  /* Shadow */
+  --shadow-sm: var(--flysoft-shadow-sm);
+  --shadow-md: var(--flysoft-shadow-md);
+  --shadow-lg: var(--flysoft-shadow-lg);
+
+  /* Border radius */
+  --radius-sm: var(--flysoft-radius-sm);
+  --radius-md: var(--flysoft-radius-md);
+  --radius-lg: var(--flysoft-radius-lg);
+  --radius-full: var(--flysoft-radius-full);
+
+  /* Spacing */
+  --spacing-xs: var(--flysoft-spacing-xs);
+  --spacing-sm: var(--flysoft-spacing-sm);
+  --spacing-md: var(--flysoft-spacing-md);
+  --spacing-lg: var(--flysoft-spacing-lg);
+  --spacing-xl: var(--flysoft-spacing-xl);
+}
+
+/* Theme-specific styles */
+[data-theme="dark"] {
+  /* Dark theme overrides can be added here if needed */
+}
+
+[data-theme="blue"] {
+  /* Blue theme overrides can be added here if needed */
+}
+
+[data-theme="green"] {
+  /* Green theme overrides can be added here if needed */
+}
+
+/* Custom component styles */
+@layer components {
+  /* Button focus states */
+  .btn:focus {
+    @apply outline-none ring-2 ring-offset-2;
+    ring-color: var(--flysoft-primary);
+  }
+
+  /* Input focus states */
+  .input:focus {
+    @apply outline-none ring-2 ring-offset-2;
+    ring-color: var(--flysoft-primary);
+  }
+
+  /* Card hover effects */
+  .card-hover:hover {
+    @apply transition-shadow duration-200;
+    box-shadow: var(--flysoft-shadow-lg);
+  }
+}
