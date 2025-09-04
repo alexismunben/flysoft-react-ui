@@ -74,6 +74,7 @@ export interface Theme {
 export interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme | string) => void;
+  setThemeOverride: (override: ThemeOverride) => void;
   currentThemeName: string;
   availableThemes: string[];
   resetToDefault: () => void;
@@ -81,5 +82,10 @@ export interface ThemeContextType {
 }
 
 export interface ThemeOverride {
-  [key: string]: string | number;
+  name?: string;
+  colors?: Partial<Theme["colors"]>;
+  shadows?: Partial<Theme["shadows"]>;
+  radius?: Partial<Theme["radius"]>;
+  spacing?: Partial<Theme["spacing"]>;
+  fonts?: Partial<Theme["fonts"]>;
 }
