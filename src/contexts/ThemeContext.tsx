@@ -5,25 +5,10 @@ import React, {
   useState,
   type ReactNode,
 } from "react";
-import type { Theme, ThemeContextType, ThemeOverride } from "./types";
+import type { Theme, ThemeContextType } from "./types";
 import { themes, defaultTheme } from "./presets";
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-// Helper function to merge theme overrides with default theme
-const mergeThemeWithOverride = (
-  baseTheme: Theme,
-  override: ThemeOverride
-): Theme => {
-  return {
-    name: override.name || baseTheme.name,
-    colors: { ...baseTheme.colors, ...override.colors },
-    shadows: { ...baseTheme.shadows, ...override.shadows },
-    radius: { ...baseTheme.radius, ...override.radius },
-    spacing: { ...baseTheme.spacing, ...override.spacing },
-    fonts: { ...baseTheme.fonts, ...override.fonts },
-  };
-};
 
 interface ThemeProviderProps {
   children: ReactNode;
@@ -139,11 +124,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     setTheme(defaultTheme);
   };
 
-  // Function to apply theme overrides
-  const setThemeOverride = (override: ThemeOverride) => {
-    const mergedTheme = mergeThemeWithOverride(defaultTheme, override);
-    setTheme(mergedTheme);
-  };
 
   // Apply theme on mount and when theme changes
   useEffect(() => {
@@ -156,7 +136,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   const value: ThemeContextType = {
     theme: currentTheme,
     setTheme,
-    setThemeOverride,
     currentThemeName,
     availableThemes: Object.keys(themes),
     resetToDefault,
