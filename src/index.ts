@@ -1,5 +1,5 @@
 // Import styles
-import "./styles.css";
+import "./index.css";
 
 // Component exports
 export { Button } from "./components/form-controls/Button";
