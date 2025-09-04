@@ -6,6 +6,7 @@ import {
   ThemeProvider,
   ThemeSwitcher,
   useTheme,
+  useGlobalThemeStyles,
 } from "./index";
 import "./index.css";
 
@@ -21,6 +22,33 @@ const ResetToDefaultButton: React.FC = () => {
       <Button onClick={resetToDefault} variant="outline" icon="fa-undo">
         Resetear al Tema Inicial
       </Button>
+    </div>
+  );
+};
+
+// Componente que demuestra el uso de useGlobalThemeStyles
+const GlobalThemeDemo: React.FC = () => {
+  // Este hook aplica automáticamente los estilos del tema al body/html
+  useGlobalThemeStyles();
+
+  return (
+    <div
+      className="p-4 rounded-lg border"
+      style={{
+        borderColor: "var(--flysoft-border-default)",
+        backgroundColor: "var(--flysoft-bg-secondary)",
+      }}
+    >
+      <h3
+        className="text-lg font-semibold mb-2"
+        style={{ color: "var(--flysoft-text-primary)" }}
+      >
+        Hook useGlobalThemeStyles
+      </h3>
+      <p className="text-sm" style={{ color: "var(--flysoft-text-secondary)" }}>
+        Este componente usa el hook useGlobalThemeStyles que aplica
+        automáticamente los colores del tema al body y html de la página.
+      </p>
     </div>
   );
 };
@@ -57,6 +85,11 @@ function App() {
           {/* Test Reset Button */}
           <div className="mb-8 text-center">
             <ResetToDefaultButton />
+          </div>
+
+          {/* Global Theme Styles Demo */}
+          <div className="mb-8">
+            <GlobalThemeDemo />
           </div>
 
           {/* Button Examples */}

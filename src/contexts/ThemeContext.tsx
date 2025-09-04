@@ -102,6 +102,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
     // Set theme name as data attribute for CSS targeting
     root.setAttribute("data-theme", theme.name);
+
+    // Apply background and text colors to body for better integration
+    const body = document.body;
+    if (body) {
+      body.style.backgroundColor = theme.colors.bgDefault;
+      body.style.color = theme.colors.textPrimary;
+      body.style.fontFamily = theme.fonts.default;
+    }
   };
 
   // Function to set theme

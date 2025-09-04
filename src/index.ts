@@ -17,6 +17,9 @@ export type { BadgeProps } from "./components/utils/Badge";
 // Theme system exports
 export * from "./contexts";
 
+// Hooks exports
+export * from "./hooks";
+
 // Theme Switcher component
 export { ThemeSwitcher } from "./components/ThemeSwitcher";
 
