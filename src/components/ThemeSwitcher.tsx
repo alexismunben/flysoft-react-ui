@@ -27,7 +27,7 @@ export const ThemeSwitcher: React.FC = () => {
           {availableThemes.map((themeName) => (
             <Button
               key={themeName}
-              variant={currentThemeName === themeName ? "primary" : "secondary"}
+              variant={currentThemeName === themeName ? "primary" : "ghost"}
               size="sm"
               onClick={() => setTheme(themeName)}
             >

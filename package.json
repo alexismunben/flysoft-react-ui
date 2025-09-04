@@ -25,7 +25,7 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./styles": "./dist/styles.css"
+    "./styles": "./dist/index.css"
   },
   "files": [
     "dist",
