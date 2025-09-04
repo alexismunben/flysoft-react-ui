@@ -1,3 +1,6 @@
+// Import styles
+import "./styles.css";
+
 // Component exports
 export { Button } from "./components/form-controls/Button";
 export type { ButtonProps } from "./components/form-controls/Button";
@@ -17,8 +20,7 @@ export * from "./contexts";
 // Theme Switcher component
 export { ThemeSwitcher } from "./components/ThemeSwitcher";
 
-// Styles export
-export * from "./styles";
+// Styles are available via package exports: import 'flysoft-react-ui/styles'
 
 // Re-export React for convenience
 export { default as React } from "react";
