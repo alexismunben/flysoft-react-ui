@@ -14,14 +14,29 @@ interface ThemeProviderProps {
   children: ReactNode;
   initialTheme?: string | Theme;
   storageKey?: string;
+  forceInitialTheme?: boolean; // Nueva prop para forzar el tema inicial
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
   initialTheme = "light",
   storageKey = "flysoft-theme",
+  forceInitialTheme = false,
 }) => {
+  // Almacenar el tema inicial para poder resetear a él
+  const getInitialTheme = (): Theme => {
+    if (typeof initialTheme === "string") {
+      return themes[initialTheme] || defaultTheme;
+    }
+    return initialTheme;
+  };
+
   const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
+    // Si forceInitialTheme es true, usar siempre el initialTheme
+    if (forceInitialTheme) {
+      return getInitialTheme();
+    }
+
     // Try to get theme from localStorage
     if (typeof window !== "undefined") {
       const savedTheme = localStorage.getItem(storageKey);
@@ -42,10 +57,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     }
 
     // Handle initialTheme prop
-    if (typeof initialTheme === "string") {
-      return themes[initialTheme] || defaultTheme;
-    }
-    return initialTheme;
+    return getInitialTheme();
   });
 
   const [currentThemeName, setCurrentThemeName] = useState(currentTheme.name);
@@ -119,11 +131,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     applyThemeToCSS(newTheme);
   };
 
-  // Function to reset to default theme
+  // Function to reset to initial theme (the one passed as initialTheme prop)
   const resetToDefault = () => {
-    setTheme(defaultTheme);
+    setTheme(getInitialTheme());
   };
-
 
   // Apply theme on mount and when theme changes
   useEffect(() => {

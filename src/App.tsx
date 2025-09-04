@@ -5,12 +5,29 @@ import {
   Badge,
   ThemeProvider,
   ThemeSwitcher,
+  useTheme,
 } from "./index";
-import "./styles.css";
+import "./index.css";
+
+// Componente para probar la funcionalidad de resetToDefault
+const ResetToDefaultButton: React.FC = () => {
+  const { resetToDefault, theme } = useTheme();
+
+  return (
+    <div className="space-y-2">
+      <p className="text-sm" style={{ color: "var(--flysoft-text-secondary)" }}>
+        Tema actual: <strong>{theme.name}</strong>
+      </p>
+      <Button onClick={resetToDefault} variant="outline" icon="fa-undo">
+        Resetear al Tema Inicial
+      </Button>
+    </div>
+  );
+};
 
 function App() {
   return (
-    <ThemeProvider initialTheme="light">
+    <ThemeProvider initialTheme={"light"} forceInitialTheme={false}>
       <div
         className="min-h-screen p-8"
         style={{ backgroundColor: "var(--flysoft-bg-secondary)" }}
@@ -35,6 +52,11 @@ function App() {
           {/* Theme Switcher */}
           <div className="mb-8">
             <ThemeSwitcher />
+          </div>
+
+          {/* Test Reset Button */}
+          <div className="mb-8 text-center">
+            <ResetToDefaultButton />
           </div>
 
           {/* Button Examples */}
