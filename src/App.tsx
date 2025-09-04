@@ -48,9 +48,6 @@ function App() {
                 <Button variant="primary" icon="fa-heart">
                   Botón Primario
                 </Button>
-                <Button variant="secondary" icon="fa-star">
-                  Botón Secundario
-                </Button>
                 <Button variant="outline" icon="fa-download">
                   Botón Outline
                 </Button>

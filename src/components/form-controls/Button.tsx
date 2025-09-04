@@ -2,7 +2,7 @@ import React from "react";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "ghost";
+  variant?: "primary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
   icon?: string;
   iconPosition?: "left" | "right";
@@ -22,8 +22,8 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseClasses = `
-    inline-flex items-center justify-center font-medium rounded-lg transition-colors 
-    focus:outline-none focus:ring-2 focus:ring-offset-2 
+    inline-flex items-center justify-center font-medium rounded-sm transition-colors 
+    cursor-pointer
     disabled:opacity-50 disabled:cursor-not-allowed
     font-[var(--font-default)]
   `;
@@ -33,16 +33,12 @@ export const Button: React.FC<ButtonProps> = ({
       bg-[var(--color-primary)] text-[var(--color-primary-contrast)] 
       hover:bg-[var(--color-primary-dark)] focus:ring-[var(--color-primary)]
     `,
-    secondary: `
-      bg-[var(--color-secondary)] text-[var(--color-secondary-contrast)] 
-      hover:bg-[var(--color-secondary-dark)] focus:ring-[var(--color-secondary)]
-    `,
     outline: `
-      border border-[var(--color-border-default)] text-[var(--color-text-primary)] 
+      border border-[var(--color-primary)] text-[var(--color-primary)] 
       hover:bg-[var(--color-bg-secondary)] focus:ring-[var(--color-primary)]
     `,
     ghost: `
-      text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] 
+      text-[var(--color-primary)] hover:bg-[var(--color-bg-secondary)] 
       focus:ring-[var(--color-primary)]
     `,
   };
