@@ -7,7 +7,7 @@ export interface ButtonProps
   icon?: string;
   iconPosition?: "left" | "right";
   loading?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -44,9 +44,9 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const sizeClasses = {
-    sm: "px-3 py-1.5 text-sm",
-    md: "px-4 py-2 text-base",
-    lg: "px-6 py-3 text-lg",
+    sm: `${children ? "px-3 py-1.5" : "p-1.5"} text-sm`,
+    md: `${children ? "px-4 py-2" : "p-2"} text-base`,
+    lg: `${children ? "px-6 py-3" : "p-3"} text-lg`,
   };
 
   const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
@@ -60,7 +60,7 @@ export const Button: React.FC<ButtonProps> = ({
     return (
       <i
         className={`fa ${icon} ${iconClasses} ${
-          iconPosition === "right" ? "ml-2" : "mr-2"
+          children ? (iconPosition === "right" ? "ml-2" : "mr-2") : ""
         }`}
       />
     );

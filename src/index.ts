@@ -23,6 +23,35 @@ export * from "./hooks";
 // Theme Switcher component
 export { ThemeSwitcher } from "./components/ThemeSwitcher";
 
+// Template exports
+export { LoginForm } from "./templates/forms/LoginForm";
+export type { LoginFormProps } from "./templates/forms/LoginForm";
+
+export { RegistrationForm } from "./templates/forms/RegistrationForm";
+export type { RegistrationFormProps } from "./templates/forms/RegistrationForm";
+
+export { ContactForm } from "./templates/forms/ContactForm";
+export type { ContactFormProps } from "./templates/forms/ContactForm";
+
+export { DashboardLayout } from "./templates/layouts/DashboardLayout";
+export type {
+  DashboardLayoutProps,
+  DashboardStat,
+} from "./templates/layouts/DashboardLayout";
+
+export { SidebarLayout } from "./templates/layouts/SidebarLayout";
+export type {
+  SidebarLayoutProps,
+  MenuItem,
+  User,
+} from "./templates/layouts/SidebarLayout";
+
+export { FormPattern } from "./templates/patterns/FormPattern";
+export type {
+  FormPatternProps,
+  FormField,
+} from "./templates/patterns/FormPattern";
+
 // Styles are available via package exports: import 'flysoft-react-ui/styles'
 
 // Re-export React for convenience

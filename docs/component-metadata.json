@@ -1,0 +1,726 @@
+{
+  "metadata": {
+    "version": "0.1.9",
+    "lastUpdated": "2025-01-05T15:00:00.000Z",
+    "totalComponents": 5,
+    "totalTemplates": 6,
+    "categories": {
+      "form-controls": 2,
+      "layout": 1,
+      "utils": 2,
+      "templates": {
+        "forms": 3,
+        "layouts": 2,
+        "patterns": 1
+      }
+    }
+  },
+  "components": [
+    {
+      "name": "Button",
+      "category": "form-controls",
+      "description": "Botón personalizable con múltiples variantes, tamaños y soporte para iconos FontAwesome 5",
+      "filePath": "src/components/form-controls/Button.tsx",
+      "props": [
+        {
+          "name": "variant",
+          "type": "'primary' | 'outline' | 'ghost'",
+          "required": false,
+          "defaultValue": "primary",
+          "description": "Variante visual del botón"
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "defaultValue": "md",
+          "description": "Tamaño del botón"
+        },
+        {
+          "name": "icon",
+          "type": "string",
+          "required": false,
+          "description": "Clase de FontAwesome 5 (ej: fa-user, fa-save)"
+        },
+        {
+          "name": "iconPosition",
+          "type": "'left' | 'right'",
+          "required": false,
+          "defaultValue": "left",
+          "description": "Posición del icono"
+        },
+        {
+          "name": "loading",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": false,
+          "description": "Estado de carga del botón"
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": false,
+          "description": "Estado deshabilitado del botón"
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "Contenido del botón"
+        }
+      ],
+      "variants": [
+        {
+          "name": "primary",
+          "description": "Botón principal con fondo de color primario",
+          "example": "<Button variant=\"primary\">Guardar</Button>"
+        },
+        {
+          "name": "outline",
+          "description": "Botón con borde y fondo transparente",
+          "example": "<Button variant=\"outline\">Cancelar</Button>"
+        },
+        {
+          "name": "ghost",
+          "description": "Botón sin borde ni fondo, solo texto",
+          "example": "<Button variant=\"ghost\">Enlace</Button>"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Botón con icono",
+          "description": "Botón con icono de FontAwesome",
+          "code": "<Button icon=\"fa-save\" variant=\"primary\">Guardar</Button>",
+          "category": "basic"
+        },
+        {
+          "name": "Botón de carga",
+          "description": "Botón en estado de carga",
+          "code": "<Button loading={true} variant=\"primary\">Procesando...</Button>",
+          "category": "states"
+        },
+        {
+          "name": "Botón deshabilitado",
+          "description": "Botón deshabilitado",
+          "code": "<Button disabled={true} variant=\"primary\">No disponible</Button>",
+          "category": "states"
+        }
+      ],
+      "useCases": [
+        "Formularios",
+        "Navegación",
+        "Acciones",
+        "Confirmaciones",
+        "Envío de datos"
+      ],
+      "icon": "fa-mouse-pointer"
+    },
+    {
+      "name": "Input",
+      "category": "form-controls",
+      "description": "Campo de entrada con soporte para labels, iconos FontAwesome 5 y estados de error",
+      "filePath": "src/components/form-controls/Input.tsx",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "description": "Texto del label del campo"
+        },
+        {
+          "name": "error",
+          "type": "string",
+          "required": false,
+          "description": "Mensaje de error a mostrar"
+        },
+        {
+          "name": "icon",
+          "type": "string",
+          "required": false,
+          "description": "Clase de FontAwesome 5 (ej: fa-user, fa-envelope)"
+        },
+        {
+          "name": "iconPosition",
+          "type": "'left' | 'right'",
+          "required": false,
+          "defaultValue": "left",
+          "description": "Posición del icono"
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "defaultValue": "md",
+          "description": "Tamaño del campo"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "required": false,
+          "defaultValue": "text",
+          "description": "Tipo de input HTML"
+        }
+      ],
+      "variants": [
+        {
+          "name": "sm",
+          "description": "Campo pequeño",
+          "example": "<Input size=\"sm\" label=\"Nombre\" />"
+        },
+        {
+          "name": "md",
+          "description": "Campo mediano (por defecto)",
+          "example": "<Input size=\"md\" label=\"Email\" />"
+        },
+        {
+          "name": "lg",
+          "description": "Campo grande",
+          "example": "<Input size=\"lg\" label=\"Mensaje\" />"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Campo con icono",
+          "description": "Campo con icono de FontAwesome",
+          "code": "<Input label=\"Email\" icon=\"fa-envelope\" type=\"email\" />",
+          "category": "basic"
+        },
+        {
+          "name": "Campo con error",
+          "description": "Campo mostrando mensaje de error",
+          "code": "<Input label=\"Email\" error=\"Email inválido\" />",
+          "category": "validation"
+        },
+        {
+          "name": "Campo de contraseña",
+          "description": "Campo de contraseña con icono",
+          "code": "<Input label=\"Contraseña\" type=\"password\" icon=\"fa-lock\" />",
+          "category": "security"
+        }
+      ],
+      "useCases": [
+        "Formularios de login",
+        "Formularios de registro",
+        "Formularios de contacto",
+        "Configuración de usuario",
+        "Búsquedas"
+      ],
+      "icon": "fa-keyboard"
+    },
+    {
+      "name": "Card",
+      "category": "layout",
+      "description": "Contenedor de tarjeta con header, contenido y footer opcionales",
+      "filePath": "src/components/layout/Card.tsx",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": false,
+          "description": "Título del header de la tarjeta"
+        },
+        {
+          "name": "subtitle",
+          "type": "string",
+          "required": false,
+          "description": "Subtítulo del header de la tarjeta"
+        },
+        {
+          "name": "variant",
+          "type": "'default' | 'elevated' | 'outlined'",
+          "required": false,
+          "defaultValue": "default",
+          "description": "Variante visual de la tarjeta"
+        },
+        {
+          "name": "headerActions",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Elementos de acción en el header"
+        },
+        {
+          "name": "footer",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Contenido del footer"
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "Contenido principal de la tarjeta"
+        }
+      ],
+      "variants": [
+        {
+          "name": "default",
+          "description": "Tarjeta con borde sutil",
+          "example": "<Card title=\"Mi Tarjeta\">Contenido</Card>"
+        },
+        {
+          "name": "elevated",
+          "description": "Tarjeta con sombra elevada",
+          "example": "<Card variant=\"elevated\" title=\"Mi Tarjeta\">Contenido</Card>"
+        },
+        {
+          "name": "outlined",
+          "description": "Tarjeta con borde más visible",
+          "example": "<Card variant=\"outlined\" title=\"Mi Tarjeta\">Contenido</Card>"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Tarjeta básica",
+          "description": "Tarjeta con título y contenido",
+          "code": "<Card title=\"Mi Tarjeta\">Contenido de la tarjeta</Card>",
+          "category": "basic"
+        },
+        {
+          "name": "Tarjeta con acciones",
+          "description": "Tarjeta con botones en el header",
+          "code": "<Card title=\"Mi Tarjeta\" headerActions={<Button>Acción</Button>}>Contenido</Card>",
+          "category": "advanced"
+        },
+        {
+          "name": "Tarjeta con footer",
+          "description": "Tarjeta con contenido en el footer",
+          "code": "<Card title=\"Mi Tarjeta\" footer={<div>Footer</div>}>Contenido</Card>",
+          "category": "advanced"
+        }
+      ],
+      "useCases": [
+        "Contenedores de formularios",
+        "Tarjetas de información",
+        "Dashboards",
+        "Layouts de contenido",
+        "Paneles de configuración"
+      ],
+      "icon": "fa-id-card"
+    },
+    {
+      "name": "Badge",
+      "category": "utils",
+      "description": "Etiqueta pequeña para mostrar estados, categorías o contadores",
+      "filePath": "src/components/utils/Badge.tsx",
+      "props": [
+        {
+          "name": "variant",
+          "type": "'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'",
+          "required": false,
+          "defaultValue": "primary",
+          "description": "Variante de color del badge"
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "defaultValue": "md",
+          "description": "Tamaño del badge"
+        },
+        {
+          "name": "rounded",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": false,
+          "description": "Aplicar bordes completamente redondeados"
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "Contenido del badge"
+        }
+      ],
+      "variants": [
+        {
+          "name": "primary",
+          "description": "Badge con color primario",
+          "example": "<Badge variant=\"primary\">Nuevo</Badge>"
+        },
+        {
+          "name": "success",
+          "description": "Badge con color de éxito",
+          "example": "<Badge variant=\"success\">Activo</Badge>"
+        },
+        {
+          "name": "warning",
+          "description": "Badge con color de advertencia",
+          "example": "<Badge variant=\"warning\">Pendiente</Badge>"
+        },
+        {
+          "name": "danger",
+          "description": "Badge con color de peligro",
+          "example": "<Badge variant=\"danger\">Error</Badge>"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Badge de estado",
+          "description": "Badge mostrando estado de un elemento",
+          "code": "<Badge variant=\"success\">Activo</Badge>",
+          "category": "status"
+        },
+        {
+          "name": "Badge de contador",
+          "description": "Badge mostrando número de elementos",
+          "code": "<Badge variant=\"primary\">5</Badge>",
+          "category": "counter"
+        },
+        {
+          "name": "Badge redondeado",
+          "description": "Badge con bordes completamente redondeados",
+          "code": "<Badge variant=\"info\" rounded>Info</Badge>",
+          "category": "styling"
+        }
+      ],
+      "useCases": [
+        "Indicadores de estado",
+        "Contadores de notificaciones",
+        "Etiquetas de categoría",
+        "Indicadores de progreso",
+        "Marcadores de estado"
+      ],
+      "icon": "fa-tag"
+    },
+    {
+      "name": "ThemeSwitcher",
+      "category": "utils",
+      "description": "Componente para cambiar temas dinámicamente con soporte para múltiples temas",
+      "filePath": "src/components/ThemeSwitcher.tsx",
+      "props": [
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "defaultValue": "md",
+          "description": "Tamaño del switcher"
+        },
+        {
+          "name": "showLabel",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": true,
+          "description": "Mostrar etiqueta del tema actual"
+        }
+      ],
+      "variants": [
+        {
+          "name": "sm",
+          "description": "Switcher pequeño",
+          "example": "<ThemeSwitcher size=\"sm\" />"
+        },
+        {
+          "name": "md",
+          "description": "Switcher mediano (por defecto)",
+          "example": "<ThemeSwitcher size=\"md\" />"
+        },
+        {
+          "name": "lg",
+          "description": "Switcher grande",
+          "example": "<ThemeSwitcher size=\"lg\" />"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Switcher básico",
+          "description": "Switcher con etiqueta",
+          "code": "<ThemeSwitcher />",
+          "category": "basic"
+        },
+        {
+          "name": "Switcher sin etiqueta",
+          "description": "Switcher solo con iconos",
+          "code": "<ThemeSwitcher showLabel={false} />",
+          "category": "compact"
+        }
+      ],
+      "useCases": [
+        "Cambio de tema claro/oscuro",
+        "Preferencias de usuario",
+        "Configuración de aplicación",
+        "Personalización de interfaz"
+      ],
+      "icon": "fa-palette"
+    }
+  ],
+  "templates": [
+    {
+      "name": "LoginForm",
+      "category": "forms",
+      "description": "Formulario de login completo con validación de email y contraseña",
+      "filePath": "templates/forms/LoginForm.tsx",
+      "components": ["Button", "Input", "Card"],
+      "useCases": ["Authentication", "User Login", "Admin Panel", "Mobile App"],
+      "features": [
+        "Validación de email",
+        "Validación de contraseña",
+        "Estados de carga",
+        "Manejo de errores",
+        "Iconos FontAwesome"
+      ]
+    },
+    {
+      "name": "RegistrationForm",
+      "category": "forms",
+      "description": "Formulario de registro con validación de contraseñas y campos requeridos",
+      "filePath": "templates/forms/RegistrationForm.tsx",
+      "components": ["Button", "Input", "Card"],
+      "useCases": [
+        "User Registration",
+        "Account Creation",
+        "Sign Up",
+        "Onboarding"
+      ],
+      "features": [
+        "Validación de campos requeridos",
+        "Confirmación de contraseña",
+        "Estados de éxito/error",
+        "Layout responsivo",
+        "Iconos FontAwesome"
+      ]
+    },
+    {
+      "name": "ContactForm",
+      "category": "forms",
+      "description": "Formulario de contacto con textarea y validación de campos",
+      "filePath": "templates/forms/ContactForm.tsx",
+      "components": ["Button", "Input", "Card"],
+      "useCases": ["Contact Page", "Support Form", "Feedback", "Help Desk"],
+      "features": [
+        "Campo de texto multilinea",
+        "Validación de mensaje",
+        "Estado de éxito",
+        "Layout responsivo",
+        "Iconos FontAwesome"
+      ]
+    },
+    {
+      "name": "DashboardLayout",
+      "category": "layouts",
+      "description": "Layout de dashboard con estadísticas, métricas y contenido organizado",
+      "filePath": "templates/layouts/DashboardLayout.tsx",
+      "components": ["Card", "Badge", "Button"],
+      "useCases": [
+        "Admin Dashboard",
+        "Analytics",
+        "Reports",
+        "Overview",
+        "KPI Display"
+      ],
+      "features": [
+        "Tarjetas de estadísticas",
+        "Indicadores de cambio",
+        "Layout responsivo",
+        "Header con acciones",
+        "Grid de contenido"
+      ]
+    },
+    {
+      "name": "SidebarLayout",
+      "category": "layouts",
+      "description": "Layout con sidebar de navegación, contenido principal y información de usuario",
+      "filePath": "templates/layouts/SidebarLayout.tsx",
+      "components": ["Button", "Badge"],
+      "useCases": [
+        "Admin Panel",
+        "Navigation",
+        "App Layout",
+        "Desktop App",
+        "Management Interface"
+      ],
+      "features": [
+        "Sidebar colapsible",
+        "Navegación con iconos",
+        "Badges de notificación",
+        "Información de usuario",
+        "Layout responsivo"
+      ]
+    },
+    {
+      "name": "FormPattern",
+      "category": "patterns",
+      "description": "Patrón reutilizable para crear cualquier tipo de formulario con validación",
+      "filePath": "templates/patterns/FormPattern.tsx",
+      "components": ["Button", "Input", "Card"],
+      "useCases": [
+        "Custom Forms",
+        "Dynamic Forms",
+        "Reusable Forms",
+        "Form Builder",
+        "Wizard Forms"
+      ],
+      "features": [
+        "Configuración de campos",
+        "Validación personalizada",
+        "Estados de éxito/error",
+        "Layout configurable",
+        "Reutilizable"
+      ]
+    }
+  ],
+  "themes": [
+    {
+      "name": "light",
+      "displayName": "Light",
+      "description": "Tema claro por defecto",
+      "isDark": false,
+      "colors": {
+        "primary": "#3b82f6",
+        "secondary": "#6b7280",
+        "success": "#10b981",
+        "warning": "#f59e0b",
+        "danger": "#ef4444",
+        "bg": "#ffffff",
+        "text": "#111827"
+      }
+    },
+    {
+      "name": "dark",
+      "displayName": "Dark",
+      "description": "Tema oscuro elegante",
+      "isDark": true,
+      "colors": {
+        "primary": "#60a5fa",
+        "secondary": "#9ca3af",
+        "success": "#34d399",
+        "warning": "#fbbf24",
+        "danger": "#f87171",
+        "bg": "#111827",
+        "text": "#f9fafb"
+      }
+    },
+    {
+      "name": "blue",
+      "displayName": "Blue",
+      "description": "Variación azul profesional",
+      "isDark": false,
+      "colors": {
+        "primary": "#1e40af",
+        "secondary": "#475569",
+        "success": "#059669",
+        "warning": "#d97706",
+        "danger": "#dc2626",
+        "bg": "#f8fafc",
+        "text": "#0f172a"
+      }
+    },
+    {
+      "name": "green",
+      "displayName": "Green",
+      "description": "Variación verde natural",
+      "isDark": false,
+      "colors": {
+        "primary": "#059669",
+        "secondary": "#6b7280",
+        "success": "#10b981",
+        "warning": "#f59e0b",
+        "danger": "#ef4444",
+        "bg": "#f0fdf4",
+        "text": "#064e3b"
+      }
+    }
+  ],
+  "iconCategories": {
+    "user": [
+      "fa-user",
+      "fa-user-circle",
+      "fa-user-friends",
+      "fa-user-plus",
+      "fa-user-minus"
+    ],
+    "forms": [
+      "fa-edit",
+      "fa-keyboard",
+      "fa-mouse-pointer",
+      "fa-check",
+      "fa-times"
+    ],
+    "navigation": [
+      "fa-home",
+      "fa-arrow-left",
+      "fa-arrow-right",
+      "fa-bars",
+      "fa-times"
+    ],
+    "actions": [
+      "fa-save",
+      "fa-trash",
+      "fa-edit",
+      "fa-plus",
+      "fa-minus",
+      "fa-search"
+    ],
+    "communication": [
+      "fa-envelope",
+      "fa-phone",
+      "fa-comment",
+      "fa-paper-plane",
+      "fa-bell"
+    ],
+    "security": [
+      "fa-lock",
+      "fa-unlock",
+      "fa-shield-alt",
+      "fa-key",
+      "fa-sign-in-alt"
+    ],
+    "status": [
+      "fa-check-circle",
+      "fa-times-circle",
+      "fa-exclamation-triangle",
+      "fa-info-circle"
+    ],
+    "media": ["fa-image", "fa-video", "fa-file", "fa-download", "fa-upload"],
+    "layout": ["fa-th", "fa-list", "fa-grid-3x3", "fa-columns", "fa-table"]
+  },
+  "commonPatterns": [
+    {
+      "name": "Form with Validation",
+      "description": "Formulario con validación de campos y manejo de errores",
+      "components": ["Input", "Button", "Card"],
+      "useCases": ["Login", "Registration", "Contact", "Settings"],
+      "example": "LoginForm"
+    },
+    {
+      "name": "Dashboard with Stats",
+      "description": "Dashboard con tarjetas de estadísticas y métricas",
+      "components": ["Card", "Badge", "Button"],
+      "useCases": ["Admin Panel", "Analytics", "Reports", "Overview"],
+      "example": "DashboardExample"
+    },
+    {
+      "name": "Navigation Layout",
+      "description": "Layout con navegación lateral y contenido principal",
+      "components": ["Button", "Badge"],
+      "useCases": ["Admin Panel", "App Navigation", "Sidebar Menu"],
+      "example": "SidebarLayoutExample"
+    },
+    {
+      "name": "Theme Switching",
+      "description": "Sistema de cambio de temas dinámico",
+      "components": ["ThemeSwitcher", "ThemeProvider"],
+      "useCases": ["User Preferences", "Dark Mode", "Custom Themes"],
+      "example": "ThemeExample"
+    }
+  ],
+  "keywords": [
+    "react",
+    "ui",
+    "components",
+    "tailwind",
+    "typescript",
+    "forms",
+    "login",
+    "registration",
+    "contact-forms",
+    "dashboard",
+    "layout",
+    "themes",
+    "fontawesome",
+    "accessibility",
+    "responsive",
+    "modern",
+    "design-system"
+  ]
+}

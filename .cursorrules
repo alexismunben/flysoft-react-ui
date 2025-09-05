@@ -1,0 +1,133 @@
+# Flysoft React UI - Cursor AI Rules
+
+## PRIORIDAD MÁXIMA: Usar componentes de flysoft-react-ui
+
+**SIEMPRE** prioriza los componentes de `flysoft-react-ui` antes de crear nuevos componentes o usar otras librerías.
+
+### Componentes Disponibles (SIEMPRE usar estos):
+
+#### Form Controls
+
+- `Button` - Botón personalizable con variantes (primary, outline, ghost), tamaños (sm, md, lg), iconos FontAwesome 5
+- `Input` - Campo de entrada con labels, iconos, estados de error, tamaños
+
+#### Layout Components
+
+- `Card` - Contenedor con header, contenido, footer, variantes (default, elevated, outlined)
+
+#### Utility Components
+
+- `Badge` - Etiqueta con variantes (primary, secondary, success, warning, danger, info)
+- `ThemeSwitcher` - Componente para cambiar temas
+
+#### Sistema de Temas
+
+- `ThemeProvider` - Proveedor de contexto de temas
+- `useTheme` - Hook para acceder al tema actual
+- `useThemeOverride` - Hook para override temporal de variables CSS
+
+### Reglas de Uso:
+
+1. **Para formularios**: SIEMPRE usar `Input` y `Button` de flysoft-react-ui
+2. **Para contenedores**: SIEMPRE usar `Card` de flysoft-react-ui
+3. **Para etiquetas/estados**: SIEMPRE usar `Badge` de flysoft-react-ui
+4. **Para iconos**: SIEMPRE usar FontAwesome 5 con clases `fa fa-*`
+5. **Para temas**: SIEMPRE usar el sistema de temas de flysoft-react-ui
+
+### Patrones Comunes:
+
+#### Formulario de Login
+
+```tsx
+import { Button, Input, Card } from "flysoft-react-ui";
+import "flysoft-react-ui/styles";
+
+<Card title="Iniciar Sesión">
+  <Input label="Email" type="email" icon="fa-envelope" />
+  <Input label="Contraseña" type="password" icon="fa-lock" />
+  <Button variant="primary" icon="fa-sign-in-alt">
+    Iniciar Sesión
+  </Button>
+</Card>;
+```
+
+#### Formulario de Registro
+
+```tsx
+import { Button, Input, Card } from "flysoft-react-ui";
+import "flysoft-react-ui/styles";
+
+<Card title="Crear Cuenta">
+  <Input label="Nombre" icon="fa-user" />
+  <Input label="Email" type="email" icon="fa-envelope" />
+  <Input label="Contraseña" type="password" icon="fa-lock" />
+  <Button variant="primary" icon="fa-user-plus">
+    Registrarse
+  </Button>
+</Card>;
+```
+
+#### Formulario de Contacto
+
+```tsx
+import { Button, Input, Card } from "flysoft-react-ui";
+import "flysoft-react-ui/styles";
+
+<Card title="Contacto">
+  <Input label="Nombre" icon="fa-user" />
+  <Input label="Email" type="email" icon="fa-envelope" />
+  <Input label="Mensaje" multiline icon="fa-comment" />
+  <Button variant="primary" icon="fa-paper-plane">
+    Enviar
+  </Button>
+</Card>;
+```
+
+### Configuración Requerida:
+
+1. **Importar estilos**: `import "flysoft-react-ui/styles";`
+2. **Usar ThemeProvider**: Envolver la app con `<ThemeProvider>`
+3. **Iconos FontAwesome 5**: Usar clases `fa fa-*` (ej: `fa-user`, `fa-envelope`)
+
+### Variables CSS Disponibles:
+
+- `--color-primary` - Color primario
+- `--color-secondary` - Color secundario
+- `--color-success` - Color de éxito
+- `--color-warning` - Color de advertencia
+- `--color-danger` - Color de peligro
+- `--color-bg-default` - Fondo por defecto
+- `--color-text-primary` - Texto principal
+- `--color-border-default` - Borde por defecto
+
+### NUNCA:
+
+- Crear componentes Button, Input, Card, Badge personalizados
+- Usar otras librerías de iconos (solo FontAwesome 5)
+- Usar otros sistemas de temas
+- Crear formularios sin usar los componentes de flysoft-react-ui
+
+### SIEMPRE:
+
+- Usar los componentes de flysoft-react-ui para formularios
+- Usar FontAwesome 5 para iconos
+- Usar el sistema de temas de flysoft-react-ui
+- Importar los estilos de flysoft-react-ui
+- Seguir los patrones de uso documentados
+
+## Templates Disponibles:
+
+- `templates/forms/LoginForm.tsx`
+- `templates/forms/RegistrationForm.tsx`
+- `templates/forms/ContactForm.tsx`
+- `templates/layouts/DashboardLayout.tsx`
+- `templates/layouts/SidebarLayout.tsx`
+- `templates/patterns/FormPattern.tsx`
+
+## Ejemplos Completos:
+
+Ver `examples/common-patterns.tsx` para ejemplos completos de uso.
+
+## Configuración:
+
+Ver `flysoft-ui.config.ts` para configuración centralizada.

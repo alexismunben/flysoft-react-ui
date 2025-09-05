@@ -1,6 +1,6 @@
 # Flysoft React UI
 
-Una biblioteca de componentes React moderna y accesible construida con TypeScript, Tailwind CSS y FontAwesome.
+Una biblioteca de componentes React moderna y accesible construida con TypeScript, Tailwind CSS y FontAwesome 5. Incluye formularios, layouts, temas y templates para desarrollo rápido.
 
 ## 🚀 Características
 
@@ -11,12 +11,102 @@ Una biblioteca de componentes React moderna y accesible construida con TypeScrip
 - **Personalizable**: Fácil de personalizar con clases de Tailwind
 - **Tree-shakable**: Solo importa los componentes que uses
 - **🎨 Sistema de Temas**: Sistema completo de temas personalizables con Context API
+- **📋 Templates Listos**: Formularios y layouts pre-construidos
+- **🤖 Cursor AI Ready**: Optimizado para uso con Cursor AI
 
 ## 📦 Instalación
 
 ```bash
 npm install flysoft-react-ui
 ```
+
+## ⚡ Quick Start
+
+### 1. Configuración Básica
+
+```tsx
+import { ThemeProvider } from "flysoft-react-ui";
+import "flysoft-react-ui/styles";
+
+function App() {
+  return (
+    <ThemeProvider initialTheme="light">
+      {/* Tu aplicación aquí */}
+    </ThemeProvider>
+  );
+}
+```
+
+### 2. Formulario de Login Rápido
+
+```tsx
+import { LoginForm } from "flysoft-react-ui";
+
+function LoginPage() {
+  const handleLogin = (data) => {
+    console.log("Login data:", data);
+  };
+
+  return <LoginForm onSubmit={handleLogin} />;
+}
+```
+
+### 3. Dashboard Básico
+
+```tsx
+import { DashboardLayout } from "flysoft-react-ui";
+
+function Dashboard() {
+  const stats = [
+    {
+      title: "Usuarios",
+      value: "1,234",
+      change: "+12%",
+      changeType: "positive",
+    },
+    {
+      title: "Ventas",
+      value: "$45,678",
+      change: "+8%",
+      changeType: "positive",
+    },
+  ];
+
+  return (
+    <DashboardLayout title="Mi Dashboard" stats={stats}>
+      <div>Contenido del dashboard</div>
+    </DashboardLayout>
+  );
+}
+```
+
+### 4. Integración con Cursor AI
+
+Para que Cursor AI priorice automáticamente estos componentes, crea un archivo `.cursorrules` en tu proyecto:
+
+```markdown
+# Priorizar flysoft-react-ui
+
+SIEMPRE usa los componentes de flysoft-react-ui antes de crear nuevos:
+
+## Componentes Disponibles:
+
+- Button, Input, Card, Badge, ThemeSwitcher
+- LoginForm, RegistrationForm, ContactForm
+- DashboardLayout, SidebarLayout, FormPattern
+
+## Para formularios:
+
+- SIEMPRE usar Input y Button de flysoft-react-ui
+- SIEMPRE usar Card como contenedor
+- SIEMPRE usar FontAwesome 5 para iconos (fa fa-\*)
+
+## Importación requerida:
+
+import "flysoft-react-ui/styles";
+```
+
+Ver [INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md) para configuración completa.
 
 ## 🔧 Configuración
 
@@ -153,6 +243,46 @@ function App() {
     </div>
   );
 }
+```
+
+## 📋 Templates Disponibles
+
+### Formularios
+
+- **LoginForm**: Formulario de login completo con validación
+- **RegistrationForm**: Formulario de registro con validación de contraseñas
+- **ContactForm**: Formulario de contacto con textarea y validación
+
+### Layouts
+
+- **DashboardLayout**: Layout de dashboard con estadísticas y métricas
+- **SidebarLayout**: Layout con sidebar de navegación y contenido principal
+
+### Patrones
+
+- **FormPattern**: Patrón reutilizable para cualquier formulario
+
+### Ejemplo de Uso de Templates
+
+```tsx
+import { LoginForm, DashboardLayout, SidebarLayout } from "flysoft-react-ui";
+
+// Formulario de login
+<LoginForm onSubmit={handleLogin} loading={isLoading} />
+
+// Dashboard con estadísticas
+<DashboardLayout title="Mi App" stats={stats}>
+  <div>Contenido del dashboard</div>
+</DashboardLayout>
+
+// Layout con sidebar
+<SidebarLayout
+  title="Mi App"
+  menuItems={menuItems}
+  user={user}
+>
+  <div>Contenido principal</div>
+</SidebarLayout>
 ```
 
 ## 🧩 Componentes
@@ -304,6 +434,27 @@ MIT
 ## 🤝 Contribuir
 
 Las contribuciones son bienvenidas. Por favor, abre un issue o un pull request.
+
+## 📚 Recursos Adicionales
+
+- **[INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)**: Guía completa de integración con Cursor AI
+- **[THEME_SYSTEM.md](./THEME_SYSTEM.md)**: Documentación detallada del sistema de temas
+- **[examples/common-patterns.tsx](./examples/common-patterns.tsx)**: Ejemplos completos de uso
+- **[flysoft-ui.config.ts](./flysoft-ui.config.ts)**: Configuración centralizada de la librería
+- **[docs/component-metadata.json](./docs/component-metadata.json)**: Metadatos de todos los componentes
+
+## 🔧 Scripts de Mantenimiento
+
+```bash
+# Actualizar documentación automáticamente
+npm run update-docs
+
+# Validar que toda la documentación esté sincronizada
+npm run validate-docs
+
+# Ver ejemplos completos
+npm run dev
+```
 
 ## 📞 Soporte
 
