@@ -11,6 +11,9 @@ export type { InputProps } from "./components/form-controls/Input";
 export { Card } from "./components/layout/Card";
 export type { CardProps } from "./components/layout/Card";
 
+export { AppLayout } from "./components/layout/AppLayout";
+export type { AppLayoutProps } from "./components/layout/AppLayout";
+
 export { Badge } from "./components/utils/Badge";
 export type { BadgeProps } from "./components/utils/Badge";
 
