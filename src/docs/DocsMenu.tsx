@@ -1,0 +1,16 @@
+import { Link } from "react-router-dom";
+
+export const DocsMenu = () => {
+  return (
+    <>
+      <ul>
+        <li>
+          <Link to="/docs/button">Button</Link>
+        </li>
+        <li>
+          <Link to="/docs/card">Card</Link>
+        </li>
+      </ul>
+    </>
+  );
+};

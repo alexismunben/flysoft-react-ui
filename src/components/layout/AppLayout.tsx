@@ -21,23 +21,39 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const { scrollY, scrollDirection } = useElementScroll(contentRef);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
+  const isNavbarVisibleRef = useRef(isNavbarVisible);
 
   const shouldShowMobileDrawer = isMobile || isTablet;
   const shouldShowDesktopDrawer = !shouldShowMobileDrawer && leftDrawer;
 
+  // Mantener el ref sincronizado con el estado
+  React.useEffect(() => {
+    isNavbarVisibleRef.current = isNavbarVisible;
+  }, [isNavbarVisible]);
+
   // Controlar visibilidad del navbar basado en scroll
   React.useEffect(() => {
+    let shouldBeVisible: boolean;
+
     if (scrollY < 100) {
       // Siempre mostrar navbar cerca del top
-      setIsNavbarVisible(true);
+      shouldBeVisible = true;
     } else if (scrollDirection === "down" && scrollY > 100) {
       // Ocultar navbar al hacer scroll hacia abajo
-      setIsNavbarVisible(false);
+      shouldBeVisible = false;
     } else if (scrollDirection === "up" && scrollY > 100) {
       // Mostrar navbar al hacer scroll hacia arriba
-      setIsNavbarVisible(true);
+      shouldBeVisible = true;
+    } else {
+      // No cambiar el estado si scrollDirection es null o no se cumple ninguna condición
+      return;
     }
-  }, [scrollDirection, scrollY, isNavbarVisible]);
+
+    // Solo actualizar el estado si hay un cambio real
+    if (shouldBeVisible !== isNavbarVisibleRef.current) {
+      setIsNavbarVisible(shouldBeVisible);
+    }
+  }, [scrollDirection, scrollY]);
 
   const handleMobileDrawerToggle = () => {
     setIsMobileDrawerOpen(!isMobileDrawerOpen);

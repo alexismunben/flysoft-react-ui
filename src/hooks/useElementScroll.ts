@@ -13,16 +13,24 @@ export const useElementScroll = (
 
     const element = elementRef.current;
     let lastScrollY = element.scrollTop;
+    let lastDirection: "up" | "down" | null = null;
 
     const handleScroll = () => {
       const currentScrollY = element.scrollTop;
+      let newDirection: "up" | "down" | null = lastDirection;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 10) {
+        newDirection = "down";
+      } else if (currentScrollY < lastScrollY && currentScrollY > 0) {
+        newDirection = "up";
+      }
 
       setScrollY(currentScrollY);
 
-      if (currentScrollY > lastScrollY && currentScrollY > 10) {
-        setScrollDirection("down");
-      } else if (currentScrollY < lastScrollY) {
-        setScrollDirection("up");
+      // Solo actualizar la dirección si cambió
+      if (newDirection !== lastDirection) {
+        setScrollDirection(newDirection);
+        lastDirection = newDirection;
       }
 
       lastScrollY = currentScrollY;
