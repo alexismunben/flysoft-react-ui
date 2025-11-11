@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 /* FontAwesome imports */
-@import url("../assets/fontawesome/css/all.min.css");
+/* @import url("../assets/fontawesome/css/all.min.css"); */
 
 /* Theme CSS Variables - These will be dynamically updated by the theme system */
 :root {
