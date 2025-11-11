@@ -10,6 +10,9 @@ export const DocsMenu = () => {
         <li>
           <Link to="/docs/card">Card</Link>
         </li>
+        <li>
+          <Link to="/docs/input">Input</Link>
+        </li>
       </ul>
     </>
   );

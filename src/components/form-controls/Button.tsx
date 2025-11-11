@@ -10,6 +10,13 @@ export interface ButtonProps
   children?: React.ReactNode;
 }
 
+type Ripple = {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+};
+
 export const Button: React.FC<ButtonProps> = ({
   variant = "primary",
   size = "md",
@@ -19,11 +26,15 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   className = "",
   disabled,
+  onClick,
   ...props
 }) => {
+  const buttonRef = React.useRef<HTMLButtonElement | null>(null);
+  const [ripples, setRipples] = React.useState<Ripple[]>([]);
+
   const baseClasses = `
     inline-flex items-center justify-center font-medium rounded-sm transition-colors 
-    cursor-pointer
+    cursor-pointer relative overflow-hidden
     disabled:opacity-50 disabled:cursor-not-allowed
     font-[var(--font-default)]
   `;
@@ -66,12 +77,57 @@ export const Button: React.FC<ButtonProps> = ({
     );
   };
 
+  const rippleColor =
+    variant === "primary" ? "rgba(255, 255, 255, 0.45)" : "rgba(0, 0, 0, 0.15)";
+
+  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
+    if (!disabled && !loading && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height) * 1.2;
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const id = window.performance.now();
+
+      const newRipple: Ripple = { id, x, y, size };
+      setRipples((prev) => [...prev, newRipple]);
+
+      window.setTimeout(() => {
+        setRipples((prev) => prev.filter((ripple) => ripple.id !== id));
+      }, 600);
+    }
+
+    onClick?.(event);
+  };
+
   return (
-    <button className={classes} disabled={disabled || loading} {...props}>
-      {loading && <i className="fa fa-spinner fa-spin mr-2" />}
-      {icon && iconPosition === "left" && !loading && renderIcon()}
-      {children}
-      {icon && iconPosition === "right" && !loading && renderIcon()}
+    <button
+      ref={buttonRef}
+      className={classes}
+      disabled={disabled || loading}
+      onClick={handleClick}
+      {...props}
+    >
+      <span className="absolute inset-0 pointer-events-none">
+        {ripples.map((ripple) => (
+          <span
+            key={ripple.id}
+            className="absolute rounded-full opacity-40 flysoft-button-ripple"
+            style={{
+              top: ripple.y,
+              left: ripple.x,
+              width: ripple.size,
+              height: ripple.size,
+              backgroundColor: rippleColor,
+            }}
+          />
+        ))}
+      </span>
+      <span className="relative inline-flex items-center justify-center">
+        {loading && <i className="fa fa-spinner fa-spin mr-2" />}
+        {icon && iconPosition === "left" && !loading && renderIcon()}
+        {children}
+        {icon && iconPosition === "right" && !loading && renderIcon()}
+      </span>
     </button>
   );
 };

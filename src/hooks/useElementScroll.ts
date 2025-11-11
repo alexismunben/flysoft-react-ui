@@ -17,11 +17,12 @@ export const useElementScroll = (
 
     const handleScroll = () => {
       const currentScrollY = element.scrollTop;
+      const delta = currentScrollY - lastScrollY;
       let newDirection: "up" | "down" | null = lastDirection;
 
-      if (currentScrollY > lastScrollY && currentScrollY > 10) {
+      if (delta > 4 && currentScrollY > 10) {
         newDirection = "down";
-      } else if (currentScrollY < lastScrollY && currentScrollY > 0) {
+      } else if (delta < -4 && currentScrollY > 0) {
         newDirection = "up";
       }
 

@@ -206,6 +206,13 @@
     ring-color: var(--flysoft-primary);
   }
 
+  .flysoft-button-ripple {
+    transform: translate(-50%, -50%) scale(0);
+    pointer-events: none;
+    will-change: transform, opacity;
+    animation: flysoft-button-ripple 600ms ease-out;
+  }
+
   /* Input focus states */
   .input:focus {
     @apply outline-none ring-2 ring-offset-2;
@@ -216,5 +223,12 @@
   .card-hover:hover {
     @apply transition-shadow duration-200;
     box-shadow: var(--flysoft-shadow-lg);
+  }
+}
+
+@keyframes flysoft-button-ripple {
+  100% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0;
   }
 }
