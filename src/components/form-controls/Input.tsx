@@ -23,7 +23,7 @@ export const Input: React.FC<InputProps> = ({
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
   const baseClasses = `
-    w-full border rounded-lg transition-colors focus:outline-none focus:ring-2 
+    w-full border rounded-lg transition-colors focus:outline-none focus:ring-1
     disabled:opacity-50 disabled:cursor-not-allowed
     font-[var(--font-default)] text-[var(--color-text-primary)]
     bg-[var(--color-bg-default)]
