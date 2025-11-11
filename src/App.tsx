@@ -264,6 +264,13 @@ function HomeContent() {
           </Button>
         </Link>
       </div>
+      <div className="mb-8 text-center">
+        <Link to="/docs/theme" className="inline-block">
+          <Button variant="outline" icon="fa-adjust">
+            Ver Documentación de ThemeSwitcher
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }

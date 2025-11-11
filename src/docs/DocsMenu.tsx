@@ -13,6 +13,9 @@ export const DocsMenu = () => {
         <li>
           <Link to="/docs/input">Input</Link>
         </li>
+        <li>
+          <Link to="/docs/theme">ThemeSwitcher</Link>
+        </li>
       </ul>
     </>
   );

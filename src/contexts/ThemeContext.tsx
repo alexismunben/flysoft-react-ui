@@ -2,13 +2,53 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState,
+  type CSSProperties,
   type ReactNode,
 } from "react";
 import type { Theme, ThemeContextType } from "./types";
 import { themes, defaultTheme } from "./presets";
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+const toKebabCase = (value: string) =>
+  value.replace(/([A-Z])/g, "-$1").toLowerCase();
+
+const buildThemeResetStyles = (theme: Theme): CSSProperties => {
+  const cssVariables: Record<string, string> = {
+    "--flysoft-theme-name": theme.name,
+  };
+
+  Object.entries(theme.colors).forEach(([key, value]) => {
+    cssVariables[`--flysoft-${toKebabCase(key)}`] = value;
+  });
+
+  Object.entries(theme.shadows).forEach(([key, value]) => {
+    cssVariables[`--flysoft-shadow-${key}`] = value;
+  });
+
+  Object.entries(theme.radius).forEach(([key, value]) => {
+    cssVariables[`--flysoft-radius-${key}`] = value;
+  });
+
+  Object.entries(theme.spacing).forEach(([key, value]) => {
+    cssVariables[`--flysoft-spacing-${key}`] = value;
+  });
+
+  Object.entries(theme.fonts).forEach(([key, value]) => {
+    cssVariables[`--flysoft-font-${key}`] = value;
+  });
+
+  return {
+    color: theme.fonts.colorDefault ?? theme.colors.textPrimary,
+    backgroundColor: theme.colors.bgDefault,
+    fontFamily: theme.fonts.default,
+    fontSize: theme.fonts.sizeDefault,
+    lineHeight: "1.5",
+    ...cssVariables,
+  };
+};
 
 interface ThemeProviderProps {
   children: ReactNode;
@@ -152,6 +192,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   // Check if current theme is dark
   const isDark = currentTheme.name === "dark";
 
+  const themeResetStyles = useMemo(
+    () => buildThemeResetStyles(currentTheme),
+    [currentTheme]
+  );
+
   const value: ThemeContextType = {
     theme: currentTheme,
     setTheme,
@@ -162,11 +207,20 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   };
 
   return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>
+      <div
+        className="flysoft-theme-reset"
+        style={themeResetStyles}
+        data-theme={currentTheme.name}
+      >
+        {children}
+      </div>
+    </ThemeContext.Provider>
   );
 };
 
 // Hook to use theme context
+// eslint-disable-next-line react-refresh/only-export-components
 export const useTheme = (): ThemeContextType => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
@@ -176,6 +230,7 @@ export const useTheme = (): ThemeContextType => {
 };
 
 // Hook to check if theme context is available
+// eslint-disable-next-line react-refresh/only-export-components
 export const useThemeContext = () => {
   const context = useContext(ThemeContext);
   return context !== undefined;
