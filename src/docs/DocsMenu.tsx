@@ -8,6 +8,9 @@ export const DocsMenu = () => {
           <Link to="/docs/button">Button</Link>
         </li>
         <li>
+          <Link to="/docs/badge">Badge</Link>
+        </li>
+        <li>
           <Link to="/docs/card">Card</Link>
         </li>
         <li>

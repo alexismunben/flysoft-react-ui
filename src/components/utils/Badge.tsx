@@ -6,6 +6,9 @@ export interface BadgeProps {
   size?: "sm" | "md" | "lg";
   rounded?: boolean;
   className?: string;
+  icon?: string;
+  iconPosition?: "left" | "right";
+  iconLabel?: string;
 }
 
 export const Badge: React.FC<BadgeProps> = ({
@@ -14,6 +17,9 @@ export const Badge: React.FC<BadgeProps> = ({
   size = "md",
   rounded = false,
   className = "",
+  icon,
+  iconPosition = "left",
+  iconLabel,
 }) => {
   const baseClasses =
     "inline-flex items-center font-medium font-[var(--font-default)]";
@@ -53,7 +59,29 @@ export const Badge: React.FC<BadgeProps> = ({
 
   const roundedClasses = rounded ? "rounded-full" : "rounded-md";
 
-  const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${roundedClasses} ${className}`;
+  const gapClasses = icon ? "gap-2" : "";
 
-  return <span className={classes}>{children}</span>;
+  const iconSizeClasses =
+    size === "sm" ? "text-xs" : size === "md" ? "text-sm" : "text-base";
+
+  const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${roundedClasses} ${gapClasses} ${className}`;
+
+  const renderIcon = () => {
+    if (!icon) return null;
+    return (
+      <i
+        className={`fa ${icon} ${iconSizeClasses}`}
+        aria-hidden={!iconLabel}
+        aria-label={iconLabel}
+      />
+    );
+  };
+
+  return (
+    <span className={classes}>
+      {icon && iconPosition === "left" && renderIcon()}
+      <span>{children}</span>
+      {icon && iconPosition === "right" && renderIcon()}
+    </span>
+  );
 };

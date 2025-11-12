@@ -7,8 +7,10 @@ import {
   type RequestOptions,
 } from "../services/apiClient";
 
+type AnyRequestOptions = RequestOptions<unknown, Record<string, unknown>>;
+
 type QueryRefetcher = (
-  override?: Partial<RequestOptions<unknown, Record<string, unknown>>>,
+  override?: Partial<AnyRequestOptions>,
 ) => Promise<unknown>;
 
 const queryRegistry = new Map<string, Set<QueryRefetcher>>();
@@ -69,11 +71,17 @@ export interface UseApiOptions<
   onError?: (error: AppApiError) => void;
 }
 
-export interface UseApiResult<TData> {
+export interface UseApiResult<
+  TData,
+  TBody = unknown,
+  TParams = Record<string, unknown>,
+> {
   data: TData | undefined;
   loading: boolean;
   error: AppApiError | undefined;
-  refetch: (override?: Partial<RequestOptions>) => Promise<TData>;
+  refetch: (
+    override?: Partial<RequestOptions<TBody, TParams>>,
+  ) => Promise<TData>;
   reset: () => void;
 }
 
@@ -86,9 +94,13 @@ const callMethod = async <TResponse, TParams, TBody>(
 ) => {
   switch (method) {
     case "get":
-      return apiClient.get<TResponse, TParams>(options);
+      return apiClient.get<TResponse, TParams>(
+        options as unknown as RequestOptions<never, TParams>,
+      );
     case "delete":
-      return apiClient.delete<TResponse, TParams>(options);
+      return apiClient.delete<TResponse, TParams>(
+        options as unknown as RequestOptions<never, TParams>,
+      );
     case "post":
       return apiClient.post<TResponse, TBody, TParams>(options);
     case "put":
@@ -96,11 +108,18 @@ const callMethod = async <TResponse, TParams, TBody>(
     case "patch":
       return apiClient.patch<TResponse, TBody, TParams>(options);
     default:
-      return apiClient.get<TResponse, TParams>(options);
+      return apiClient.get<TResponse, TParams>(
+        options as unknown as RequestOptions<never, TParams>,
+      );
   }
 };
 
-const buildRequestOptions = <TParams, TBody, TResponse, TTransformed = TResponse>(
+const buildRequestOptions = <
+  TResponse,
+  TParams,
+  TBody,
+  TTransformed = TResponse,
+>(
   base: UseApiOptions<TResponse, TParams, TBody, TTransformed>,
   override?: Partial<RequestOptions<TBody, TParams>>,
 ): RequestOptions<TBody, TParams> => ({
@@ -124,7 +143,7 @@ export const useApi = <
   TTransformed = TResponse,
 >(
   options: UseApiOptions<TResponse, TParams, TBody, TTransformed>,
-): UseApiResult<TTransformed> => {
+): UseApiResult<TTransformed, TBody, TParams> => {
   const {
     method = "get",
     enabled = true,
@@ -151,9 +170,11 @@ export const useApi = <
   onErrorRef.current = onError;
 
   const refetch = useCallback(
-    async (override?: Partial<RequestOptions>) => {
+    async (
+      override?: Partial<RequestOptions<TBody, TParams>>,
+    ): Promise<TTransformed> => {
       const activeOptions = latestOptionsRef.current;
-      const requestOptions = buildRequestOptions<TParams, TBody, TResponse, TTransformed>(
+      const requestOptions = buildRequestOptions(
         activeOptions,
         override,
       );
@@ -186,9 +207,9 @@ export const useApi = <
 
   useEffect(() => {
     if (queryKey) {
-      registerQuery(queryKey, stableRefetch);
+      registerQuery(queryKey, stableRefetch as QueryRefetcher);
       return () => {
-        unregisterQuery(queryKey, stableRefetch);
+        unregisterQuery(queryKey, stableRefetch as QueryRefetcher);
       };
     }
     return undefined;

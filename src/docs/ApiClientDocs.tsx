@@ -74,7 +74,7 @@ const ApiClientDocs: React.FC = () => {
   const renderErrorBadge = (error?: AppApiError) => {
     if (!error) return null;
     return (
-      <Badge variant="danger" icon="fa fa-exclamation-triangle">
+      <Badge variant="danger" icon="fa-exclamation-triangle">
         {error.message}
       </Badge>
     );
@@ -124,14 +124,14 @@ const ApiClientDocs: React.FC = () => {
           >
             <Input
               label="ID del post"
-              icon="fa fa-hashtag"
+              icon="fa-hashtag"
               value={postId}
               onChange={(event) => setPostId(event.target.value)}
             />
             <Button
               type="submit"
               variant="primary"
-              icon="fa fa-search"
+              icon="fa-search"
               loading={loadingPost}
             >
               Consultar
@@ -140,7 +140,7 @@ const ApiClientDocs: React.FC = () => {
 
           <div className="space-y-3">
             {loadingPost && (
-              <Badge variant="info" icon="fa fa-spinner" className="animate-pulse">
+              <Badge variant="info" icon="fa-spinner" className="animate-pulse">
                 Cargando post...
               </Badge>
             )}
@@ -169,7 +169,7 @@ const ApiClientDocs: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="Título"
-              icon="fa fa-heading"
+              icon="fa-heading"
               value={formState.title}
               onChange={(event) =>
                 setFormState((prev) => ({
@@ -180,7 +180,7 @@ const ApiClientDocs: React.FC = () => {
             />
             <Input
               label="Contenido"
-              icon="fa fa-align-left"
+              icon="fa-align-left"
               value={formState.body}
               onChange={(event) =>
                 setFormState((prev) => ({
@@ -195,7 +195,7 @@ const ApiClientDocs: React.FC = () => {
             <Button
               type="submit"
               variant="primary"
-              icon="fa fa-paper-plane"
+              icon="fa-paper-plane"
               loading={creatingPost}
             >
               Enviar datos
@@ -203,7 +203,7 @@ const ApiClientDocs: React.FC = () => {
             <Button
               type="button"
               variant="outline"
-              icon="fa fa-undo"
+              icon="fa-undo"
               onClick={() => {
                 setFormState({ title: "", body: "" });
                 resetMutation();
@@ -215,13 +215,13 @@ const ApiClientDocs: React.FC = () => {
 
           <div className="space-y-3">
             {creatingPost && (
-              <Badge variant="info" icon="fa fa-spinner" className="animate-pulse">
+              <Badge variant="info" icon="fa-spinner" className="animate-pulse">
                 Enviando...
               </Badge>
             )}
             {renderErrorBadge(createError)}
             {createdPost && !creatingPost && (
-              <Badge variant="success" icon="fa fa-check-circle">
+              <Badge variant="success" icon="fa-check-circle">
                 Post #{createdPost.id} creado (ejemplo).
               </Badge>
             )}

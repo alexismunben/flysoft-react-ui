@@ -3,6 +3,7 @@ import type {
   AxiosError,
   AxiosInstance,
   AxiosRequestConfig,
+  AxiosRequestHeaders,
   AxiosResponse,
 } from "axios";
 
@@ -75,10 +76,16 @@ export class ApiClient {
     this.instance.interceptors.request.use((requestConfig) => {
       const token = this.tokenProvider?.();
       if (token) {
-        requestConfig.headers = {
-          ...requestConfig.headers,
-          Authorization: `Bearer ${token}`,
-        };
+        if (requestConfig.headers && "set" in requestConfig.headers) {
+          requestConfig.headers.set?.("Authorization", `Bearer ${token}`);
+        } else {
+          const existingHeaders =
+            (requestConfig.headers as Record<string, string> | undefined) ?? {};
+          requestConfig.headers = {
+            ...existingHeaders,
+            Authorization: `Bearer ${token}`,
+          } as AxiosRequestHeaders;
+        }
       }
       return requestConfig;
     });
