@@ -223,5 +223,3 @@ const InputDocs: React.FC = () => {
 };
 
 export default InputDocs;
-
-

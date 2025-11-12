@@ -23,6 +23,9 @@ export * from "./contexts";
 // Hooks exports
 export * from "./hooks";
 
+// Services
+export * from "./services/apiClient";
+
 // Theme Switcher component
 export { ThemeSwitcher } from "./components/ThemeSwitcher";
 

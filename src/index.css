@@ -1,9 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap");
 @import "tailwindcss";
 
-/* FontAwesome imports */
-/* @import url("../assets/fontawesome/css/all.min.css"); */
-
 /* Theme CSS Variables - These will be dynamically updated by the theme system */
 :root {
   /* Font variables */
