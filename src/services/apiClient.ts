@@ -1,9 +1,4 @@
-import axios, {
-  type AxiosInstance,
-  type AxiosRequestConfig,
-  type AxiosResponse,
-  type AxiosHeaders,
-} from "axios";
+import axios, { type AxiosInstance, type AxiosResponse } from "axios";
 
 export interface ApiClientConfig {
   baseURL?: string;
@@ -12,12 +7,6 @@ export interface ApiClientConfig {
 }
 
 type TokenProvider = () => string | undefined;
-
-interface RequestOptions {
-  url: string;
-  headers?: Record<string, string>;
-  body?: unknown;
-}
 
 interface FileResponse {
   data: Blob;
@@ -53,7 +42,10 @@ class ApiClientService {
         const token = this.tokenProvider?.();
         if (token && config.headers) {
           // Manejo compatible con diferentes versiones de axios
-          if ("set" in config.headers && typeof config.headers.set === "function") {
+          if (
+            "set" in config.headers &&
+            typeof config.headers.set === "function"
+          ) {
             config.headers.set("Authorization", `Bearer ${token}`);
           } else {
             const headers = config.headers as Record<string, string>;
@@ -64,7 +56,7 @@ class ApiClientService {
       },
       (error) => {
         return Promise.reject(error);
-      },
+      }
     );
 
     // Response interceptor para manejo de errores (opcional, puede extenderse)
@@ -72,7 +64,7 @@ class ApiClientService {
       (response) => response,
       (error) => {
         return Promise.reject(error);
-      },
+      }
     );
   }
 
@@ -102,10 +94,11 @@ class ApiClientService {
       this.instance.defaults.timeout = config.timeout;
     }
     if (config.headers) {
-      this.instance.defaults.headers = {
-        ...this.instance.defaults.headers,
-        ...config.headers,
-      } as AxiosHeaders;
+      // Actualizar headers comunes de forma segura
+      Object.assign(
+        this.instance.defaults.headers.common || {},
+        config.headers
+      );
     }
   }
 
@@ -114,30 +107,38 @@ class ApiClientService {
     url,
     headers,
     body,
+    params,
   }: {
     method: string;
     url: string;
     headers?: Record<string, string>;
     body?: unknown;
+    params?: Record<string, unknown>;
   }): Promise<AxiosResponse<T>> {
     return await this.instance({
       method,
       headers,
       url,
       data: body,
+      params,
     });
   }
 
   /**
    * Realiza una petición GET
+   * @param url URL del endpoint
+   * @param params Parámetros opcionales que se enviarán como query string
+   * @param headers Headers opcionales de la petición
    */
   async get<T = unknown>(
     url: string,
-    headers?: Record<string, string>,
+    params?: Record<string, unknown>,
+    headers?: Record<string, string>
   ): Promise<T> {
     const response = await this.axiosRequest<T>({
       method: "GET",
       url,
+      params,
       headers,
     });
     return response.data;
@@ -149,7 +150,7 @@ class ApiClientService {
   async post<T = unknown>(
     url: string,
     body?: unknown,
-    headers?: Record<string, string>,
+    headers?: Record<string, string>
   ): Promise<T> {
     const response = await this.axiosRequest<T>({
       method: "POST",
@@ -166,7 +167,7 @@ class ApiClientService {
   async put<T = unknown>(
     url: string,
     body?: unknown,
-    headers?: Record<string, string>,
+    headers?: Record<string, string>
   ): Promise<T> {
     const response = await this.axiosRequest<T>({
       method: "PUT",
@@ -182,7 +183,7 @@ class ApiClientService {
    */
   async del<T = unknown>(
     url: string,
-    headers?: Record<string, string>,
+    headers?: Record<string, string>
   ): Promise<T> {
     const response = await this.axiosRequest<T>({
       method: "DELETE",
@@ -197,7 +198,7 @@ class ApiClientService {
    */
   async getFile(
     url: string,
-    headers: Record<string, string> = {},
+    headers: Record<string, string> = {}
   ): Promise<FileResponse> {
     const response = await this.instance.get<Blob>(url, {
       responseType: "blob",
@@ -214,7 +215,7 @@ class ApiClientService {
    */
   async getFileAsUrl(
     url: string,
-    headers: Record<string, string> = {},
+    headers: Record<string, string> = {}
   ): Promise<string> {
     const { data } = await this.getFile(url, headers);
     const blob = new Blob([data], { type: data.type });
@@ -235,7 +236,7 @@ class ApiClientService {
    */
   async downloadFile(
     url: string,
-    headers?: Record<string, string>,
+    headers?: Record<string, string>
   ): Promise<void> {
     const { data, headers: dataHeaders } = await this.getFile(url, headers);
 
@@ -261,7 +262,7 @@ class ApiClientService {
   async uploadFile<T = unknown>(
     url: string,
     files: FileList | File[],
-    headers?: UploadFileOptions,
+    headers?: UploadFileOptions
   ): Promise<T> {
     const formData = new FormData();
     const { paramName = "file", ...newHeaders } = headers || {};
@@ -298,7 +299,7 @@ export const createApiClient = (config?: ApiClientConfig): ApiClientService => {
  * Establece el proveedor de token global para el cliente compartido
  */
 export const setApiClientTokenProvider = (
-  provider: TokenProvider | undefined,
+  provider: TokenProvider | undefined
 ): void => {
   sharedClient.setTokenProvider(provider);
 };
@@ -309,4 +310,3 @@ export const setApiClientTokenProvider = (
 export const clearApiClientTokenProvider = (): void => {
   sharedClient.clearTokenProvider();
 };
-
