@@ -1,21 +1,9 @@
-import axios from "axios";
-import type {
-  AxiosError,
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosRequestHeaders,
-  AxiosResponse,
+import axios, {
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+  type AxiosHeaders,
 } from "axios";
-
-export type HttpMethod = "get" | "post" | "put" | "delete" | "patch";
-
-export interface AppApiError {
-  message: string;
-  code?: string;
-  status?: number;
-  details?: unknown;
-  originalError?: unknown;
-}
 
 export interface ApiClientConfig {
   baseURL?: string;
@@ -23,48 +11,34 @@ export interface ApiClientConfig {
   headers?: Record<string, string>;
 }
 
-export interface RequestOptions<
-  TBody = unknown,
-  TParams = Record<string, unknown>,
-> {
-  url: string;
-  params?: TParams;
-  data?: TBody;
-  headers?: Record<string, string>;
-  config?: AxiosRequestConfig;
-}
-
 type TokenProvider = () => string | undefined;
 
-const DEFAULT_CONFIG: Required<Pick<ApiClientConfig, "baseURL" | "timeout">> = {
-  baseURL: "/api",
-  timeout: 15000,
-};
+interface RequestOptions {
+  url: string;
+  headers?: Record<string, string>;
+  body?: unknown;
+}
 
-const isObject = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null;
+interface FileResponse {
+  data: Blob;
+  headers: AxiosResponse["headers"];
+}
 
-const extractErrorData = (error: AxiosError): Record<string, unknown> => {
-  if (isObject(error.response?.data)) {
-    return error.response?.data;
-  }
-  if (typeof error.response?.data === "string") {
-    return { message: error.response?.data };
-  }
-  return {};
-};
+interface UploadFileOptions {
+  paramName?: string;
+  [key: string]: unknown;
+}
 
-export class ApiClient {
-  private readonly instance: AxiosInstance;
+class ApiClientService {
+  private instance: AxiosInstance;
   private tokenProvider?: TokenProvider;
 
   constructor(config?: ApiClientConfig) {
     this.instance = axios.create({
-      baseURL: config?.baseURL ?? DEFAULT_CONFIG.baseURL,
-      timeout: config?.timeout ?? DEFAULT_CONFIG.timeout,
+      baseURL: config?.baseURL ?? "",
+      timeout: config?.timeout ?? 15000,
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
         ...config?.headers,
       },
     });
@@ -72,39 +46,55 @@ export class ApiClient {
     this.setupInterceptors();
   }
 
-  private setupInterceptors() {
-    this.instance.interceptors.request.use((requestConfig) => {
-      const token = this.tokenProvider?.();
-      if (token) {
-        if (requestConfig.headers && "set" in requestConfig.headers) {
-          requestConfig.headers.set?.("Authorization", `Bearer ${token}`);
-        } else {
-          const existingHeaders =
-            (requestConfig.headers as Record<string, string> | undefined) ?? {};
-          requestConfig.headers = {
-            ...existingHeaders,
-            Authorization: `Bearer ${token}`,
-          } as AxiosRequestHeaders;
+  private setupInterceptors(): void {
+    // Request interceptor para inyectar el token automáticamente
+    this.instance.interceptors.request.use(
+      (config) => {
+        const token = this.tokenProvider?.();
+        if (token && config.headers) {
+          // Manejo compatible con diferentes versiones de axios
+          if ("set" in config.headers && typeof config.headers.set === "function") {
+            config.headers.set("Authorization", `Bearer ${token}`);
+          } else {
+            const headers = config.headers as Record<string, string>;
+            headers.Authorization = `Bearer ${token}`;
+          }
         }
-      }
-      return requestConfig;
-    });
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      },
+    );
 
+    // Response interceptor para manejo de errores (opcional, puede extenderse)
     this.instance.interceptors.response.use(
       (response) => response,
-      (error) => Promise.reject(this.toAppApiError(error)),
+      (error) => {
+        return Promise.reject(error);
+      },
     );
   }
 
-  setTokenProvider(provider: TokenProvider | undefined) {
+  /**
+   * Establece el proveedor de token que se usará en todas las peticiones
+   * @param provider Función que retorna el token de autorización
+   */
+  setTokenProvider(provider: TokenProvider | undefined): void {
     this.tokenProvider = provider;
   }
 
-  clearTokenProvider() {
+  /**
+   * Limpia el proveedor de token
+   */
+  clearTokenProvider(): void {
     this.tokenProvider = undefined;
   }
 
-  updateDefaults(config: ApiClientConfig) {
+  /**
+   * Actualiza la configuración por defecto del cliente
+   */
+  updateDefaults(config: ApiClientConfig): void {
     if (config.baseURL) {
       this.instance.defaults.baseURL = config.baseURL;
     }
@@ -115,159 +105,208 @@ export class ApiClient {
       this.instance.defaults.headers = {
         ...this.instance.defaults.headers,
         ...config.headers,
-      };
+      } as AxiosHeaders;
     }
   }
 
-  async get<TResponse, TParams = Record<string, unknown>>(
-    options: RequestOptions<never, TParams>,
-  ): Promise<TResponse> {
-    try {
-      const response = await this.instance.get<TResponse>(options.url, {
-        params: options.params,
-        headers: options.headers,
-        ...options.config,
-      });
-      return this.transformResponse(response);
-    } catch (error) {
-      throw this.ensureAppApiError(error);
-    }
+  private async axiosRequest<T = unknown>({
+    method,
+    url,
+    headers,
+    body,
+  }: {
+    method: string;
+    url: string;
+    headers?: Record<string, string>;
+    body?: unknown;
+  }): Promise<AxiosResponse<T>> {
+    return await this.instance({
+      method,
+      headers,
+      url,
+      data: body,
+    });
   }
 
-  async delete<TResponse, TParams = Record<string, unknown>>(
-    options: RequestOptions<never, TParams>,
-  ): Promise<TResponse> {
-    try {
-      const response = await this.instance.delete<TResponse>(options.url, {
-        params: options.params,
-        headers: options.headers,
-        ...options.config,
-      });
-      return this.transformResponse(response);
-    } catch (error) {
-      throw this.ensureAppApiError(error);
-    }
-  }
-
-  async post<
-    TResponse,
-    TBody = unknown,
-    TParams = Record<string, unknown>,
-  >(options: RequestOptions<TBody, TParams>): Promise<TResponse> {
-    try {
-      const response = await this.instance.post<TResponse>(options.url, options.data, {
-        params: options.params,
-        headers: options.headers,
-        ...options.config,
-      });
-      return this.transformResponse(response);
-    } catch (error) {
-      throw this.ensureAppApiError(error);
-    }
-  }
-
-  async put<
-    TResponse,
-    TBody = unknown,
-    TParams = Record<string, unknown>,
-  >(options: RequestOptions<TBody, TParams>): Promise<TResponse> {
-    try {
-      const response = await this.instance.put<TResponse>(options.url, options.data, {
-        params: options.params,
-        headers: options.headers,
-        ...options.config,
-      });
-      return this.transformResponse(response);
-    } catch (error) {
-      throw this.ensureAppApiError(error);
-    }
-  }
-
-  async patch<
-    TResponse,
-    TBody = unknown,
-    TParams = Record<string, unknown>,
-  >(options: RequestOptions<TBody, TParams>): Promise<TResponse> {
-    try {
-      const response = await this.instance.patch<TResponse>(options.url, options.data, {
-        params: options.params,
-        headers: options.headers,
-        ...options.config,
-      });
-      return this.transformResponse(response);
-    } catch (error) {
-      throw this.ensureAppApiError(error);
-    }
-  }
-
-  private transformResponse<TResponse>(
-    response: AxiosResponse<TResponse>,
-  ): TResponse {
+  /**
+   * Realiza una petición GET
+   */
+  async get<T = unknown>(
+    url: string,
+    headers?: Record<string, string>,
+  ): Promise<T> {
+    const response = await this.axiosRequest<T>({
+      method: "GET",
+      url,
+      headers,
+    });
     return response.data;
   }
 
-  private ensureAppApiError(error: unknown): AppApiError {
-    if (this.isAppApiError(error)) {
-      return error;
-    }
-    return this.toAppApiError(error);
+  /**
+   * Realiza una petición POST
+   */
+  async post<T = unknown>(
+    url: string,
+    body?: unknown,
+    headers?: Record<string, string>,
+  ): Promise<T> {
+    const response = await this.axiosRequest<T>({
+      method: "POST",
+      url,
+      headers,
+      body,
+    });
+    return response.data;
   }
 
-  private isAppApiError(error: unknown): error is AppApiError {
-    return (
-      isObject(error) &&
-      typeof error.message === "string" &&
-      ("code" in error || "status" in error || "details" in error)
-    );
+  /**
+   * Realiza una petición PUT
+   */
+  async put<T = unknown>(
+    url: string,
+    body?: unknown,
+    headers?: Record<string, string>,
+  ): Promise<T> {
+    const response = await this.axiosRequest<T>({
+      method: "PUT",
+      url,
+      headers,
+      body,
+    });
+    return response.data;
   }
 
-  private toAppApiError(error: unknown): AppApiError {
-    if (axios.isAxiosError(error)) {
-      const extracted = extractErrorData(error);
-      return {
-        message:
-          (extracted.message as string) ??
-          error.message ??
-          "Unexpected API error",
-        code:
-          (extracted.code as string) ??
-          (error.code as string | undefined) ??
-          "API_ERROR",
-        status: error.response?.status ?? error.status,
-        details: extracted,
-        originalError: error,
-      };
-    }
+  /**
+   * Realiza una petición DELETE
+   */
+  async del<T = unknown>(
+    url: string,
+    headers?: Record<string, string>,
+  ): Promise<T> {
+    const response = await this.axiosRequest<T>({
+      method: "DELETE",
+      url,
+      headers,
+    });
+    return response.data;
+  }
 
-    if (error instanceof Error) {
-      return {
-        message: error.message,
-        code: "UNKNOWN_ERROR",
-        details: undefined,
-        originalError: error,
-      };
-    }
-
+  /**
+   * Obtiene un archivo como Blob
+   */
+  async getFile(
+    url: string,
+    headers: Record<string, string> = {},
+  ): Promise<FileResponse> {
+    const response = await this.instance.get<Blob>(url, {
+      responseType: "blob",
+      headers,
+    });
     return {
-      message: "Unexpected error",
-      code: "UNKNOWN_ERROR",
-      details: error,
+      data: response.data,
+      headers: response.headers,
     };
+  }
+
+  /**
+   * Obtiene un archivo y retorna su URL como objeto
+   */
+  async getFileAsUrl(
+    url: string,
+    headers: Record<string, string> = {},
+  ): Promise<string> {
+    const { data } = await this.getFile(url, headers);
+    const blob = new Blob([data], { type: data.type });
+    return URL.createObjectURL(blob);
+  }
+
+  /**
+   * Abre un archivo en una nueva ventana
+   */
+  async openFile(url: string, headers?: Record<string, string>): Promise<void> {
+    const { data } = await this.getFile(url, headers);
+    const urlData = URL.createObjectURL(data);
+    window.open(urlData);
+  }
+
+  /**
+   * Descarga un archivo
+   */
+  async downloadFile(
+    url: string,
+    headers?: Record<string, string>,
+  ): Promise<void> {
+    const { data, headers: dataHeaders } = await this.getFile(url, headers);
+
+    const contentDisposition =
+      dataHeaders["content-disposition"] || dataHeaders["Content-Disposition"];
+    const fileName = contentDisposition
+      ?.split("filename=")[1]
+      ?.split(";")[0]
+      .replaceAll('"', "");
+
+    const blob = new Blob([data], { type: data.type });
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.setAttribute("download", fileName || "");
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode?.removeChild(link);
+  }
+
+  /**
+   * Sube uno o más archivos usando FormData
+   */
+  async uploadFile<T = unknown>(
+    url: string,
+    files: FileList | File[],
+    headers?: UploadFileOptions,
+  ): Promise<T> {
+    const formData = new FormData();
+    const { paramName = "file", ...newHeaders } = headers || {};
+
+    const fileArray = Array.from(files);
+    for (const file of fileArray) {
+      formData.append(paramName, file, file.name);
+    }
+
+    const response = await this.instance.post<T>(url, formData, {
+      headers: newHeaders as Record<string, string>,
+    });
+
+    return response.data;
   }
 }
 
-const sharedClient = new ApiClient();
+// Instancia compartida del cliente
+const sharedClient = new ApiClientService();
 
+/**
+ * Cliente de API compartido con todas las funciones de HTTP
+ */
 export const apiClient = sharedClient;
 
-export const createApiClient = (config?: ApiClientConfig) => new ApiClient(config);
+/**
+ * Crea una nueva instancia del cliente de API
+ */
+export const createApiClient = (config?: ApiClientConfig): ApiClientService => {
+  return new ApiClientService(config);
+};
 
-export const setApiClientTokenProvider = (provider: TokenProvider | undefined) => {
+/**
+ * Establece el proveedor de token global para el cliente compartido
+ */
+export const setApiClientTokenProvider = (
+  provider: TokenProvider | undefined,
+): void => {
   sharedClient.setTokenProvider(provider);
 };
 
-export const clearApiClientTokenProvider = () => {
+/**
+ * Limpia el proveedor de token global
+ */
+export const clearApiClientTokenProvider = (): void => {
   sharedClient.clearTokenProvider();
 };
-
 

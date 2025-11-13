@@ -23,8 +23,14 @@ export * from "./contexts";
 // Hooks exports
 export * from "./hooks";
 
-// Services
-export * from "./services/apiClient";
+// Services exports
+export {
+  apiClient,
+  createApiClient,
+  setApiClientTokenProvider,
+  clearApiClientTokenProvider,
+} from "./services/apiClient";
+export type { ApiClientConfig } from "./services/apiClient";
 
 // Theme Switcher component
 export { ThemeSwitcher } from "./components/ThemeSwitcher";

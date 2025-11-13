@@ -19,9 +19,6 @@ export const DocsMenu = () => {
         <li>
           <Link to="/docs/theme">ThemeSwitcher</Link>
         </li>
-        <li>
-          <Link to="/docs/api-client">ApiClient</Link>
-        </li>
       </ul>
     </>
   );
