@@ -72,6 +72,8 @@ class ApiClientService {
     this.instance.interceptors.request.use(
       (config) => {
         const token = this.tokenProvider?.();
+
+        console.log("PASA POR SETUP", token);
         if (token && config.headers) {
           // Manejo compatible con diferentes versiones de axios
           if (
