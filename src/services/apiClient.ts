@@ -13,9 +13,41 @@ interface FileResponse {
   headers: AxiosResponse["headers"];
 }
 
+interface GetRequestOptions {
+  url: string;
+  params?: Record<string, unknown>;
+  headers?: Record<string, string>;
+}
+
+interface PostRequestOptions {
+  url: string;
+  body?: unknown;
+  headers?: Record<string, string>;
+}
+
+interface PutRequestOptions {
+  url: string;
+  body?: unknown;
+  headers?: Record<string, string>;
+}
+
+interface DeleteRequestOptions {
+  url: string;
+  headers?: Record<string, string>;
+}
+
+interface FileRequestOptions {
+  url: string;
+  headers?: Record<string, string>;
+}
+
 interface UploadFileOptions {
-  paramName?: string;
-  [key: string]: unknown;
+  url: string;
+  files: FileList | File[];
+  headers?: {
+    paramName?: string;
+    [key: string]: unknown;
+  };
 }
 
 class ApiClientService {
@@ -126,15 +158,9 @@ class ApiClientService {
 
   /**
    * Realiza una petición GET
-   * @param url URL del endpoint
-   * @param params Parámetros opcionales que se enviarán como query string
-   * @param headers Headers opcionales de la petición
    */
-  async get<T = unknown>(
-    url: string,
-    params?: Record<string, unknown>,
-    headers?: Record<string, string>
-  ): Promise<T> {
+  async get<T = unknown>(options: GetRequestOptions): Promise<T> {
+    const { url, params, headers } = options;
     const response = await this.axiosRequest<T>({
       method: "GET",
       url,
@@ -147,11 +173,8 @@ class ApiClientService {
   /**
    * Realiza una petición POST
    */
-  async post<T = unknown>(
-    url: string,
-    body?: unknown,
-    headers?: Record<string, string>
-  ): Promise<T> {
+  async post<T = unknown>(options: PostRequestOptions): Promise<T> {
+    const { url, body, headers } = options;
     const response = await this.axiosRequest<T>({
       method: "POST",
       url,
@@ -164,11 +187,8 @@ class ApiClientService {
   /**
    * Realiza una petición PUT
    */
-  async put<T = unknown>(
-    url: string,
-    body?: unknown,
-    headers?: Record<string, string>
-  ): Promise<T> {
+  async put<T = unknown>(options: PutRequestOptions): Promise<T> {
+    const { url, body, headers } = options;
     const response = await this.axiosRequest<T>({
       method: "PUT",
       url,
@@ -181,10 +201,8 @@ class ApiClientService {
   /**
    * Realiza una petición DELETE
    */
-  async del<T = unknown>(
-    url: string,
-    headers?: Record<string, string>
-  ): Promise<T> {
+  async del<T = unknown>(options: DeleteRequestOptions): Promise<T> {
+    const { url, headers } = options;
     const response = await this.axiosRequest<T>({
       method: "DELETE",
       url,
@@ -196,10 +214,8 @@ class ApiClientService {
   /**
    * Obtiene un archivo como Blob
    */
-  async getFile(
-    url: string,
-    headers: Record<string, string> = {}
-  ): Promise<FileResponse> {
+  async getFile(options: FileRequestOptions): Promise<FileResponse> {
+    const { url, headers = {} } = options;
     const response = await this.instance.get<Blob>(url, {
       responseType: "blob",
       headers,
@@ -213,11 +229,8 @@ class ApiClientService {
   /**
    * Obtiene un archivo y retorna su URL como objeto
    */
-  async getFileAsUrl(
-    url: string,
-    headers: Record<string, string> = {}
-  ): Promise<string> {
-    const { data } = await this.getFile(url, headers);
+  async getFileAsUrl(options: FileRequestOptions): Promise<string> {
+    const { data } = await this.getFile(options);
     const blob = new Blob([data], { type: data.type });
     return URL.createObjectURL(blob);
   }
@@ -225,8 +238,8 @@ class ApiClientService {
   /**
    * Abre un archivo en una nueva ventana
    */
-  async openFile(url: string, headers?: Record<string, string>): Promise<void> {
-    const { data } = await this.getFile(url, headers);
+  async openFile(options: FileRequestOptions): Promise<void> {
+    const { data } = await this.getFile(options);
     const urlData = URL.createObjectURL(data);
     window.open(urlData);
   }
@@ -234,11 +247,8 @@ class ApiClientService {
   /**
    * Descarga un archivo
    */
-  async downloadFile(
-    url: string,
-    headers?: Record<string, string>
-  ): Promise<void> {
-    const { data, headers: dataHeaders } = await this.getFile(url, headers);
+  async downloadFile(options: FileRequestOptions): Promise<void> {
+    const { data, headers: dataHeaders } = await this.getFile(options);
 
     const contentDisposition =
       dataHeaders["content-disposition"] || dataHeaders["Content-Disposition"];
@@ -259,11 +269,8 @@ class ApiClientService {
   /**
    * Sube uno o más archivos usando FormData
    */
-  async uploadFile<T = unknown>(
-    url: string,
-    files: FileList | File[],
-    headers?: UploadFileOptions
-  ): Promise<T> {
+  async uploadFile<T = unknown>(options: UploadFileOptions): Promise<T> {
+    const { url, files, headers } = options;
     const formData = new FormData();
     const { paramName = "file", ...newHeaders } = headers || {};
 
