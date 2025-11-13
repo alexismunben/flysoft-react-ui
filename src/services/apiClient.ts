@@ -73,7 +73,7 @@ class ApiClientService {
       (config) => {
         const token = this.tokenProvider?.();
 
-        console.log("PASA POR SETUP", token);
+        console.log("PASA POR SETUP INTERCEPTOR", token);
         if (token && config.headers) {
           // Manejo compatible con diferentes versiones de axios
           if (
@@ -107,6 +107,7 @@ class ApiClientService {
    * @param provider Función que retorna el token de autorización
    */
   setTokenProvider(provider: TokenProvider | undefined): void {
+    console.log("PASA POR setTokenProvider", provider, provider?.());
     this.tokenProvider = provider;
   }
 
