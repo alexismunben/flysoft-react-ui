@@ -123,6 +123,28 @@ npx tailwindcss init -p
 
 La librería incluye FontAwesome 5. Si quieres usar tu propia instalación, puedes sobrescribir los estilos.
 
+**⚠️ Importante:** Si usas FontAwesome en tu proyecto, asegúrate de:
+
+1. Importar los estilos de `flysoft-react-ui` **después** de FontAwesome (si es posible)
+2. Usar `ThemeProvider` para envolver tu aplicación (esto evita conflictos de variables CSS)
+
+```tsx
+// Orden recomendado de importación
+import "fontawesome/css/all.min.css"; // Primero FontAwesome
+import "flysoft-react-ui/styles"; // Luego flysoft-react-ui
+
+// En tu App.tsx
+import { ThemeProvider } from "flysoft-react-ui";
+
+function App() {
+  return (
+    <ThemeProvider initialTheme="light">{/* Tu aplicación */}</ThemeProvider>
+  );
+}
+```
+
+El `ThemeProvider` aplica automáticamente las variables CSS con mayor especificidad, evitando que FontAwesome sobrescriba los colores del tema (como `gray-200`).
+
 ## 🎨 Sistema de Temas
 
 Flysoft React UI incluye un sistema completo de temas personalizables que permite cambiar dinámicamente la apariencia de todos los componentes.
