@@ -106,42 +106,54 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   const applyThemeToCSS = (theme: Theme) => {
     if (typeof document === "undefined") return;
 
-    const root = document.documentElement;
+    // Aplicar variables al contenedor del tema en lugar de :root
+    // Esto evita conflictos con otras librerías como FontAwesome
+    const themeContainer = document.querySelector(
+      ".flysoft-theme-reset"
+    ) as HTMLElement;
+
+    // Si el contenedor no existe aún, aplicar a :root temporalmente
+    // (se actualizará cuando el componente se monte)
+    const target = themeContainer || document.documentElement;
 
     // Apply color variables
     Object.entries(theme.colors).forEach(([key, value]) => {
       const cssVarName = `--flysoft-${key
         .replace(/([A-Z])/g, "-$1")
         .toLowerCase()}`;
-      root.style.setProperty(cssVarName, value);
+      target.style.setProperty(cssVarName, value);
     });
 
     // Apply shadow variables
     Object.entries(theme.shadows).forEach(([key, value]) => {
       const cssVarName = `--flysoft-shadow-${key}`;
-      root.style.setProperty(cssVarName, value);
+      target.style.setProperty(cssVarName, value);
     });
 
     // Apply radius variables
     Object.entries(theme.radius).forEach(([key, value]) => {
       const cssVarName = `--flysoft-radius-${key}`;
-      root.style.setProperty(cssVarName, value);
+      target.style.setProperty(cssVarName, value);
     });
 
     // Apply spacing variables
     Object.entries(theme.spacing).forEach(([key, value]) => {
       const cssVarName = `--flysoft-spacing-${key}`;
-      root.style.setProperty(cssVarName, value);
+      target.style.setProperty(cssVarName, value);
     });
 
     // Apply font variables
     Object.entries(theme.fonts).forEach(([key, value]) => {
       const cssVarName = `--flysoft-font-${key}`;
-      root.style.setProperty(cssVarName, value);
+      target.style.setProperty(cssVarName, value);
     });
 
     // Set theme name as data attribute for CSS targeting
-    root.setAttribute("data-theme", theme.name);
+    if (themeContainer) {
+      themeContainer.setAttribute("data-theme", theme.name);
+    } else {
+      document.documentElement.setAttribute("data-theme", theme.name);
+    }
 
     // Apply background and text colors to body for better integration
     const body = document.body;
