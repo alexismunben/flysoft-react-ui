@@ -303,41 +303,6 @@ import "flysoft-react-ui/styles";
 </ThemeProvider>
 ```
 
-### Problema: Conflictos de variables CSS con FontAwesome
-
-**Solución:** La librería ya maneja automáticamente los conflictos con FontAwesome aplicando las variables CSS al contenedor `.flysoft-theme-reset` con mayor especificidad. Solo necesitas:
-
-1. **Importar los estilos de flysoft-react-ui DESPUÉS de FontAwesome** (si es posible):
-
-```tsx
-// En tu archivo principal (main.tsx o App.tsx)
-import "fontawesome/css/all.min.css"; // Primero FontAwesome
-import "flysoft-react-ui/styles";      // Luego flysoft-react-ui
-```
-
-2. **Asegurarte de usar ThemeProvider** (esto es crítico):
-
-```tsx
-import { ThemeProvider } from "flysoft-react-ui";
-import "flysoft-react-ui/styles";
-
-function App() {
-  return (
-    <ThemeProvider initialTheme="light">
-      {/* Tu aplicación aquí */}
-    </ThemeProvider>
-  );
-}
-```
-
-El `ThemeProvider` aplica automáticamente las variables CSS al contenedor `.flysoft-theme-reset` con mayor especificidad que `:root`, evitando conflictos con FontAwesome.
-
-**Si aún tienes problemas:**
-
-- Verifica que el `ThemeProvider` esté envolviendo toda tu aplicación
-- Asegúrate de que los estilos de flysoft-react-ui se importen después de FontAwesome
-- Revisa en las DevTools que las variables `--flysoft-gray-200` estén definidas en el elemento `.flysoft-theme-reset`
-
 ### Problema: Cursor AI no usa los componentes
 
 **Solución:** Verifica que el archivo `.cursorrules` esté en la raíz del proyecto y contenga las reglas correctas.

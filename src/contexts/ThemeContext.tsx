@@ -2,9 +2,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
-  useLayoutEffect,
   useMemo,
-  useRef,
   useState,
   type CSSProperties,
   type ReactNode,
@@ -103,62 +101,47 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   });
 
   const [currentThemeName, setCurrentThemeName] = useState(currentTheme.name);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   // Function to apply theme to CSS variables
-  const applyThemeToCSS = (theme: Theme, container?: HTMLElement | null) => {
+  const applyThemeToCSS = (theme: Theme) => {
     if (typeof document === "undefined") return;
 
-    // Priorizar el contenedor si está disponible, sino usar :root
-    const target = container || document.documentElement;
+    const root = document.documentElement;
 
     // Apply color variables
     Object.entries(theme.colors).forEach(([key, value]) => {
       const cssVarName = `--flysoft-${key
         .replace(/([A-Z])/g, "-$1")
         .toLowerCase()}`;
-      target.style.setProperty(cssVarName, value);
-      
-      // También sobrescribir variables genéricas que FontAwesome pueda usar
-      // Esto asegura que nuestras variables tengan prioridad
-      if (key.startsWith("gray")) {
-        const genericVarName = `--color-${key
-          .replace(/([A-Z])/g, "-$1")
-          .toLowerCase()}`;
-        target.style.setProperty(genericVarName, value);
-      }
+      root.style.setProperty(cssVarName, value);
     });
 
     // Apply shadow variables
     Object.entries(theme.shadows).forEach(([key, value]) => {
       const cssVarName = `--flysoft-shadow-${key}`;
-      target.style.setProperty(cssVarName, value);
+      root.style.setProperty(cssVarName, value);
     });
 
     // Apply radius variables
     Object.entries(theme.radius).forEach(([key, value]) => {
       const cssVarName = `--flysoft-radius-${key}`;
-      target.style.setProperty(cssVarName, value);
+      root.style.setProperty(cssVarName, value);
     });
 
     // Apply spacing variables
     Object.entries(theme.spacing).forEach(([key, value]) => {
       const cssVarName = `--flysoft-spacing-${key}`;
-      target.style.setProperty(cssVarName, value);
+      root.style.setProperty(cssVarName, value);
     });
 
     // Apply font variables
     Object.entries(theme.fonts).forEach(([key, value]) => {
       const cssVarName = `--flysoft-font-${key}`;
-      target.style.setProperty(cssVarName, value);
+      root.style.setProperty(cssVarName, value);
     });
 
     // Set theme name as data attribute for CSS targeting
-    if (container) {
-      container.setAttribute("data-theme", theme.name);
-    } else {
-      document.documentElement.setAttribute("data-theme", theme.name);
-    }
+    root.setAttribute("data-theme", theme.name);
 
     // Apply background and text colors to body for better integration
     const body = document.body;
@@ -192,8 +175,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
       localStorage.setItem(storageKey, JSON.stringify(newTheme));
     }
 
-    // Apply to CSS usando el ref si está disponible
-    applyThemeToCSS(newTheme, containerRef.current);
+    // Apply to CSS
+    applyThemeToCSS(newTheme);
   };
 
   // Function to reset to initial theme (the one passed as initialTheme prop)
@@ -201,22 +184,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     setTheme(getInitialTheme());
   };
 
-  // Apply theme on mount and when theme changes using useLayoutEffect
-  // para asegurar que se aplique antes del paint y con mayor prioridad
-  useLayoutEffect(() => {
-    if (containerRef.current) {
-      applyThemeToCSS(currentTheme, containerRef.current);
-    } else {
-      // Fallback a :root si el contenedor aún no está montado
-      applyThemeToCSS(currentTheme);
-    }
-  }, [currentTheme]);
-
-  // También aplicar después del mount para asegurar que se actualice
+  // Apply theme on mount and when theme changes
   useEffect(() => {
-    if (containerRef.current) {
-      applyThemeToCSS(currentTheme, containerRef.current);
-    }
+    applyThemeToCSS(currentTheme);
   }, [currentTheme]);
 
   // Check if current theme is dark
@@ -239,7 +209,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   return (
     <ThemeContext.Provider value={value}>
       <div
-        ref={containerRef}
         className="flysoft-theme-reset"
         style={themeResetStyles}
         data-theme={currentTheme.name}
