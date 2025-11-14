@@ -37,10 +37,14 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./styles": "./dist/index.css"
+    "./styles": {
+      "import": "./dist/index.css",
+      "types": "./styles.d.ts"
+    }
   },
   "files": [
     "dist",
+    "styles.d.ts",
     "README.md"
   ],
   "scripts": {
