@@ -5,6 +5,7 @@ import CardDocs from "./CardDocs";
 import InputDocs from "./InputDocs";
 import ThemeSwitcherDocs from "./ThemeSwitcherDocs";
 import BadgeDocs from "./BadgeDocs";
+import DataFieldDocs from "./DataFieldDocs";
 
 export const DocsRouter: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ export const DocsRouter: React.FC = () => {
       <Route path="card" element={<CardDocs />} />
       <Route path="input" element={<InputDocs />} />
       <Route path="theme" element={<ThemeSwitcherDocs />} />
+      <Route path="datafield" element={<DataFieldDocs />} />
     </Routes>
   );
 };

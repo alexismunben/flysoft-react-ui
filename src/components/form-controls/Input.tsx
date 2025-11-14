@@ -61,7 +61,7 @@ export const Input: React.FC<InputProps> = ({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-[var(--color-text-primary)] mb-1 font-[var(--font-default)]"
+          className="block text-sm text-[var(--color-primary)] mb-1 font-[var(--font-default)]"
         >
           {label}
         </label>

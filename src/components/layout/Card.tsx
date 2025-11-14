@@ -1,8 +1,8 @@
 import React from "react";
 
 export interface CardProps {
-  title?: string;
-  subtitle?: string;
+  title?: string | React.ReactNode;
+  subtitle?: string | React.ReactNode;
   children: React.ReactNode;
   className?: string;
   headerActions?: React.ReactNode;
@@ -19,8 +19,25 @@ export const Card: React.FC<CardProps> = ({
   footer,
   variant = "default",
 }) => {
+  // Separar clases de background del className
+  const classArray = className.trim().split(/\s+/).filter(Boolean);
+  const bgClasses: string[] = [];
+  const otherClasses: string[] = [];
+
+  classArray.forEach((cls) => {
+    // Detectar clases de background (bg-*, bg-gradient-*, bg-[...])
+    if (cls.startsWith("bg-") || cls.startsWith("bg-gradient-")) {
+      bgClasses.push(cls);
+    } else {
+      otherClasses.push(cls);
+    }
+  });
+
+  const backgroundClass =
+    bgClasses.length > 0 ? bgClasses.join(" ") : "bg-[var(--color-bg-default)]";
+
   const baseClasses = `
-    bg-[var(--color-bg-default)] rounded-lg border
+    ${backgroundClass} rounded-lg border
     font-[var(--font-default)]
   `;
 
@@ -30,12 +47,14 @@ export const Card: React.FC<CardProps> = ({
     outlined: `border-[var(--color-gray-300)]`,
   };
 
-  const classes = `${baseClasses} ${variantClasses[variant]} ${className}`;
+  const classes = `${baseClasses} ${
+    variantClasses[variant]
+  } ${otherClasses.join(" ")}`;
 
   return (
     <div className={classes}>
       {(title || subtitle || headerActions) && (
-        <div className="px-6 py-4 border-b border-[var(--color-border-default)]">
+        <div className="px-6 pt-4">
           <div className="flex items-center justify-between">
             <div>
               {title && (
@@ -58,11 +77,7 @@ export const Card: React.FC<CardProps> = ({
 
       <div className="px-6 py-4">{children}</div>
 
-      {footer && (
-        <div className="px-6 py-4 border-t border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] rounded-b-lg">
-          {footer}
-        </div>
-      )}
+      {footer && <div className="px-6 pb-4">{footer}</div>}
     </div>
   );
 };

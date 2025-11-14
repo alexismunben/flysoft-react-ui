@@ -14,6 +14,12 @@ export type { CardProps } from "./components/layout/Card";
 export { AppLayout } from "./components/layout/AppLayout";
 export type { AppLayoutProps } from "./components/layout/AppLayout";
 
+export { Collection } from "./components/layout/Collection";
+export type { CollectionProps } from "./components/layout/Collection";
+
+export { DataField } from "./components/layout/DataField";
+export type { DataFieldProps } from "./components/layout/DataField";
+
 export { Badge } from "./components/utils/Badge";
 export type { BadgeProps } from "./components/utils/Badge";
 

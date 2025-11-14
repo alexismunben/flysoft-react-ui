@@ -19,6 +19,9 @@ export const DocsMenu = () => {
         <li>
           <Link to="/docs/theme">ThemeSwitcher</Link>
         </li>
+        <li>
+          <Link to="/docs/datafield">DataField</Link>
+        </li>
       </ul>
     </>
   );

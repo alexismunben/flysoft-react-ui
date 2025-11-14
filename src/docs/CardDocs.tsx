@@ -68,6 +68,78 @@ const CardDocs: React.FC = () => {
               </p>
             </Card>
           </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Title y Subtitle como ReactNode
+            </h3>
+            <Card
+              title={
+                <div className="flex items-center gap-2">
+                  <i className="fa fa-user-circle" />
+                  <span>Usuario Personalizado</span>
+                </div>
+              }
+              subtitle={
+                <div className="flex items-center gap-2">
+                  <i className="fa fa-envelope" />
+                  <span>usuario@ejemplo.com</span>
+                </div>
+              }
+            >
+              <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                El título y subtítulo pueden ser ReactNode, permitiendo
+                incluir iconos, badges, o cualquier componente personalizado.
+              </p>
+            </Card>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Background Personalizado
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              El componente detecta automáticamente las clases de background
+              (bg-*) desde la prop className y las aplica al background de la
+              card. Las demás clases se aplican normalmente al contenedor.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card
+                title="Card con bg-blue-50"
+                className="bg-blue-50"
+              >
+                <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                  Card con background personalizado usando clases de Tailwind
+                </p>
+              </Card>
+              <Card
+                title="Card con bg-gradient"
+                className="bg-gradient-to-br from-purple-100 to-pink-100"
+              >
+                <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                  Card con gradiente personalizado
+                </p>
+              </Card>
+              <Card
+                title="Card con bg y otras clases"
+                className="bg-green-50 p-8"
+              >
+                <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                  Puedes combinar clases de background con otras clases de
+                  Tailwind
+                </p>
+              </Card>
+            </div>
+          </section>
         </div>
       </Card>
     </div>
