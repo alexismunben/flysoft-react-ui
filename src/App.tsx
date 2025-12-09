@@ -11,6 +11,7 @@ import { ThemeProvider } from "./index";
 import "./index.css";
 import { DocsMenu } from "./docs/DocsMenu";
 import DocsRouter from "./docs/DocsRouter";
+import { OsocnaSaludTheme } from "./contexts/presets";
 
 function HomeContent() {
   return (
@@ -42,7 +43,7 @@ function HomeContent() {
 
 function App() {
   return (
-    <ThemeProvider initialTheme={"light"} forceInitialTheme={false}>
+    <ThemeProvider initialTheme={OsocnaSaludTheme} forceInitialTheme={false}>
       <AppLayout
         navBarDrawer={
           <h2>
