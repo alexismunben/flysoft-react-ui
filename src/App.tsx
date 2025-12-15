@@ -11,7 +11,7 @@ import { ThemeProvider } from "./index";
 import "./index.css";
 import { DocsMenu } from "./docs/DocsMenu";
 import DocsRouter from "./docs/DocsRouter";
-import { OsocnaSaludTheme } from "./contexts/presets";
+import { AuthDocs } from "./docs/AuthDocs.tsx/AuthDocs";
 
 function HomeContent() {
   return (
@@ -37,13 +37,16 @@ function HomeContent() {
           </Collection>
         </Card>
       </Card>
+      <div>
+        <AuthDocs />
+      </div>
     </>
   );
 }
 
 function App() {
   return (
-    <ThemeProvider initialTheme={OsocnaSaludTheme} forceInitialTheme={false}>
+    <ThemeProvider initialTheme={"light"} forceInitialTheme={false}>
       <AppLayout
         navBarDrawer={
           <h2>

@@ -17,3 +17,11 @@ export {
   defaultTheme,
   themes,
 } from "./presets";
+
+// Auth system exports
+export { AuthProvider, AuthContext } from "./AuthContext";
+export type {
+  AuthContextType,
+  AuthContextUserInterface,
+  AuthTokenInterface,
+} from "./AuthContext";
