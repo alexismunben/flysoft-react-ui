@@ -22,6 +22,9 @@ export const DocsMenu = () => {
         <li>
           <Link to="/docs/datafield">DataField</Link>
         </li>
+        <li>
+          <Link to="/docs/auth">AuthContext</Link>
+        </li>
       </ul>
     </>
   );
