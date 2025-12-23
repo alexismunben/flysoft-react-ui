@@ -26,12 +26,12 @@ export const useElementScroll = (
           rafId = null;
           const currentScrollY = pendingScrollY;
           const delta = currentScrollY - lastScrollY;
-          
+
           // Verificar si estamos cerca del final (margen de 5px)
-          const isNearBottom = Math.abs(
-            element.scrollHeight - element.clientHeight - currentScrollY
-          ) < 5;
-          const isNearTop = currentScrollY < 5;
+          const isNearBottom =
+            Math.abs(
+              element.scrollHeight - element.clientHeight - currentScrollY
+            ) < 5;
 
           let newDirection: "up" | "down" | null = lastDirection;
 
