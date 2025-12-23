@@ -6,6 +6,9 @@ import InputDocs from "./InputDocs";
 import ThemeSwitcherDocs from "./ThemeSwitcherDocs";
 import BadgeDocs from "./BadgeDocs";
 import DataFieldDocs from "./DataFieldDocs";
+import AutocompleteInputDocs from "./AutocompleteInputDocs";
+import DatePickerDocs from "./DatePickerDocs";
+import DateInputDocs from "./DateInputDocs";
 import { AuthDocs } from "./AuthDocs.tsx/AuthDocs";
 
 export const DocsRouter: React.FC = () => {
@@ -16,6 +19,9 @@ export const DocsRouter: React.FC = () => {
       <Route path="badge" element={<BadgeDocs />} />
       <Route path="card" element={<CardDocs />} />
       <Route path="input" element={<InputDocs />} />
+      <Route path="autocomplete-input" element={<AutocompleteInputDocs />} />
+      <Route path="datepicker" element={<DatePickerDocs />} />
+      <Route path="dateinput" element={<DateInputDocs />} />
       <Route path="theme" element={<ThemeSwitcherDocs />} />
       <Route path="datafield" element={<DataFieldDocs />} />
       <Route path="auth" element={<AuthDocs />} />

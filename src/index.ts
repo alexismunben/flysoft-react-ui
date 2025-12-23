@@ -8,6 +8,21 @@ export type { ButtonProps } from "./components/form-controls/Button";
 export { Input } from "./components/form-controls/Input";
 export type { InputProps } from "./components/form-controls/Input";
 
+export { AutocompleteInput } from "./components/form-controls/AutocompleteInput";
+export type {
+  AutocompleteInputProps,
+  AutocompleteOption,
+} from "./components/form-controls/AutocompleteInput";
+
+export { DatePicker } from "./components/form-controls/DatePicker";
+export type { DatePickerProps } from "./components/form-controls/DatePicker";
+
+export { DateInput } from "./components/form-controls/DateInput";
+export type {
+  DateInputProps,
+  DateInputFormat,
+} from "./components/form-controls/DateInput";
+
 export { Card } from "./components/layout/Card";
 export type { CardProps } from "./components/layout/Card";
 

@@ -17,6 +17,15 @@ export const DocsMenu = () => {
           <Link to="/docs/input">Input</Link>
         </li>
         <li>
+          <Link to="/docs/autocomplete-input">AutocompleteInput</Link>
+        </li>
+        <li>
+          <Link to="/docs/datepicker">DatePicker</Link>
+        </li>
+        <li>
+          <Link to="/docs/dateinput">DateInput</Link>
+        </li>
+        <li>
           <Link to="/docs/theme">ThemeSwitcher</Link>
         </li>
         <li>

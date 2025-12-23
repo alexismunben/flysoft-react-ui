@@ -22,6 +22,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
   const isNavbarVisibleRef = useRef(isNavbarVisible);
+  const isTransitioningRef = useRef(false);
+  const lastScrollYRef = useRef(0);
 
   const shouldShowMobileDrawer = isMobile || isTablet;
   const shouldShowDesktopDrawer = !shouldShowMobileDrawer && leftDrawer;
@@ -29,21 +31,52 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   // Mantener el ref sincronizado con el estado
   React.useEffect(() => {
     isNavbarVisibleRef.current = isNavbarVisible;
+    // Marcar que estamos en transición por 350ms (duración de la transición + margen)
+    isTransitioningRef.current = true;
+    const timer = setTimeout(() => {
+      isTransitioningRef.current = false;
+    }, 350);
+    return () => clearTimeout(timer);
   }, [isNavbarVisible]);
 
-  // Controlar visibilidad del navbar basado en scroll
+  // Controlar visibilidad del navbar basado en scroll con histeresis mejorada
   React.useEffect(() => {
+    // Ignorar cambios durante transiciones o cambios muy pequeños de scroll
+    if (isTransitioningRef.current) {
+      return;
+    }
+
+    const SCROLL_DELTA_THRESHOLD = 5; // Mínimo cambio de scroll para considerar
+    const scrollDelta = Math.abs(scrollY - lastScrollYRef.current);
+    
+    // Ignorar cambios muy pequeños que pueden ser causados por el cambio de padding
+    if (scrollDelta < SCROLL_DELTA_THRESHOLD && lastScrollYRef.current > 0) {
+      return;
+    }
+
+    const SHOW_THRESHOLD = 80;
+    const HIDE_THRESHOLD = 120;
+
+    // Verificar si estamos cerca del final del scroll (margen de error de 10px)
+    const element = contentRef.current;
+    const isNearBottom = element
+      ? Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) < 10
+      : false;
+
     let shouldBeVisible: boolean;
 
-    if (scrollY < 100) {
+    if (scrollY < SHOW_THRESHOLD) {
       // Siempre mostrar navbar cerca del top
       shouldBeVisible = true;
-    } else if (scrollDirection === "down" && scrollY > 100) {
-      // Ocultar navbar al hacer scroll hacia abajo
+    } else if (scrollDirection === "down" && scrollY > HIDE_THRESHOLD && !isNearBottom) {
+      // Ocultar navbar al hacer scroll hacia abajo, excepto si estamos cerca del final
       shouldBeVisible = false;
-    } else if (scrollDirection === "up" && scrollY > 100) {
+    } else if (scrollDirection === "up" && scrollY > SHOW_THRESHOLD) {
       // Mostrar navbar al hacer scroll hacia arriba
       shouldBeVisible = true;
+    } else if (isNearBottom && scrollDirection === "down") {
+      // Si estamos en el final y scrolleamos hacia abajo, mantener el estado actual
+      return;
     } else {
       // No cambiar el estado si scrollDirection es null o no se cumple ninguna condición
       return;
@@ -51,7 +84,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
     // Solo actualizar el estado si hay un cambio real
     if (shouldBeVisible !== isNavbarVisibleRef.current) {
+      lastScrollYRef.current = scrollY;
       setIsNavbarVisible(shouldBeVisible);
+    } else {
+      // Actualizar la referencia del scroll incluso si no cambiamos la visibilidad
+      lastScrollYRef.current = scrollY;
     }
   }, [scrollDirection, scrollY]);
 
