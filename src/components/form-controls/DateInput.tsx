@@ -67,7 +67,7 @@ const parseDateFromString = (
   }
 
   // Si no funciona, intentar parsear con separadores
-  const parts = value.split(/[\/\-\.]/).map((p) => p.trim());
+  const parts = value.split(/[/\-.]/).map((p) => p.trim());
   if (parts.length !== 3) return null;
 
   const [p1, p2, p3] = parts;
@@ -116,6 +116,8 @@ export const DateInput: React.FC<DateInputProps> = ({
   );
   const [isOpen, setIsOpen] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const inputWrapperRef = React.useRef<HTMLDivElement | null>(null);
+  const iconRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
     if (value !== undefined) {
@@ -123,6 +125,37 @@ export const DateInput: React.FC<DateInputProps> = ({
       setInputValue(formatDateToString(value, format));
     }
   }, [value, format]);
+
+  // Centrar el ícono verticalmente respecto al input real
+  React.useEffect(() => {
+    const updateIconPosition = () => {
+      if (
+        iconPosition === "right" &&
+        inputWrapperRef.current &&
+        iconRef.current
+      ) {
+        const inputElement = inputWrapperRef.current.querySelector("input");
+        if (inputElement) {
+          const inputRect = inputElement.getBoundingClientRect();
+          const wrapperRect = inputWrapperRef.current.getBoundingClientRect();
+          const topOffset =
+            inputRect.top - wrapperRect.top + inputRect.height / 2;
+          iconRef.current.style.top = `${topOffset}px`;
+          iconRef.current.style.transform = "translateY(-50%)";
+        }
+      }
+    };
+
+    // Ejecutar inmediatamente
+    updateIconPosition();
+
+    // Ejecutar cuando cambie el tamaño de la ventana
+    window.addEventListener("resize", updateIconPosition);
+
+    return () => {
+      window.removeEventListener("resize", updateIconPosition);
+    };
+  }, [iconPosition, inputValue, inputProps.label, inputProps.size]);
 
   const handleDateChange = (date: Date | null) => {
     if (value === undefined) {
@@ -142,7 +175,9 @@ export const DateInput: React.FC<DateInputProps> = ({
     // No intentamos parsear en cada pulsación, solo actualizamos el texto.
   };
 
-  const handleInputBlur: React.FocusEventHandler<HTMLInputElement> = (event) => {
+  const handleInputBlur: React.FocusEventHandler<HTMLInputElement> = (
+    event
+  ) => {
     const newValue = event.target.value.trim();
     if (!newValue) {
       handleDateChange(null);
@@ -184,7 +219,7 @@ export const DateInput: React.FC<DateInputProps> = ({
 
   return (
     <div ref={containerRef} className="relative w-full">
-      <div className="relative">
+      <div ref={inputWrapperRef} className="relative">
         <Input
           {...inputProps}
           type="text"
@@ -197,14 +232,13 @@ export const DateInput: React.FC<DateInputProps> = ({
             inputProps.placeholder ??
             (format === "mm/dd/yyyy" ? "mm/dd/yyyy" : "dd/mm/yyyy")
           }
-          className={`${className} ${
-            iconPosition === "right" ? "pr-10" : ""
-          }`}
+          className={`${className} ${iconPosition === "right" ? "pr-10" : ""}`}
         />
 
         {iconPosition === "right" && (
           <div
-            className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+            ref={iconRef}
+            className="absolute right-3 cursor-pointer"
             onMouseDown={handleIconClick}
           >
             <i
@@ -232,5 +266,3 @@ export const DateInput: React.FC<DateInputProps> = ({
     </div>
   );
 };
-
-
