@@ -178,6 +178,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1">
           <Button
+            type="button"
             size="sm"
             variant="ghost"
             icon="fa-angle-double-left"
@@ -185,6 +186,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             aria-label="Año anterior"
           />
           <Button
+            type="button"
             size="sm"
             variant="ghost"
             icon="fa-angle-left"
@@ -199,6 +201,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         </div>
         <div className="flex items-center gap-1">
           <Button
+            type="button"
             size="sm"
             variant="ghost"
             icon="fa-angle-right"
@@ -206,6 +209,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             aria-label="Mes siguiente"
           />
           <Button
+            type="button"
             size="sm"
             variant="ghost"
             icon="fa-angle-double-right"
