@@ -10,7 +10,7 @@ export interface PaginationInterface<T> {
   total: number;
 }
 
-interface PaginationProps {
+export interface PaginationProps {
   fieldName?: string;
   page?: number;
   pages?: number;

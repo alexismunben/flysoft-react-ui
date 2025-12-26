@@ -10,3 +10,5 @@ export { TabsGroup } from "./TabsGroup";
 export type { TabsGroupProps, Tab } from "./TabsGroup";
 export { TabPanel } from "./TabPanel";
 export type { TabPanelProps } from "./TabPanel";
+export { DataTable } from "./DataTable";
+export type { DataTableProps, DataTableColumn } from "./DataTable";

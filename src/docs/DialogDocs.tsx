@@ -155,7 +155,7 @@ const DialogDocs: React.FC = () => {
             </p>
             <div className="space-y-4">
               <Button
-                variant="danger"
+                variant="primary"
                 icon="fa-trash"
                 onClick={() => setIsOpenConfirm(true)}
               >
@@ -192,7 +192,7 @@ const DialogDocs: React.FC = () => {
                       Cancelar
                     </Button>
                     <Button
-                      variant="danger"
+                      variant="primary"
                       icon="fa-trash"
                       onClick={() => setIsOpenConfirm(false)}
                     >

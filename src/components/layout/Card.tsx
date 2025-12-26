@@ -1,11 +1,20 @@
 import React from "react";
+import { DropdownMenu } from "../utils/DropdownMenu";
+
+interface ActionItem {
+  id: string | number;
+  content: React.ReactNode;
+}
 
 export interface CardProps {
   title?: string | React.ReactNode;
   subtitle?: string | React.ReactNode;
   children: React.ReactNode;
   className?: string;
-  headerActions?: React.ReactNode;
+  /**
+   * Acciones para el header de la tarjeta. Retorna un array de ReactNode que se mostrarán en un DropdownMenu.
+   */
+  headerActions?: () => Array<React.ReactNode>;
   footer?: React.ReactNode;
   variant?: "default" | "elevated" | "outlined";
 }
@@ -51,9 +60,50 @@ export const Card: React.FC<CardProps> = ({
     variantClasses[variant]
   } ${otherClasses.join(" ")}`;
 
+  // Convertir array de ReactNode a array de ActionItem para DropdownMenu
+  const convertActionsToOptions = (
+    actions: Array<React.ReactNode>
+  ): ActionItem[] => {
+    return actions.map((action, index) => ({
+      id: index,
+      content: (
+        <div
+          onClick={(e) => {
+            // Detener la propagación para que el onClick del DropdownMenu no interfiera
+            e.stopPropagation();
+          }}
+        >
+          {action}
+        </div>
+      ),
+    }));
+  };
+
+  const headerActionsArray = headerActions?.();
+  const hasHeaderActions = headerActionsArray && headerActionsArray.length > 0;
+  const [isHovered, setIsHovered] = React.useState(false);
+  const [isLargeScreen, setIsLargeScreen] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024);
+    };
+
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+
+    return () => {
+      window.removeEventListener("resize", checkScreenSize);
+    };
+  }, []);
+
   return (
-    <div className={classes}>
-      {(title || subtitle || headerActions) && (
+    <div
+      className={`${classes} relative`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {(title || subtitle || hasHeaderActions) && (
         <div className="px-6 pt-4">
           <div className="flex items-center justify-between">
             <div>
@@ -68,10 +118,24 @@ export const Card: React.FC<CardProps> = ({
                 </p>
               )}
             </div>
-            {headerActions && (
-              <div className="flex items-center space-x-2">{headerActions}</div>
-            )}
           </div>
+        </div>
+      )}
+      {hasHeaderActions && (
+        <div
+          className="absolute top-2 right-2 transition-opacity"
+          style={{
+            opacity: isLargeScreen ? (isHovered ? 1 : 0) : 1,
+          }}
+        >
+          <DropdownMenu<ActionItem>
+            options={convertActionsToOptions(headerActionsArray)}
+            onOptionSelected={() => {
+              // Las acciones ya manejan sus propios eventos
+            }}
+            renderOption={(item) => item.content}
+            replaceOnSingleOption={true}
+          />
         </div>
       )}
 

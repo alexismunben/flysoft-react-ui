@@ -46,6 +46,8 @@ export type { TabsGroupProps, Tab } from "./components/layout/TabsGroup";
 
 export { TabPanel } from "./components/layout/TabPanel";
 export type { TabPanelProps } from "./components/layout/TabPanel";
+export { DataTable } from "./components/layout/DataTable";
+export type { DataTableProps, DataTableColumn } from "./components/layout/DataTable";
 
 export { Badge } from "./components/utils/Badge";
 export type { BadgeProps } from "./components/utils/Badge";
@@ -53,6 +55,8 @@ export { Dialog } from "./components/utils/Dialog";
 export type { DialogProps } from "./components/utils/Dialog";
 export { Loader } from "./components/utils/Loader";
 export type { LoaderProps } from "./components/utils/Loader";
+export { DropdownMenu } from "./components/utils/DropdownMenu";
+export type { DropdownMenuProps } from "./components/utils/DropdownMenu";
 
 // Theme system exports
 export * from "./contexts";

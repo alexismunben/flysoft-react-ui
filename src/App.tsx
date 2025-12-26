@@ -22,12 +22,16 @@ function HomeContent() {
           title="FALCONE WALTER ALDO"
           subtitle="3558-03 - Titular"
           footer={<Button>Ver</Button>}
-          headerActions={
-            <>
-              <Badge variant="secondary">OSOCNA</Badge>
-              <Badge variant="secondary">BÁSICO</Badge>
-            </>
-          }
+          headerActions={() => [
+            <Badge variant="secondary">OSOCNA</Badge>,
+            <Badge variant="secondary">BÁSICO</Badge>,
+          ]}
+          // headerActions={
+          //   <>
+          //     <Badge variant="secondary">OSOCNA</Badge>
+          //     <Badge variant="secondary">BÁSICO</Badge>
+          //   </>
+          // }
         >
           <Collection direction="row" gap="1rem" wrap>
             <DataField label="Cuil" value="20179902711" />
@@ -49,9 +53,11 @@ function App() {
     <ThemeProvider initialTheme={"light"} forceInitialTheme={false}>
       <AppLayout
         navBarDrawer={
-          <h2>
-            <Link to="/">Flysoft React UI</Link>
-          </h2>
+          <div>
+            <h2>
+              <Link to="/">Flysoft React UI</Link>
+            </h2>
+          </div>
         }
         leftDrawer={<DocsMenu />}
       >

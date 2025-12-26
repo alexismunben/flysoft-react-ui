@@ -13,6 +13,8 @@ import TabsGroupDocs from "./TabsGroupDocs";
 import DialogDocs from "./DialogDocs";
 import PaginationDocs from "./PaginationDocs";
 import LoaderDocs from "./LoaderDocs";
+import DataTableDocs from "./DataTableDocs";
+import DropdownMenuDocs from "./DropdownMenuDocs";
 import { AuthDocs } from "./AuthDocs.tsx/AuthDocs";
 
 export const DocsRouter: React.FC = () => {
@@ -32,6 +34,8 @@ export const DocsRouter: React.FC = () => {
       <Route path="dialog" element={<DialogDocs />} />
       <Route path="pagination" element={<PaginationDocs />} />
       <Route path="loader" element={<LoaderDocs />} />
+      <Route path="datatable" element={<DataTableDocs />} />
+      <Route path="dropdownmenu" element={<DropdownMenuDocs />} />
       <Route path="auth" element={<AuthDocs />} />
     </Routes>
   );

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wdth,wght@0,75..100,400..700;1,75..100,400..700&display=swap");
 @import "tailwindcss";
 
 /* Theme CSS Variables - These will be dynamically updated by the theme system */
@@ -208,6 +208,11 @@
     pointer-events: none;
     will-change: transform, opacity;
     animation: flysoft-button-ripple 600ms ease-out;
+  }
+
+  /* Reset fontStretch for buttons inside DataTable */
+  table button {
+    font-stretch: normal;
   }
 
   /* Input focus states */

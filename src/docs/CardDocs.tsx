@@ -39,34 +39,86 @@ const CardDocs: React.FC = () => {
             >
               Header y Footer
             </h3>
-            <Card
-              title="Card con Acciones"
-              subtitle="Ejemplo de header y footer"
-              headerActions={
-                <div className="flex gap-2">
-                  <Button size="sm" variant="outline" icon="fa-edit">
-                    Editar
-                  </Button>
-                  <Button size="sm" variant="primary" icon="fa-save">
-                    Guardar
-                  </Button>
-                </div>
-              }
-              footer={
-                <div className="flex justify-end gap-2">
-                  <Button size="sm" variant="outline">
-                    Cancelar
-                  </Button>
-                  <Button size="sm" variant="primary" icon="fa-check">
-                    Aceptar
-                  </Button>
-                </div>
-              }
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                card con acciones en header y contenido descriptivo
-              </p>
-            </Card>
+              El componente Card soporta acciones en el header usando la
+              propiedad <code>headerActions</code>. Las acciones se muestran en
+              un DropdownMenu. En pantallas grandes (lg+), las acciones solo se
+              muestran al hacer hover sobre el Card. En pantallas pequeñas,
+              siempre son visibles.
+            </p>
+            <div className="space-y-4">
+              <Card
+                title="Card con múltiples acciones"
+                subtitle="Ejemplo con DropdownMenu"
+                headerActions={() => [
+                  <Button
+                    key="edit"
+                    size="sm"
+                    variant="ghost"
+                    icon="fa-edit"
+                    onClick={() => console.log("Editar")}
+                  >
+                    Editar
+                  </Button>,
+                  <Button
+                    key="delete"
+                    size="sm"
+                    variant="ghost"
+                    icon="fa-trash"
+                    onClick={() => console.log("Eliminar")}
+                  >
+                    Eliminar
+                  </Button>,
+                  <Button
+                    key="share"
+                    size="sm"
+                    variant="ghost"
+                    icon="fa-share"
+                    onClick={() => console.log("Compartir")}
+                  >
+                    Compartir
+                  </Button>,
+                ]}
+                footer={
+                  <div className="flex justify-end gap-2">
+                    <Button size="sm" variant="outline">
+                      Cancelar
+                    </Button>
+                    <Button size="sm" variant="primary" icon="fa-check">
+                      Aceptar
+                    </Button>
+                  </div>
+                }
+              >
+                <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                  Card con múltiples acciones en el header. En pantallas
+                  grandes, pasa el mouse sobre el Card para ver las acciones.
+                </p>
+              </Card>
+
+              <Card
+                title="Card con una sola acción"
+                subtitle="Se muestra directamente sin menú"
+                headerActions={() => [
+                  <Button
+                    key="view"
+                    size="sm"
+                    variant="ghost"
+                    icon="fa-search"
+                    onClick={() => console.log("Ver detalles")}
+                  />,
+                ]}
+              >
+                <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                  Cuando hay una sola acción, se muestra directamente gracias a{" "}
+                  <code>replaceOnSingleOption</code>, sin necesidad de abrir un
+                  menú.
+                </p>
+              </Card>
+            </div>
           </section>
 
           <section>
@@ -91,8 +143,8 @@ const CardDocs: React.FC = () => {
               }
             >
               <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                El título y subtítulo pueden ser ReactNode, permitiendo
-                incluir iconos, badges, o cualquier componente personalizado.
+                El título y subtítulo pueden ser ReactNode, permitiendo incluir
+                iconos, badges, o cualquier componente personalizado.
               </p>
             </Card>
           </section>
@@ -113,10 +165,7 @@ const CardDocs: React.FC = () => {
               card. Las demás clases se aplican normalmente al contenedor.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card
-                title="Card con bg-blue-50"
-                className="bg-blue-50"
-              >
+              <Card title="Card con bg-blue-50" className="bg-blue-50">
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
                   Card con background personalizado usando clases de Tailwind
                 </p>
@@ -138,6 +187,289 @@ const CardDocs: React.FC = () => {
                   Tailwind
                 </p>
               </Card>
+            </div>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Características
+            </h3>
+            <div className="space-y-3">
+              <div className="p-3 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded">
+                <ul
+                  className="list-disc list-inside space-y-2 text-sm"
+                  style={{ color: "var(--flysoft-text-secondary)" }}
+                >
+                  <li>
+                    <strong>Variantes:</strong> Soporta tres variantes: default,
+                    elevated (con sombra) y outlined (con borde destacado)
+                  </li>
+                  <li>
+                    <strong>HeaderActions:</strong> Usa la propiedad{" "}
+                    <code>headerActions</code> para mostrar un DropdownMenu con
+                    acciones en el header. Las acciones se muestran en un menú
+                    desplegable.
+                  </li>
+                  <li>
+                    <strong>Comportamiento responsive:</strong> En pantallas
+                    grandes (lg+), las acciones del header solo se muestran al
+                    hacer hover sobre el Card. En pantallas pequeñas, siempre
+                    son visibles.
+                  </li>
+                  <li>
+                    <strong>Opción única:</strong> Cuando hay una sola acción,
+                    se muestra directamente gracias a{" "}
+                    <code>replaceOnSingleOption</code>, sin necesidad de abrir
+                    un menú.
+                  </li>
+                  <li>
+                    <strong>Title y Subtitle flexibles:</strong> Pueden ser
+                    strings o ReactNode, permitiendo incluir iconos, badges u
+                    otros componentes.
+                  </li>
+                  <li>
+                    <strong>Background personalizado:</strong> El componente
+                    detecta automáticamente las clases de background (bg-*) y
+                    las aplica correctamente.
+                  </li>
+                  <li>
+                    <strong>Footer opcional:</strong> Puedes agregar contenido
+                    en el footer de la card.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Props
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <th
+                      className="px-4 py-2 text-left text-sm font-semibold"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      Prop
+                    </th>
+                    <th
+                      className="px-4 py-2 text-left text-sm font-semibold"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      Tipo
+                    </th>
+                    <th
+                      className="px-4 py-2 text-left text-sm font-semibold"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      Requerido
+                    </th>
+                    <th
+                      className="px-4 py-2 text-left text-sm font-semibold"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      Descripción
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td
+                      className="px-4 py-2 text-sm font-mono"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      children
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      ReactNode
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Sí
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Contenido principal de la card.
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td
+                      className="px-4 py-2 text-sm font-mono"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      title
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      string | ReactNode
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      No
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Título de la card. Puede ser un string o un ReactNode.
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td
+                      className="px-4 py-2 text-sm font-mono"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      subtitle
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      string | ReactNode
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      No
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Subtítulo de la card. Se muestra debajo del título.
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td
+                      className="px-4 py-2 text-sm font-mono"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      headerActions
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      () =&gt; Array&lt;ReactNode&gt;
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      No
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Función que retorna un array de ReactNode que se mostrarán
+                      en un DropdownMenu en el header. En pantallas grandes
+                      (lg+), solo se muestran al hacer hover. Las acciones deben
+                      manejar sus propios eventos onClick.
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td
+                      className="px-4 py-2 text-sm font-mono"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      footer
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      ReactNode
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      No
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Contenido del footer de la card.
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td
+                      className="px-4 py-2 text-sm font-mono"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      variant
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      "default" | "elevated" | "outlined"
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      No
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Variante visual de la card. Por defecto es "default".
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td
+                      className="px-4 py-2 text-sm font-mono"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      className
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      string
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      No
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Clases CSS adicionales. Las clases de background (bg-*) se
+                      aplican automáticamente al background de la card.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </section>
         </div>

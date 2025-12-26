@@ -44,6 +44,12 @@ export const DocsMenu = () => {
           <Link to="/docs/loader">Loader</Link>
         </li>
         <li>
+          <Link to="/docs/datatable">DataTable</Link>
+        </li>
+        <li>
+          <Link to="/docs/dropdownmenu">DropdownMenu</Link>
+        </li>
+        <li>
           <Link to="/docs/auth">AuthContext</Link>
         </li>
       </ul>
