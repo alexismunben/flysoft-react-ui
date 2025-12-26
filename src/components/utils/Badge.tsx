@@ -1,5 +1,36 @@
 import React from "react";
 
+// Función helper para convertir nombres de colores comunes a valores CSS válidos
+const getColorValue = (color?: string): string | undefined => {
+  if (!color) return undefined;
+
+  // Si ya es un valor CSS válido (hex, rgb, rgba, hsl, etc.), retornarlo
+  if (
+    color.startsWith("#") ||
+    color.startsWith("rgb") ||
+    color.startsWith("hsl")
+  ) {
+    return color;
+  }
+
+  // Mapeo de nombres de colores comunes
+  const colorMap: Record<string, string> = {
+    white: "#ffffff",
+    black: "#000000",
+    "gray-800": "#1f2937",
+    "gray-700": "#374151",
+    "gray-600": "#4b5563",
+    "gray-500": "#6b7280",
+    "gray-400": "#9ca3af",
+    "gray-300": "#d1d5db",
+    "gray-200": "#e5e7eb",
+    "gray-100": "#f3f4f6",
+    "gray-50": "#f9fafb",
+  };
+
+  return colorMap[color.toLowerCase()] || color;
+};
+
 export interface BadgeProps {
   children: React.ReactNode;
   variant?: "primary" | "secondary" | "success" | "warning" | "danger" | "info";
@@ -9,6 +40,9 @@ export interface BadgeProps {
   icon?: string;
   iconPosition?: "left" | "right";
   iconLabel?: string;
+  bg?: string;
+  textColor?: string;
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
 export const Badge: React.FC<BadgeProps> = ({
@@ -20,34 +54,31 @@ export const Badge: React.FC<BadgeProps> = ({
   icon,
   iconPosition = "left",
   iconLabel,
+  bg,
+  textColor,
+  onClick,
 }) => {
   const baseClasses =
     "inline-flex items-center font-medium font-[var(--font-default)]";
 
   const variantClasses = {
     primary: `
-      bg-[var(--color-primary-light)] text-[var(--color-primary-dark)]
-      hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-contrast)]
+      bg-[var(--color-primary-light)] text-gray-800
     `,
     secondary: `
-      bg-[var(--color-secondary-light)] text-[var(--color-secondary-dark)]
-      hover:bg-[var(--color-secondary)] hover:text-[var(--color-secondary-contrast)]
+      bg-[var(--color-secondary-light)] text-gray-800
     `,
     success: `
-      bg-[var(--color-success-light)] text-[var(--color-success-dark)]
-      hover:bg-[var(--color-success)] hover:text-[var(--color-success-contrast)]
+      bg-[var(--color-success-light)] text-gray-800
     `,
     warning: `
-      bg-[var(--color-warning-light)] text-[var(--color-warning-dark)]
-      hover:bg-[var(--color-warning)] hover:text-[var(--color-warning-contrast)]
+      bg-[var(--color-warning-light)] text-gray-800
     `,
     danger: `
-      bg-[var(--color-danger-light)] text-[var(--color-danger-dark)]
-      hover:bg-[var(--color-danger)] hover:text-[var(--color-danger-contrast)]
+      bg-[var(--color-danger-light)] text-gray-800
     `,
     info: `
-      bg-[var(--color-info-light)] text-[var(--color-info-dark)]
-      hover:bg-[var(--color-info)] hover:text-[var(--color-info-contrast)]
+      bg-[var(--color-info-light)] text-gray-800
     `,
   };
 
@@ -64,21 +95,81 @@ export const Badge: React.FC<BadgeProps> = ({
   const iconSizeClasses =
     size === "sm" ? "text-xs" : size === "md" ? "text-sm" : "text-base";
 
-  const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${roundedClasses} ${gapClasses} ${className}`;
+  // Si se proporciona bg personalizado, usar estilos inline; si no, usar las clases de variante
+  const backgroundClasses = bg ? "" : variantClasses[variant];
+
+  // Estilos inline para colores personalizados
+  const inlineStyles: React.CSSProperties = bg
+    ? {
+        backgroundColor: getColorValue(bg) || bg,
+        color: getColorValue(textColor) || textColor || "#1f2937", // gray-800 por defecto
+      }
+    : {};
+
+  // Si hay onClick y no hay iconos, agregar cursor-pointer al badge completo
+  const cursorClasses = onClick && !icon ? "cursor-pointer" : "";
+
+  const classes = `${baseClasses} ${backgroundClasses} ${sizeClasses[size]} ${roundedClasses} ${gapClasses} ${cursorClasses} ${className}`;
 
   const renderIcon = () => {
     if (!icon) return null;
+    // Si hay onClick y hay iconos, el onClick se aplica solo a los iconos
+    const iconClasses = onClick
+      ? `fa ${icon} ${iconSizeClasses} cursor-pointer`
+      : `fa ${icon} ${iconSizeClasses}`;
+
     return (
       <i
-        className={`fa ${icon} ${iconSizeClasses}`}
+        className={iconClasses}
         aria-hidden={!iconLabel}
         aria-label={iconLabel}
+        onClick={onClick}
+        role={onClick ? "button" : undefined}
+        tabIndex={onClick ? 0 : undefined}
+        onKeyDown={
+          onClick
+            ? (e: React.KeyboardEvent) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  // Crear un evento sintético compatible con MouseEvent
+                  const syntheticEvent = {
+                    ...e,
+                    currentTarget: e.currentTarget,
+                    target: e.target,
+                  } as unknown as React.MouseEvent<HTMLElement>;
+                  onClick(syntheticEvent);
+                }
+              }
+            : undefined
+        }
       />
     );
   };
 
+  // Si hay onClick y no hay iconos, aplicar onClick al badge completo
+  const badgeProps =
+    onClick && !icon
+      ? {
+          onClick,
+          role: "button" as const,
+          tabIndex: 0,
+          onKeyDown: (e: React.KeyboardEvent<HTMLSpanElement>) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              // Crear un evento sintético compatible con MouseEvent
+              const syntheticEvent = {
+                ...e,
+                currentTarget: e.currentTarget,
+                target: e.target,
+              } as unknown as React.MouseEvent<HTMLElement>;
+              onClick(syntheticEvent);
+            }
+          },
+        }
+      : {};
+
   return (
-    <span className={classes}>
+    <span className={classes} style={inlineStyles} {...badgeProps}>
       {icon && iconPosition === "left" && renderIcon()}
       <span>{children}</span>
       {icon && iconPosition === "right" && renderIcon()}

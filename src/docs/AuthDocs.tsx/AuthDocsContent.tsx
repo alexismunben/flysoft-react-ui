@@ -203,11 +203,11 @@ export const AuthDocsContent = () => {
         <Card
           title="Sesión Activa"
           subtitle="Información del usuario autenticado"
-          headerActions={
+          headerActions={() => [
             <Badge variant="success" icon="fa-check-circle" iconPosition="left">
               Autenticado
-            </Badge>
-          }
+            </Badge>,
+          ]}
         >
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
