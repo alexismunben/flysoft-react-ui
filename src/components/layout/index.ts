@@ -6,3 +6,7 @@ export { Collection } from "./Collection";
 export type { CollectionProps } from "./Collection";
 export { DataField } from "./DataField";
 export type { DataFieldProps } from "./DataField";
+export { TabsGroup } from "./TabsGroup";
+export type { TabsGroupProps, Tab } from "./TabsGroup";
+export { TabPanel } from "./TabPanel";
+export type { TabPanelProps } from "./TabPanel";

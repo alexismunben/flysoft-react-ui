@@ -23,6 +23,12 @@ export type {
   DateInputFormat,
 } from "./components/form-controls/DateInput";
 
+export { Pagination } from "./components/form-controls/Pagination";
+export type {
+  PaginationProps,
+  PaginationInterface,
+} from "./components/form-controls/Pagination";
+
 export { Card } from "./components/layout/Card";
 export type { CardProps } from "./components/layout/Card";
 
@@ -35,8 +41,18 @@ export type { CollectionProps } from "./components/layout/Collection";
 export { DataField } from "./components/layout/DataField";
 export type { DataFieldProps } from "./components/layout/DataField";
 
+export { TabsGroup } from "./components/layout/TabsGroup";
+export type { TabsGroupProps, Tab } from "./components/layout/TabsGroup";
+
+export { TabPanel } from "./components/layout/TabPanel";
+export type { TabPanelProps } from "./components/layout/TabPanel";
+
 export { Badge } from "./components/utils/Badge";
 export type { BadgeProps } from "./components/utils/Badge";
+export { Dialog } from "./components/utils/Dialog";
+export type { DialogProps } from "./components/utils/Dialog";
+export { Loader } from "./components/utils/Loader";
+export type { LoaderProps } from "./components/utils/Loader";
 
 // Theme system exports
 export * from "./contexts";

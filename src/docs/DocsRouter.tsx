@@ -9,6 +9,10 @@ import DataFieldDocs from "./DataFieldDocs";
 import AutocompleteInputDocs from "./AutocompleteInputDocs";
 import DatePickerDocs from "./DatePickerDocs";
 import DateInputDocs from "./DateInputDocs";
+import TabsGroupDocs from "./TabsGroupDocs";
+import DialogDocs from "./DialogDocs";
+import PaginationDocs from "./PaginationDocs";
+import LoaderDocs from "./LoaderDocs";
 import { AuthDocs } from "./AuthDocs.tsx/AuthDocs";
 
 export const DocsRouter: React.FC = () => {
@@ -24,6 +28,10 @@ export const DocsRouter: React.FC = () => {
       <Route path="dateinput" element={<DateInputDocs />} />
       <Route path="theme" element={<ThemeSwitcherDocs />} />
       <Route path="datafield" element={<DataFieldDocs />} />
+      <Route path="tabsgroup" element={<TabsGroupDocs />} />
+      <Route path="dialog" element={<DialogDocs />} />
+      <Route path="pagination" element={<PaginationDocs />} />
+      <Route path="loader" element={<LoaderDocs />} />
       <Route path="auth" element={<AuthDocs />} />
     </Routes>
   );

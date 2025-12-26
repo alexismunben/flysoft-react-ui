@@ -32,6 +32,18 @@ export const DocsMenu = () => {
           <Link to="/docs/datafield">DataField</Link>
         </li>
         <li>
+          <Link to="/docs/tabsgroup">TabsGroup</Link>
+        </li>
+        <li>
+          <Link to="/docs/dialog">Dialog</Link>
+        </li>
+        <li>
+          <Link to="/docs/pagination">Pagination</Link>
+        </li>
+        <li>
+          <Link to="/docs/loader">Loader</Link>
+        </li>
+        <li>
           <Link to="/docs/auth">AuthContext</Link>
         </li>
       </ul>
