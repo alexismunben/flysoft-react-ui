@@ -1,4 +1,5 @@
 import React from "react";
+import dayjs, { type Dayjs } from "dayjs";
 import { Button } from "./Button";
 
 export type DatePickerView = {
@@ -7,29 +8,24 @@ export type DatePickerView = {
 };
 
 export interface DatePickerProps {
-  value?: Date | null;
-  onChange?: (date: Date) => void;
-  initialViewDate?: Date;
+  value?: Dayjs | null;
+  onChange?: (date: Dayjs) => void;
+  initialViewDate?: Dayjs;
   startWeekOn?: "monday" | "sunday";
   className?: string;
 }
 
-const createDateAtMidnight = (date: Date) => {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  return d;
+const createDateAtMidnight = (date: Dayjs | Date) => {
+  const d = dayjs(date);
+  return d.startOf("day");
 };
 
-const isSameDay = (a: Date, b: Date) => {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
+const isSameDay = (a: Dayjs, b: Dayjs) => {
+  return a.isSame(b, "day");
 };
 
 const getDaysInMonth = (year: number, month: number) => {
-  return new Date(year, month + 1, 0).getDate();
+  return dayjs().year(year).month(month).daysInMonth();
 };
 
 const getWeekdayLabels = (startWeekOn: "monday" | "sunday") => {
@@ -47,13 +43,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   startWeekOn = "sunday",
   className = "",
 }) => {
-  const today = React.useMemo(() => createDateAtMidnight(new Date()), []);
+  const today = React.useMemo(() => dayjs().startOf("day"), []);
 
   const initial = React.useMemo(() => {
     const base = value ?? initialViewDate ?? today;
     return {
-      month: base.getMonth(),
-      year: base.getFullYear(),
+      month: base.month(),
+      year: base.year(),
     };
   }, [value, initialViewDate, today]);
 
@@ -62,8 +58,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   React.useEffect(() => {
     if (value) {
       setView({
-        month: value.getMonth(),
-        year: value.getFullYear(),
+        month: value.month(),
+        year: value.year(),
       });
     }
   }, [value]);
@@ -95,7 +91,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   const handleSelectDay = (day: number, month?: number, year?: number) => {
     const targetMonth = month !== undefined ? month : view.month;
     const targetYear = year !== undefined ? year : view.year;
-    const date = new Date(targetYear, targetMonth, day);
+    const date = dayjs().year(targetYear).month(targetMonth).date(day);
     onChange?.(createDateAtMidnight(date));
 
     // Si el día es de otro mes, cambiar la vista
@@ -106,8 +102,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     }
   };
 
-  const firstDayOfMonth = new Date(view.year, view.month, 1);
-  const firstWeekday = firstDayOfMonth.getDay(); // 0-6, Sunday=0
+  const firstDayOfMonth = dayjs().year(view.year).month(view.month).date(1);
+  const firstWeekday = firstDayOfMonth.day(); // 0-6, Sunday=0
   const daysInMonth = getDaysInMonth(view.year, view.month);
   const weekdayLabels = getWeekdayLabels(startWeekOn);
 
@@ -164,11 +160,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   }
 
   const selectedDate =
-    value && !isNaN(value.getTime()) ? createDateAtMidnight(value) : null;
+    value && value.isValid() ? createDateAtMidnight(value) : null;
 
-  const monthName = new Date(view.year, view.month, 1).toLocaleString("es-ES", {
-    month: "long",
-  });
+  const monthName = dayjs()
+    .year(view.year)
+    .month(view.month)
+    .date(1)
+    .format("MMMM");
 
   return (
     <div
@@ -237,7 +235,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               const { day, month, year } = dayInfo;
               const isCurrentMonth = month === view.month && year === view.year;
 
-              const date = new Date(year, month, day);
+              const date = dayjs().year(year).month(month).date(day);
               const isToday = isSameDay(date, today);
               const isSelected =
                 selectedDate !== null && isSameDay(date, selectedDate);

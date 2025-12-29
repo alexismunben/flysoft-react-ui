@@ -140,6 +140,60 @@ const InputDocs: React.FC = () => {
               className="text-lg font-semibold mb-4"
               style={{ color: "var(--flysoft-text-primary)" }}
             >
+              Ícono clickeable con onIconClick
+            </h3>
+            <div className="space-y-4">
+              <div className="space-y-3">
+                <Input
+                  label="Input con ícono clickeable"
+                  placeholder="Haz click en el ícono..."
+                  icon="fa-info-circle"
+                  iconPosition="right"
+                  onIconClick={() => {
+                    alert("¡Ícono clickeado!");
+                  }}
+                />
+                <p
+                  className="text-sm"
+                  style={{ color: "var(--flysoft-text-secondary)" }}
+                >
+                  Usa la propiedad <code>onIconClick</code> para hacer el ícono
+                  clickeable. El ícono mostrará un efecto hover cuando sea
+                  clickeable.
+                </p>
+              </div>
+              <div className="space-y-3">
+                <Input
+                  label="Ejemplo práctico: limpiar campo"
+                  placeholder="Escribe algo..."
+                  icon="fa-times"
+                  iconPosition="right"
+                  onIconClick={(e) => {
+                    const input = e.currentTarget
+                      .closest(".relative")
+                      ?.querySelector("input") as HTMLInputElement;
+                    if (input) {
+                      input.value = "";
+                      input.focus();
+                    }
+                  }}
+                />
+                <p
+                  className="text-sm"
+                  style={{ color: "var(--flysoft-text-secondary)" }}
+                >
+                  Ejemplo de uso práctico: limpiar el campo al hacer click en
+                  el ícono.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
               Estados
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -14,6 +14,12 @@ export type {
   AutocompleteOption,
 } from "./components/form-controls/AutocompleteInput";
 
+export { SearchSelectInput } from "./components/form-controls/SearchSelectInput";
+export type {
+  SearchSelectInputProps,
+  SearchSelectOption,
+} from "./components/form-controls/SearchSelectInput";
+
 export { DatePicker } from "./components/form-controls/DatePicker";
 export type { DatePickerProps } from "./components/form-controls/DatePicker";
 

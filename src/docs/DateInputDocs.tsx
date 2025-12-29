@@ -1,19 +1,17 @@
 import React from "react";
+import dayjs, { type Dayjs } from "dayjs";
+import "dayjs/locale/es";
 import { Card, DateInput, Button, Input, DatePicker } from "../index";
 import type { DateInputFormat } from "../index";
 
 const DateInputDocs: React.FC = () => {
-  const [date1, setDate1] = React.useState<Date | null>(new Date());
-  const [date2, setDate2] = React.useState<Date | null>(null);
+  const [date1, setDate1] = React.useState<Dayjs | null>(dayjs());
+  const [date2, setDate2] = React.useState<Dayjs | null>(null);
   const [format, setFormat] = React.useState<DateInputFormat>("dd/mm/yyyy");
 
-  const formatDate = (date: Date | null) => {
-    if (!date) return "Sin fecha seleccionada";
-    return date.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
+  const formatDate = (date: Dayjs | null) => {
+    if (!date || !date.isValid()) return "Sin fecha seleccionada";
+    return date.locale("es").format("DD [de] MMMM [de] YYYY");
   };
 
   return (
@@ -40,8 +38,10 @@ const DateInputDocs: React.FC = () => {
                   className="text-sm"
                   style={{ color: "var(--flysoft-text-secondary)" }}
                 >
-                  puedes escribir la fecha manualmente (dd/mm/yyyy) o elegirla
-                  desde el calendario
+                  puedes escribir la fecha manualmente (dd/mm/yyyy) o hacer
+                  click en el ícono del calendario para abrir el selector de
+                  fecha. El componente usa <code>onIconClick</code> del Input
+                  para manejar el click en el ícono.
                 </p>
               </div>
               <div className="space-y-2">
@@ -176,7 +176,7 @@ const DateInputDocs: React.FC = () => {
               <div className="space-y-3">
                 <DateInput
                   label="Solo lectura"
-                  value={new Date()}
+                  value={dayjs()}
                   readOnly
                   icon="fa-lock"
                 />
@@ -190,7 +190,7 @@ const DateInputDocs: React.FC = () => {
               <div className="space-y-3">
                 <DateInput
                   label="Deshabilitado"
-                  value={new Date()}
+                  value={dayjs()}
                   disabled
                   icon="fa-ban"
                 />

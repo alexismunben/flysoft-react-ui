@@ -1,19 +1,17 @@
 import React from "react";
+import dayjs, { type Dayjs } from "dayjs";
+import "dayjs/locale/es";
 import { Card, DatePicker, Button } from "../index";
 
 const DatePickerDocs: React.FC = () => {
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
-  const [anotherDate, setAnotherDate] = React.useState<Date | null>(
-    new Date()
+  const [selectedDate, setSelectedDate] = React.useState<Dayjs | null>(null);
+  const [anotherDate, setAnotherDate] = React.useState<Dayjs | null>(
+    dayjs()
   );
 
-  const formatDate = (date: Date | null) => {
-    if (!date) return "Sin fecha seleccionada";
-    return date.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
+  const formatDate = (date: Dayjs | null) => {
+    if (!date || !date.isValid()) return "Sin fecha seleccionada";
+    return date.locale("es").format("DD [de] MMMM [de] YYYY");
   };
 
   return (
@@ -88,7 +86,7 @@ const DatePickerDocs: React.FC = () => {
                   size="sm"
                   variant="outline"
                   icon="fa-calendar-day"
-                  onClick={() => setAnotherDate(new Date())}
+                  onClick={() => setAnotherDate(dayjs())}
                 >
                   Ir a hoy
                 </Button>

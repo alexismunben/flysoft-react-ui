@@ -8,18 +8,27 @@ export interface InputProps
   iconPosition?: "left" | "right";
   size?: "sm" | "md" | "lg";
   children?: React.ReactNode;
+  /**
+   * Callback cuando se hace click en el ícono. Si está definido, el ícono será clickeable.
+   */
+  onIconClick?: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
-export const Input: React.FC<InputProps> = ({
-  label,
-  error,
-  icon,
-  iconPosition = "left",
-  size = "md",
-  className = "",
-  id,
-  ...props
-}) => {
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      label,
+      error,
+      icon,
+      iconPosition = "left",
+      size = "md",
+      className = "",
+      id,
+      onIconClick,
+      ...props
+    },
+    ref
+  ) => {
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
   const baseClasses = `
@@ -47,13 +56,16 @@ export const Input: React.FC<InputProps> = ({
   const renderIcon = () => {
     if (!icon) return null;
 
-    return (
+    const iconElement = (
       <i
         className={`fa ${icon} ${iconClasses} text-[var(--color-text-muted)] absolute top-1/2 transform -translate-y-1/2 ${
           iconPosition === "left" ? "left-3" : "right-3"
-        }`}
+        } ${onIconClick ? "cursor-pointer hover:text-[var(--color-primary)] transition-colors" : ""}`}
+        onClick={onIconClick}
       />
     );
+
+    return iconElement;
   };
 
   return (
@@ -69,10 +81,12 @@ export const Input: React.FC<InputProps> = ({
       <div className="relative">
         {icon && iconPosition === "left" && renderIcon()}
         <input
+          ref={ref}
           id={inputId}
           className={`${inputClasses} ${
             icon && iconPosition === "left" ? "pl-10" : ""
           } ${icon && iconPosition === "right" ? "pr-10" : ""}`}
+          autoComplete="off"
           {...props}
         />
         {icon && iconPosition === "right" && renderIcon()}
@@ -84,4 +98,7 @@ export const Input: React.FC<InputProps> = ({
       )}
     </div>
   );
-};
+  }
+);
+
+Input.displayName = "Input";

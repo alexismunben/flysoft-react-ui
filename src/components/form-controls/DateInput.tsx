@@ -1,4 +1,5 @@
 import React from "react";
+import dayjs, { type Dayjs } from "dayjs";
 import { Input } from "./Input";
 import { DatePicker } from "./DatePicker";
 import type { InputProps } from "./Input";
@@ -7,20 +8,40 @@ import type { DatePickerProps } from "./DatePicker";
 export type DateInputFormat = "dd/mm/yyyy" | "mm/dd/yyyy";
 
 export interface DateInputProps
-  extends Omit<InputProps, "type" | "value" | "onChange"> {
-  value?: Date | null;
-  onChange?: (date: Date | null) => void;
+  extends Omit<InputProps, "type" | "value" | "onChange" | "ref"> {
+  value?: Dayjs | null;
+  /**
+   * Callback cuando cambia la fecha.
+   * Compatible con react-hook-form: acepta tanto (date: Dayjs | null) => void como el onChange estándar de HTML.
+   */
+  onChange?: ((date: Dayjs | null) => void) | React.ChangeEventHandler<HTMLInputElement>;
   format?: DateInputFormat;
   datePickerProps?: Omit<DatePickerProps, "value" | "onChange">;
 }
 
 const pad = (value: number) => value.toString().padStart(2, "0");
 
-const formatDateToString = (date: Date | null, format: DateInputFormat) => {
-  if (!date) return "";
-  const day = pad(date.getDate());
-  const month = pad(date.getMonth() + 1);
-  const year = date.getFullYear().toString();
+const isDayjs = (value: unknown): value is Dayjs => {
+  return value !== null && value !== undefined && typeof value === "object" && "isValid" in value && typeof (value as any).isValid === "function";
+};
+
+const normalizeToDayjs = (value: unknown): Dayjs | null => {
+  if (value === null || value === undefined) return null;
+  if (isDayjs(value)) return value;
+  // Si no es Dayjs, intentar convertirlo
+  if (typeof value === "string" || typeof value === "number" || value instanceof Date) {
+    const d = dayjs(value);
+    return d.isValid() ? d : null;
+  }
+  return null;
+};
+
+const formatDateToString = (date: Dayjs | null | unknown, format: DateInputFormat) => {
+  const normalized = normalizeToDayjs(date);
+  if (!normalized || !normalized.isValid()) return "";
+  const day = pad(normalized.date());
+  const month = pad(normalized.month() + 1);
+  const year = normalized.year().toString();
 
   if (format === "mm/dd/yyyy") {
     return `${month}/${day}/${year}`;
@@ -32,7 +53,7 @@ const formatDateToString = (date: Date | null, format: DateInputFormat) => {
 const parseDateFromString = (
   value: string,
   format: DateInputFormat
-): Date | null => {
+): Dayjs | null => {
   // Primero intentar parsear como números sin separadores (ej: 11102025)
   const numbersOnly = value.replace(/\D/g, "");
   if (numbersOnly.length === 8) {
@@ -55,13 +76,9 @@ const parseDateFromString = (
       year >= 1000 &&
       year <= 9999
     ) {
-      const date = new Date(year, month - 1, day);
-      if (
-        date.getFullYear() === year &&
-        date.getMonth() === month - 1 &&
-        date.getDate() === day
-      ) {
-        return date;
+      const date = dayjs().year(year).month(month - 1).date(day);
+      if (date.isValid() && date.year() === year && date.month() === month - 1 && date.date() === day) {
+        return date.startOf("day");
       }
     }
   }
@@ -86,83 +103,66 @@ const parseDateFromString = (
     return null;
   }
 
-  const date = new Date(year, month - 1, day);
-  if (
-    date.getFullYear() !== year ||
-    date.getMonth() !== month - 1 ||
-    date.getDate() !== day
-  ) {
+  const date = dayjs().year(year).month(month - 1).date(day);
+  if (!date.isValid() || date.year() !== year || date.month() !== month - 1 || date.date() !== day) {
     return null;
   }
 
-  return date;
+  return date.startOf("day");
 };
 
-export const DateInput: React.FC<DateInputProps> = ({
-  value,
-  onChange,
-  format = "dd/mm/yyyy",
-  datePickerProps,
-  icon = "fa-calendar-alt",
-  iconPosition = "right",
-  className = "",
-  ...inputProps
-}) => {
-  const [internalDate, setInternalDate] = React.useState<Date | null>(
-    value ?? null
+export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
+  (
+    {
+      value,
+      onChange,
+      format = "dd/mm/yyyy",
+      datePickerProps,
+      icon = "fa-calendar-alt",
+      iconPosition = "right",
+      className = "",
+      ...inputProps
+    },
+    ref
+  ) => {
+  // Detectar si estamos usando Controller (modo controlado con Dayjs)
+  // Cuando se usa Controller, siempre se pasa onChange, incluso si value es undefined inicialmente
+  // Si onChange está presente, asumimos modo controlado con Controller (que espera Dayjs)
+  // Esto funciona porque Controller siempre pasa onChange, mientras que register puede no pasarlo directamente
+  const isControlled = onChange !== undefined;
+  
+  const [internalDate, setInternalDate] = React.useState<Dayjs | null>(
+    normalizeToDayjs(value)
   );
   const [inputValue, setInputValue] = React.useState(
-    formatDateToString(value ?? null, format)
+    formatDateToString(value, format)
   );
   const [isOpen, setIsOpen] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const inputWrapperRef = React.useRef<HTMLDivElement | null>(null);
-  const iconRef = React.useRef<HTMLDivElement | null>(null);
+  const isTypingRef = React.useRef(false);
 
   React.useEffect(() => {
-    if (value !== undefined) {
-      setInternalDate(value);
+    if (isControlled && !isTypingRef.current) {
+      const normalized = normalizeToDayjs(value);
+      setInternalDate(normalized);
       setInputValue(formatDateToString(value, format));
     }
-  }, [value, format]);
+  }, [value, format, isControlled]);
 
-  // Centrar el ícono verticalmente respecto al input real
-  React.useEffect(() => {
-    const updateIconPosition = () => {
-      if (
-        iconPosition === "right" &&
-        inputWrapperRef.current &&
-        iconRef.current
-      ) {
-        const inputElement = inputWrapperRef.current.querySelector("input");
-        if (inputElement) {
-          const inputRect = inputElement.getBoundingClientRect();
-          const wrapperRect = inputWrapperRef.current.getBoundingClientRect();
-          const topOffset =
-            inputRect.top - wrapperRect.top + inputRect.height / 2;
-          iconRef.current.style.top = `${topOffset}px`;
-          iconRef.current.style.transform = "translateY(-50%)";
-        }
-      }
-    };
-
-    // Ejecutar inmediatamente
-    updateIconPosition();
-
-    // Ejecutar cuando cambie el tamaño de la ventana
-    window.addEventListener("resize", updateIconPosition);
-
-    return () => {
-      window.removeEventListener("resize", updateIconPosition);
-    };
-  }, [iconPosition, inputValue, inputProps.label, inputProps.size]);
-
-  const handleDateChange = (date: Date | null) => {
-    if (value === undefined) {
+  const handleDateChange = (date: Dayjs | null) => {
+    if (!isControlled) {
       setInternalDate(date);
       setInputValue(formatDateToString(date, format));
     }
-    onChange?.(date);
+    
+    if (onChange) {
+      // Cuando onChange está presente, asumimos que es modo controlado con Controller
+      // (que espera Dayjs directamente, no un evento)
+      // Esto funciona correctamente porque Controller siempre pasa onChange
+      const dayjsHandler = onChange as unknown as ((date: Dayjs | null) => void);
+      dayjsHandler(date);
+    }
     setIsOpen(false);
   };
 
@@ -170,14 +170,19 @@ export const DateInput: React.FC<DateInputProps> = ({
     event
   ) => {
     const newValue = event.target.value;
+    // Marcar que el usuario está escribiendo para evitar que el useEffect sobrescriba
+    isTypingRef.current = true;
+    // Solo actualizar el valor del input, NO llamar onChange mientras el usuario escribe
+    // El onChange se llamará en onBlur cuando se valide y parse la fecha completa
     setInputValue(newValue);
-
-    // No intentamos parsear en cada pulsación, solo actualizamos el texto.
   };
 
   const handleInputBlur: React.FocusEventHandler<HTMLInputElement> = (
     event
   ) => {
+    // Marcar que el usuario terminó de escribir
+    isTypingRef.current = false;
+    
     const newValue = event.target.value.trim();
     if (!newValue) {
       handleDateChange(null);
@@ -193,7 +198,7 @@ export const DateInput: React.FC<DateInputProps> = ({
     }
   };
 
-  const handleIconClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
+  const handleIconClick: React.MouseEventHandler<HTMLElement> = (event) => {
     event.preventDefault();
     setIsOpen((prev) => !prev);
   };
@@ -215,43 +220,27 @@ export const DateInput: React.FC<DateInputProps> = ({
   }, []);
 
   const datePickerInitialViewDate =
-    internalDate ?? datePickerProps?.initialViewDate ?? new Date();
+    internalDate ?? datePickerProps?.initialViewDate ?? dayjs();
 
   return (
     <div ref={containerRef} className="relative w-full">
       <div ref={inputWrapperRef} className="relative">
         <Input
           {...inputProps}
+          ref={ref}
           type="text"
           value={inputValue}
           onChange={handleInputChange}
           onBlur={handleInputBlur}
-          icon={iconPosition === "right" ? undefined : icon}
+          icon={icon}
           iconPosition={iconPosition}
+          onIconClick={handleIconClick}
           placeholder={
             inputProps.placeholder ??
             (format === "mm/dd/yyyy" ? "mm/dd/yyyy" : "dd/mm/yyyy")
           }
-          className={`${className} ${iconPosition === "right" ? "pr-10" : ""}`}
+          className={className}
         />
-
-        {iconPosition === "right" && (
-          <div
-            ref={iconRef}
-            className="absolute right-3 cursor-pointer"
-            onMouseDown={handleIconClick}
-          >
-            <i
-              className={`fa ${icon} ${
-                inputProps.size === "sm"
-                  ? "w-4 h-4"
-                  : inputProps.size === "lg"
-                  ? "w-6 h-6"
-                  : "w-5 h-5"
-              } text-[var(--color-text-muted)]`}
-            />
-          </div>
-        )}
       </div>
 
       {isOpen && (
@@ -265,4 +254,7 @@ export const DateInput: React.FC<DateInputProps> = ({
       )}
     </div>
   );
-};
+  }
+);
+
+DateInput.displayName = "DateInput";

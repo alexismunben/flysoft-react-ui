@@ -7,6 +7,7 @@ import ThemeSwitcherDocs from "./ThemeSwitcherDocs";
 import BadgeDocs from "./BadgeDocs";
 import DataFieldDocs from "./DataFieldDocs";
 import AutocompleteInputDocs from "./AutocompleteInputDocs";
+import SearchSelectInputDocs from "./SearchSelectInputDocs";
 import DatePickerDocs from "./DatePickerDocs";
 import DateInputDocs from "./DateInputDocs";
 import TabsGroupDocs from "./TabsGroupDocs";
@@ -16,6 +17,7 @@ import LoaderDocs from "./LoaderDocs";
 import DataTableDocs from "./DataTableDocs";
 import DropdownMenuDocs from "./DropdownMenuDocs";
 import { AuthDocs } from "./AuthDocs.tsx/AuthDocs";
+import ExampleFormDocs from "./ExampleFormDocs";
 
 export const DocsRouter: React.FC = () => {
   return (
@@ -26,6 +28,7 @@ export const DocsRouter: React.FC = () => {
       <Route path="card" element={<CardDocs />} />
       <Route path="input" element={<InputDocs />} />
       <Route path="autocomplete-input" element={<AutocompleteInputDocs />} />
+      <Route path="search-select-input" element={<SearchSelectInputDocs />} />
       <Route path="datepicker" element={<DatePickerDocs />} />
       <Route path="dateinput" element={<DateInputDocs />} />
       <Route path="theme" element={<ThemeSwitcherDocs />} />
@@ -37,6 +40,7 @@ export const DocsRouter: React.FC = () => {
       <Route path="datatable" element={<DataTableDocs />} />
       <Route path="dropdownmenu" element={<DropdownMenuDocs />} />
       <Route path="auth" element={<AuthDocs />} />
+      <Route path="example-form" element={<ExampleFormDocs />} />
     </Routes>
   );
 };

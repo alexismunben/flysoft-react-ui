@@ -170,6 +170,9 @@ export const AutocompleteInput = <T = AutocompleteOption, K = string>({
   React.useEffect(() => {
     if (value !== undefined) {
       setInternalValue(value);
+    } else {
+      // Resetear el estado interno cuando value es undefined (por ejemplo, después de un reset)
+      setInternalValue("");
     }
   }, [value]);
 
@@ -184,7 +187,6 @@ export const AutocompleteInput = <T = AutocompleteOption, K = string>({
         onFocus={() => setIsOpen(true)}
         onKeyDown={handleKeyDown}
         className={className}
-        autoComplete="off"
       />
 
       {showDropdown && (

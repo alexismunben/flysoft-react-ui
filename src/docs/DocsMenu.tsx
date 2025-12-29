@@ -20,6 +20,9 @@ export const DocsMenu = () => {
           <Link to="/docs/autocomplete-input">AutocompleteInput</Link>
         </li>
         <li>
+          <Link to="/docs/search-select-input">SearchSelectInput</Link>
+        </li>
+        <li>
           <Link to="/docs/datepicker">DatePicker</Link>
         </li>
         <li>
@@ -51,6 +54,9 @@ export const DocsMenu = () => {
         </li>
         <li>
           <Link to="/docs/auth">AuthContext</Link>
+        </li>
+        <li>
+          <Link to="/docs/example-form">Formulario de Ejemplo</Link>
         </li>
       </ul>
     </>
