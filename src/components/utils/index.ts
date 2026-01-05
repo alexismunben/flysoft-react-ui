@@ -1,5 +1,9 @@
 export { Badge } from "./Badge";
 export type { BadgeProps } from "./Badge";
+export { Avatar } from "./Avatar";
+export type { AvatarProps } from "./Avatar";
+export { RoadMap } from "./RoadMap";
+export type { RoadMapProps, RoadMapStage } from "./RoadMap";
 export { Dialog } from "./Dialog";
 export type { DialogProps } from "./Dialog";
 export { Loader } from "./Loader";

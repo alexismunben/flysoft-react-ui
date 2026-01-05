@@ -15,6 +15,7 @@ export interface PaginationProps {
   page?: number;
   pages?: number;
   total?: number;
+  isLoading?: boolean;
 }
 
 export const Pagination: React.FC<PaginationProps> = ({
@@ -22,6 +23,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   page = 1,
   pages = 1,
   total = 0,
+  isLoading = false,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -52,7 +54,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           size="sm"
           icon="fa-angle-double-left"
           onClick={goToFirstPage}
-          disabled={isFirstPage || !hasPages}
+          disabled={isFirstPage || !hasPages || isLoading}
           aria-label="Primera página"
         />
       </div>
@@ -62,17 +64,23 @@ export const Pagination: React.FC<PaginationProps> = ({
           size="sm"
           icon="fa-angle-left"
           onClick={goToPreviousPage}
-          disabled={isFirstPage || !hasPages}
+          disabled={isFirstPage || !hasPages || isLoading}
           aria-label="Página anterior"
         />
       </div>
       <div className="text-xs">
-        <span className="block">
-          Página {page} de {pages}
-        </span>
-        <span className="block">
-          {total} elemento{total !== 1 ? "s" : ""}
-        </span>
+        {isLoading ? (
+          <span className="block">Cargando...</span>
+        ) : (
+          <>
+            <span className="block">
+              Página {page} de {pages}
+            </span>
+            <span className="block">
+              {total} elemento{total !== 1 ? "s" : ""}
+            </span>
+          </>
+        )}
       </div>
       <div>
         <Button
@@ -80,7 +88,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           size="sm"
           icon="fa-angle-right"
           onClick={goToNextPage}
-          disabled={isLastPage || !hasPages}
+          disabled={isLastPage || !hasPages || isLoading}
           aria-label="Página siguiente"
         />
       </div>
@@ -90,7 +98,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           size="sm"
           icon="fa-angle-double-right"
           onClick={goToLastPage}
-          disabled={isLastPage || !hasPages}
+          disabled={isLastPage || !hasPages || isLoading}
           aria-label="Última página"
         />
       </div>

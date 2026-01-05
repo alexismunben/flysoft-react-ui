@@ -35,6 +35,15 @@ export type {
   PaginationInterface,
 } from "./components/form-controls/Pagination";
 
+export { Checkbox } from "./components/form-controls/Checkbox";
+export type { CheckboxProps } from "./components/form-controls/Checkbox";
+
+export { RadioButtonGroup } from "./components/form-controls/RadioButtonGroup";
+export type {
+  RadioButtonGroupProps,
+  RadioOption,
+} from "./components/form-controls/RadioButtonGroup";
+
 export { Card } from "./components/layout/Card";
 export type { CardProps } from "./components/layout/Card";
 
@@ -53,10 +62,17 @@ export type { TabsGroupProps, Tab } from "./components/layout/TabsGroup";
 export { TabPanel } from "./components/layout/TabPanel";
 export type { TabPanelProps } from "./components/layout/TabPanel";
 export { DataTable } from "./components/layout/DataTable";
-export type { DataTableProps, DataTableColumn } from "./components/layout/DataTable";
+export type {
+  DataTableProps,
+  DataTableColumn,
+} from "./components/layout/DataTable";
 
 export { Badge } from "./components/utils/Badge";
 export type { BadgeProps } from "./components/utils/Badge";
+export { Avatar } from "./components/utils/Avatar";
+export type { AvatarProps } from "./components/utils/Avatar";
+export { RoadMap } from "./components/utils/RoadMap";
+export type { RoadMapProps, RoadMapStage } from "./components/utils/RoadMap";
 export { Dialog } from "./components/utils/Dialog";
 export type { DialogProps } from "./components/utils/Dialog";
 export { Loader } from "./components/utils/Loader";

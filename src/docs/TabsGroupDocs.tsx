@@ -1,5 +1,145 @@
 import React, { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Card, TabsGroup, TabPanel, Button, Badge, Input } from "../index";
+
+const UrlSyncExample: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const urlTab = searchParams.get("tab");
+
+  const tabsForUrl = [
+    { id: "overview", label: "Resumen" },
+    { id: "details", label: "Detalles" },
+    { id: "settings", label: "Configuración" },
+  ];
+
+  return (
+    <div className="space-y-4">
+      {urlTab && (
+        <div className="p-3 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded">
+          <p className="text-sm">
+            <span className="font-semibold">Tab desde URL:</span>{" "}
+            <span style={{ color: "var(--flysoft-text-secondary)" }}>
+              {urlTab}
+            </span>
+          </p>
+          <p
+            className="text-xs mt-1"
+            style={{ color: "var(--flysoft-text-secondary)" }}
+          >
+            URL actual:{" "}
+            <code className="px-1 py-0.5 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded">
+              ?tab={urlTab}
+            </code>
+          </p>
+          <p
+            className="text-xs mt-2"
+            style={{ color: "var(--flysoft-text-secondary)" }}
+          >
+            💡 Prueba cambiar de tab y observa cómo se actualiza la URL. También
+            puedes recargar la página con{" "}
+            <code className="px-1 py-0.5 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded">
+              ?tab=details
+            </code>
+            en la URL para ver cómo se carga directamente ese tab.
+          </p>
+        </div>
+      )}
+      {!urlTab && (
+        <div className="p-3 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded">
+          <p
+            className="text-sm"
+            style={{ color: "var(--flysoft-text-secondary)" }}
+          >
+            💡 Cambia de tab y observa cómo se actualiza la URL. También puedes
+            agregar{" "}
+            <code className="px-1 py-0.5 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded">
+              ?tab=details
+            </code>
+            manualmente en la URL para cargar directamente ese tab.
+          </p>
+        </div>
+      )}
+      <TabsGroup tabs={tabsForUrl} paramName="tab">
+        <TabPanel tabId="overview">
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold text-[var(--color-text-primary)]">
+              Resumen General
+            </h4>
+            <p style={{ color: "var(--flysoft-text-secondary)" }}>
+              Este es el tab de resumen. Cuando este tab esté activo, la URL
+              mostrará{" "}
+              <code className="px-1 py-0.5 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded text-xs">
+                ?tab=overview
+              </code>
+              .
+            </p>
+            <div className="flex gap-2">
+              <Button variant="primary" icon="fa-chart-bar">
+                Ver Estadísticas
+              </Button>
+              <Button variant="outline" icon="fa-download">
+                Exportar
+              </Button>
+            </div>
+          </div>
+        </TabPanel>
+        <TabPanel tabId="details">
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold text-[var(--color-text-primary)]">
+              Detalles Completos
+            </h4>
+            <p style={{ color: "var(--flysoft-text-secondary)" }}>
+              Este es el tab de detalles. Cuando este tab esté activo, la URL
+              mostrará{" "}
+              <code className="px-1 py-0.5 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded text-xs">
+                ?tab=details
+              </code>
+              .
+            </p>
+            <p style={{ color: "var(--flysoft-text-secondary)" }}>
+              Si recargas la página con{" "}
+              <code className="px-1 py-0.5 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded text-xs">
+                ?tab=details
+              </code>
+              en la URL, este tab se cargará automáticamente.
+            </p>
+            <div className="flex gap-2">
+              <Button variant="primary" icon="fa-info-circle">
+                Más Información
+              </Button>
+              <Button variant="outline" icon="fa-edit">
+                Editar
+              </Button>
+            </div>
+          </div>
+        </TabPanel>
+        <TabPanel tabId="settings">
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold text-[var(--color-text-primary)]">
+              Configuración
+            </h4>
+            <p style={{ color: "var(--flysoft-text-secondary)" }}>
+              Este es el tab de configuración. Cuando este tab esté activo, la
+              URL mostrará{" "}
+              <code className="px-1 py-0.5 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded text-xs">
+                ?tab=settings
+              </code>
+              .
+            </p>
+            <div className="flex gap-2">
+              <Button variant="primary" icon="fa-cog">
+                Configurar
+              </Button>
+              <Button variant="outline" icon="fa-save">
+                Guardar
+              </Button>
+            </div>
+          </div>
+        </TabPanel>
+      </TabsGroup>
+    </div>
+  );
+};
 
 const TabsGroupDocs: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<string>("");
@@ -116,7 +256,8 @@ const TabsGroupDocs: React.FC = () => {
               className="mb-4 text-sm"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              Los tabs pueden usar tanto strings como números como identificadores.
+              Los tabs pueden usar tanto strings como números como
+              identificadores.
             </p>
             <Card title="Ejemplo con IDs numéricos">
               <TabsGroup tabs={tabsWithNumbers}>
@@ -263,7 +404,8 @@ const TabsGroupDocs: React.FC = () => {
                         Roles
                       </h4>
                       <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                        Este tab también notifica el cambio mediante onChangeTab.
+                        Este tab también notifica el cambio mediante
+                        onChangeTab.
                       </p>
                     </div>
                   </TabPanel>
@@ -273,12 +415,40 @@ const TabsGroupDocs: React.FC = () => {
                         Permisos
                       </h4>
                       <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                        Este tab también notifica el cambio mediante onChangeTab.
+                        Este tab también notifica el cambio mediante
+                        onChangeTab.
                       </p>
                     </div>
                   </TabPanel>
                 </TabsGroup>
               </div>
+            </Card>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Sincronización con URL (paramName)
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              El prop{" "}
+              <code className="px-1 py-0.5 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded text-xs">
+                paramName
+              </code>{" "}
+              permite sincronizar el tab activo con los parámetros de la URL.
+              Cuando cambias de tab, se actualiza la URL automáticamente. Si la
+              URL ya contiene el parámetro al cargar la página, se mostrará el
+              tab correspondiente. Esto es útil para compartir enlaces directos
+              a un tab específico o para mantener el estado al navegar con el
+              botón atrás/adelante del navegador.
+            </p>
+            <Card title="Ejemplo con sincronización de URL">
+              <UrlSyncExample />
             </Card>
           </section>
 
@@ -396,4 +566,3 @@ const TabsGroupDocs: React.FC = () => {
 };
 
 export default TabsGroupDocs;
-

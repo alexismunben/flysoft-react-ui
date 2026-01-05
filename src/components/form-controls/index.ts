@@ -5,6 +5,8 @@ export { SearchSelectInput } from "./SearchSelectInput";
 export { DatePicker } from "./DatePicker";
 export { DateInput } from "./DateInput";
 export { Pagination } from "./Pagination";
+export { Checkbox } from "./Checkbox";
+export { RadioButtonGroup } from "./RadioButtonGroup";
 export type { ButtonProps } from "./Button";
 export type { InputProps } from "./Input";
 export type {
@@ -17,7 +19,6 @@ export type {
 } from "./SearchSelectInput";
 export type { DatePickerProps } from "./DatePicker";
 export type { DateInputProps, DateInputFormat } from "./DateInput";
-export type {
-  PaginationProps,
-  PaginationInterface,
-} from "./Pagination";
+export type { PaginationProps, PaginationInterface } from "./Pagination";
+export type { CheckboxProps } from "./Checkbox";
+export type { RadioButtonGroupProps, RadioOption } from "./RadioButtonGroup";

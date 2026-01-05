@@ -5,6 +5,8 @@ import CardDocs from "./CardDocs";
 import InputDocs from "./InputDocs";
 import ThemeSwitcherDocs from "./ThemeSwitcherDocs";
 import BadgeDocs from "./BadgeDocs";
+import AvatarDocs from "./AvatarDocs";
+import RoadMapDocs from "./RoadMapDocs";
 import DataFieldDocs from "./DataFieldDocs";
 import AutocompleteInputDocs from "./AutocompleteInputDocs";
 import SearchSelectInputDocs from "./SearchSelectInputDocs";
@@ -17,7 +19,11 @@ import LoaderDocs from "./LoaderDocs";
 import DataTableDocs from "./DataTableDocs";
 import DropdownMenuDocs from "./DropdownMenuDocs";
 import { AuthDocs } from "./AuthDocs.tsx/AuthDocs";
+import { ListCrudDocs } from "./ListCrudDocs.tsx/ListCrudDocs";
 import ExampleFormDocs from "./ExampleFormDocs";
+import CheckboxDocs from "./CheckboxDocs";
+import RadioButtonGroupDocs from "./RadioButtonGroupDocs";
+import DocAdmin from "./DocAdmin";
 
 export const DocsRouter: React.FC = () => {
   return (
@@ -25,12 +31,16 @@ export const DocsRouter: React.FC = () => {
       <Route path="" element={<Navigate to="button" replace />} />
       <Route path="button" element={<ButtonDocs />} />
       <Route path="badge" element={<BadgeDocs />} />
+      <Route path="avatar" element={<AvatarDocs />} />
+      <Route path="roadmap" element={<RoadMapDocs />} />
       <Route path="card" element={<CardDocs />} />
       <Route path="input" element={<InputDocs />} />
       <Route path="autocomplete-input" element={<AutocompleteInputDocs />} />
       <Route path="search-select-input" element={<SearchSelectInputDocs />} />
       <Route path="datepicker" element={<DatePickerDocs />} />
       <Route path="dateinput" element={<DateInputDocs />} />
+      <Route path="checkbox" element={<CheckboxDocs />} />
+      <Route path="radiobuttongroup" element={<RadioButtonGroupDocs />} />
       <Route path="theme" element={<ThemeSwitcherDocs />} />
       <Route path="datafield" element={<DataFieldDocs />} />
       <Route path="tabsgroup" element={<TabsGroupDocs />} />
@@ -40,7 +50,9 @@ export const DocsRouter: React.FC = () => {
       <Route path="datatable" element={<DataTableDocs />} />
       <Route path="dropdownmenu" element={<DropdownMenuDocs />} />
       <Route path="auth" element={<AuthDocs />} />
+      <Route path="listcrud" element={<ListCrudDocs />} />
       <Route path="example-form" element={<ExampleFormDocs />} />
+      <Route path="admin" element={<DocAdmin />} />
     </Routes>
   );
 };

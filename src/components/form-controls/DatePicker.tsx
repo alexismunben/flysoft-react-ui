@@ -45,24 +45,25 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 }) => {
   const today = React.useMemo(() => dayjs().startOf("day"), []);
 
-  const initial = React.useMemo(() => {
-    const base = value ?? initialViewDate ?? today;
-    return {
-      month: base.month(),
-      year: base.year(),
-    };
-  }, [value, initialViewDate, today]);
+  const getViewFromValue = React.useCallback(
+    (val: Dayjs | null | undefined): DatePickerView => {
+      const base = val ?? initialViewDate ?? today;
+      return {
+        month: base.month(),
+        year: base.year(),
+      };
+    },
+    [initialViewDate, today]
+  );
 
-  const [view, setView] = React.useState<DatePickerView>(initial);
+  const [view, setView] = React.useState<DatePickerView>(() =>
+    getViewFromValue(value)
+  );
 
   React.useEffect(() => {
-    if (value) {
-      setView({
-        month: value.month(),
-        year: value.year(),
-      });
-    }
-  }, [value]);
+    // Sincronizar la vista con el valor actual, incluso si es null/undefined
+    setView(getViewFromValue(value));
+  }, [value, getViewFromValue]);
 
   const handlePrevMonth = () => {
     setView((prev) => {

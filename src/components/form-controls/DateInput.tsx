@@ -1,5 +1,6 @@
 import React from "react";
 import dayjs, { type Dayjs } from "dayjs";
+import { useFormContext } from "react-hook-form";
 import { Input } from "./Input";
 import { DatePicker } from "./DatePicker";
 import type { InputProps } from "./Input";
@@ -9,12 +10,20 @@ export type DateInputFormat = "dd/mm/yyyy" | "mm/dd/yyyy";
 
 export interface DateInputProps
   extends Omit<InputProps, "type" | "value" | "onChange" | "ref"> {
-  value?: Dayjs | null;
+  /**
+   * Valor de la fecha.
+   * En modo register: string (fecha formateada) o undefined
+   * En modo Controller: Dayjs | null
+   */
+  value?: Dayjs | null | string;
   /**
    * Callback cuando cambia la fecha.
-   * Compatible con react-hook-form: acepta tanto (date: Dayjs | null) => void como el onChange estándar de HTML.
+   * En modo register: ChangeEventHandler (de register)
+   * En modo Controller: (date: Dayjs | null) => void
    */
-  onChange?: ((date: Dayjs | null) => void) | React.ChangeEventHandler<HTMLInputElement>;
+  onChange?:
+    | ((date: Dayjs | null) => void)
+    | React.ChangeEventHandler<HTMLInputElement>;
   format?: DateInputFormat;
   datePickerProps?: Omit<DatePickerProps, "value" | "onChange">;
 }
@@ -22,21 +31,34 @@ export interface DateInputProps
 const pad = (value: number) => value.toString().padStart(2, "0");
 
 const isDayjs = (value: unknown): value is Dayjs => {
-  return value !== null && value !== undefined && typeof value === "object" && "isValid" in value && typeof (value as any).isValid === "function";
+  return (
+    value !== null &&
+    value !== undefined &&
+    typeof value === "object" &&
+    "isValid" in value &&
+    typeof (value as any).isValid === "function"
+  );
 };
 
 const normalizeToDayjs = (value: unknown): Dayjs | null => {
   if (value === null || value === undefined) return null;
   if (isDayjs(value)) return value;
   // Si no es Dayjs, intentar convertirlo
-  if (typeof value === "string" || typeof value === "number" || value instanceof Date) {
+  if (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    value instanceof Date
+  ) {
     const d = dayjs(value);
     return d.isValid() ? d : null;
   }
   return null;
 };
 
-const formatDateToString = (date: Dayjs | null | unknown, format: DateInputFormat) => {
+const formatDateToString = (
+  date: Dayjs | null | unknown,
+  format: DateInputFormat
+) => {
   const normalized = normalizeToDayjs(date);
   if (!normalized || !normalized.isValid()) return "";
   const day = pad(normalized.date());
@@ -76,8 +98,16 @@ const parseDateFromString = (
       year >= 1000 &&
       year <= 9999
     ) {
-      const date = dayjs().year(year).month(month - 1).date(day);
-      if (date.isValid() && date.year() === year && date.month() === month - 1 && date.date() === day) {
+      const date = dayjs()
+        .year(year)
+        .month(month - 1)
+        .date(day);
+      if (
+        date.isValid() &&
+        date.year() === year &&
+        date.month() === month - 1 &&
+        date.date() === day
+      ) {
         return date.startOf("day");
       }
     }
@@ -103,8 +133,16 @@ const parseDateFromString = (
     return null;
   }
 
-  const date = dayjs().year(year).month(month - 1).date(day);
-  if (!date.isValid() || date.year() !== year || date.month() !== month - 1 || date.date() !== day) {
+  const date = dayjs()
+    .year(year)
+    .month(month - 1)
+    .date(day);
+  if (
+    !date.isValid() ||
+    date.year() !== year ||
+    date.month() !== month - 1 ||
+    date.date() !== day
+  ) {
     return null;
   }
 
@@ -125,109 +163,395 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
     },
     ref
   ) => {
-  // Detectar si estamos usando Controller (modo controlado con Dayjs)
-  // Cuando se usa Controller, siempre se pasa onChange, incluso si value es undefined inicialmente
-  // Si onChange está presente, asumimos modo controlado con Controller (que espera Dayjs)
-  // Esto funciona porque Controller siempre pasa onChange, mientras que register puede no pasarlo directamente
-  const isControlled = onChange !== undefined;
-  
-  const [internalDate, setInternalDate] = React.useState<Dayjs | null>(
-    normalizeToDayjs(value)
-  );
-  const [inputValue, setInputValue] = React.useState(
-    formatDateToString(value, format)
-  );
-  const [isOpen, setIsOpen] = React.useState(false);
-  const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const inputWrapperRef = React.useRef<HTMLDivElement | null>(null);
-  const isTypingRef = React.useRef(false);
+    // Extraer onBlur de inputProps para manejarlo por separado
+    const { onBlur: registerOnBlur, ...restInputProps } = inputProps;
 
-  React.useEffect(() => {
-    if (isControlled && !isTypingRef.current) {
-      const normalized = normalizeToDayjs(value);
-      setInternalDate(normalized);
-      setInputValue(formatDateToString(value, format));
-    }
-  }, [value, format, isControlled]);
+    // Detectar si estamos en modo register: si viene 'name' de register, estamos en modo register
+    // register siempre pasa 'name', 'onChange', 'onBlur', y 'ref'
+    const isRegisterMode = React.useMemo(() => {
+      // Si viene 'name' en inputProps, es porque viene de register
+      return "name" in inputProps && inputProps.name !== undefined;
+    }, [inputProps]);
 
-  const handleDateChange = (date: Dayjs | null) => {
-    if (!isControlled) {
-      setInternalDate(date);
-      setInputValue(formatDateToString(date, format));
-    }
-    
-    if (onChange) {
-      // Cuando onChange está presente, asumimos que es modo controlado con Controller
-      // (que espera Dayjs directamente, no un evento)
-      // Esto funciona correctamente porque Controller siempre pasa onChange
-      const dayjsHandler = onChange as unknown as ((date: Dayjs | null) => void);
-      dayjsHandler(date);
-    }
-    setIsOpen(false);
-  };
+    const fieldName =
+      isRegisterMode && "name" in restInputProps
+        ? (restInputProps.name as string)
+        : undefined;
 
-  const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (
-    event
-  ) => {
-    const newValue = event.target.value;
-    // Marcar que el usuario está escribiendo para evitar que el useEffect sobrescriba
-    isTypingRef.current = true;
-    // Solo actualizar el valor del input, NO llamar onChange mientras el usuario escribe
-    // El onChange se llamará en onBlur cuando se valide y parse la fecha completa
-    setInputValue(newValue);
-  };
+    // Obtener setValue del contexto del formulario
+    // Para usar objetos Dayjs con register, el formulario debe estar dentro de FormProvider
+    // useFormContext lanzará un error si no hay FormProvider, en cuyo caso el componente
+    // no funcionará correctamente con objetos Dayjs (guardará como string)
+    const formContext = useFormContext();
+    const setValue = formContext.setValue;
 
-  const handleInputBlur: React.FocusEventHandler<HTMLInputElement> = (
-    event
-  ) => {
-    // Marcar que el usuario terminó de escribir
-    isTypingRef.current = false;
-    
-    const newValue = event.target.value.trim();
-    if (!newValue) {
-      handleDateChange(null);
-      return;
-    }
+    const [internalDate, setInternalDate] = React.useState<Dayjs | null>(null);
+    const [displayValue, setDisplayValue] = React.useState<string>("");
+    const [isOpen, setIsOpen] = React.useState(false);
+    const containerRef = React.useRef<HTMLDivElement | null>(null);
+    const inputRef = React.useRef<HTMLInputElement | null>(null);
+    const isTypingRef = React.useRef(false);
 
-    const parsed = parseDateFromString(newValue, format);
-    if (parsed) {
-      handleDateChange(parsed);
-    } else {
-      // Si no es válida, restauramos el valor anterior formateado.
-      setInputValue(formatDateToString(internalDate, format));
-    }
-  };
+    // Función helper para sincronizar displayValue con el valor del formulario en modo register
+    const syncDisplayValue = React.useCallback(() => {
+      if (isRegisterMode && inputRef.current) {
+        const formValue = inputRef.current.value;
+        if (formValue) {
+          // Parsear el string de fecha del formulario
+          const parsed = parseDateFromString(formValue, format);
+          if (parsed) {
+            setDisplayValue(formatDateToString(parsed, format));
+            setInternalDate(parsed);
+            return true;
+          } else {
+            // Si hay un valor pero no se puede parsear, mostrarlo tal cual
+            setDisplayValue(formValue);
+            return true;
+          }
+        } else {
+          setDisplayValue("");
+          setInternalDate(null);
+          return false;
+        }
+      }
+      return false;
+    }, [isRegisterMode, format]);
 
-  const handleIconClick: React.MouseEventHandler<HTMLElement> = (event) => {
-    event.preventDefault();
-    setIsOpen((prev) => !prev);
-  };
+    // Sincronizar displayValue con el valor del formulario en modo register
+    React.useEffect(() => {
+      if (isRegisterMode) {
+        let attempts = 0;
+        const maxAttempts = 50; // Intentar durante ~5 segundos (50 * 100ms)
 
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
+        const trySync = (): boolean => {
+          if (inputRef.current) {
+            const formValue = inputRef.current.value;
+            if (formValue) {
+              const parsed = parseDateFromString(formValue, format);
+              if (parsed) {
+                setDisplayValue(formatDateToString(parsed, format));
+                setInternalDate(parsed);
+                return true;
+              } else {
+                setDisplayValue(formValue);
+                return true;
+              }
+            } else {
+              setDisplayValue("");
+              setInternalDate(null);
+            }
+          }
+          return false;
+        };
+
+        // Intentar inmediatamente
+        if (trySync()) {
+          return;
+        }
+
+        // Si no encontramos el valor, usar un intervalo
+        const intervalId = window.setInterval(() => {
+          attempts++;
+          if (trySync() || attempts >= maxAttempts) {
+            clearInterval(intervalId);
+          }
+        }, 100);
+
+        // También usar timeouts como fallback
+        const timeouts: number[] = [];
+        [0, 50, 100, 200, 500, 1000].forEach((delay) => {
+          const timeoutId = window.setTimeout(() => {
+            trySync();
+          }, delay);
+          timeouts.push(timeoutId);
+        });
+
+        return () => {
+          clearInterval(intervalId);
+          timeouts.forEach(clearTimeout);
+        };
+      }
+    }, [isRegisterMode, format]);
+
+    // También escuchar cambios en el input nativo para sincronizar cuando cambie
+    React.useEffect(() => {
+      if (isRegisterMode && inputRef.current) {
+        const input = inputRef.current;
+
+        const handleInputSync = () => {
+          syncDisplayValue();
+        };
+
+        input.addEventListener("input", handleInputSync);
+        input.addEventListener("change", handleInputSync);
+
+        const observer = new MutationObserver(() => {
+          syncDisplayValue();
+        });
+
+        observer.observe(input, {
+          attributes: true,
+          attributeFilter: ["value"],
+        });
+
+        return () => {
+          input.removeEventListener("input", handleInputSync);
+          input.removeEventListener("change", handleInputSync);
+          observer.disconnect();
+        };
+      }
+    }, [isRegisterMode, syncDisplayValue]);
+
+    // Sincronizar con el valor del formulario
+    React.useEffect(() => {
+      if (!isTypingRef.current) {
+        if (isRegisterMode) {
+          // En modo register con setValue, leer del formulario
+          if (formContext && fieldName) {
+            const formValue = formContext.watch(fieldName);
+            const normalized = normalizeToDayjs(formValue);
+            setInternalDate(normalized);
+            if (normalized) {
+              setDisplayValue(formatDateToString(normalized, format));
+            } else {
+              setDisplayValue("");
+            }
+          }
+          // Si no hay setValue, syncDisplayValue se encarga de sincronizar desde el input nativo
+        } else {
+          // Modo Controller, sincronizar con el valor Dayjs
+          const normalized = normalizeToDayjs(value);
+          setInternalDate(normalized);
+          if (normalized) {
+            setDisplayValue(formatDateToString(normalized, format));
+          } else {
+            setDisplayValue("");
+          }
+        }
+      }
+    }, [value, format, isRegisterMode, setValue, fieldName, formContext]);
+
+    // Determinar el valor a mostrar en el input
+    const inputValue = isRegisterMode ? displayValue : displayValue;
+
+    const handleDateChange = (date: Dayjs | null) => {
+      const dateString = formatDateToString(date, format);
+
+      if (isRegisterMode) {
+        // En modo register, usar setValue si está disponible para guardar el objeto Dayjs
+        // Si no está disponible, guardar como string (comportamiento por defecto)
+        if (setValue && fieldName) {
+          // Usar setValue para guardar el objeto Dayjs directamente
+          setValue(fieldName, date, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
+        } else {
+          // Fallback: actualizar el input nativo con el string de fecha
+          if (inputRef.current) {
+            const nativeInput = inputRef.current;
+
+            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+              window.HTMLInputElement.prototype,
+              "value"
+            )?.set;
+
+            if (nativeInputValueSetter) {
+              nativeInputValueSetter.call(nativeInput, dateString);
+            } else {
+              nativeInput.value = dateString;
+            }
+
+            // Llamar al onChange de register
+            if (onChange) {
+              const changeEvent = {
+                target: nativeInput,
+                currentTarget: nativeInput,
+              } as React.ChangeEvent<HTMLInputElement>;
+
+              (onChange as React.ChangeEventHandler<HTMLInputElement>)(
+                changeEvent
+              );
+            }
+
+            // Disparar eventos nativos
+            const inputEvent = new Event("input", {
+              bubbles: true,
+              cancelable: true,
+            });
+            nativeInput.dispatchEvent(inputEvent);
+
+            const changeEventNative = new Event("change", {
+              bubbles: true,
+              cancelable: true,
+            });
+            nativeInput.dispatchEvent(changeEventNative);
+          }
+        }
+
+        // Actualizar el displayValue
+        setDisplayValue(dateString);
+        setInternalDate(date);
+      } else {
+        // Modo Controller - comportamiento original
+        setInternalDate(date);
+        setDisplayValue(dateString);
+
+        if (onChange) {
+          const dayjsHandler = onChange as unknown as (
+            date: Dayjs | null
+          ) => void;
+          dayjsHandler(date);
+        }
+      }
+
+      setIsOpen(false);
+    };
+
+    const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (
+      event
+    ) => {
+      const newValue = event.target.value;
+      isTypingRef.current = true;
+
+      if (isRegisterMode) {
+        // En modo register, actualizar el displayValue mientras el usuario escribe
+        setDisplayValue(newValue);
+      } else {
+        // Modo Controller
+        setDisplayValue(newValue);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+    const handleInputBlur: React.FocusEventHandler<HTMLInputElement> = (
+      event
+    ) => {
+      isTypingRef.current = false;
+
+      const newValue = event.target.value.trim();
+
+      if (isRegisterMode) {
+        // En modo register, validar y actualizar el input nativo
+        if (!newValue) {
+          // Limpiar el valor
+          if (inputRef.current) {
+            const nativeInput = inputRef.current;
+            const setter = Object.getOwnPropertyDescriptor(
+              window.HTMLInputElement.prototype,
+              "value"
+            )?.set;
+            setter?.call(nativeInput, "");
+
+            if (onChange) {
+              const changeEvent = {
+                target: nativeInput,
+                currentTarget: nativeInput,
+              } as React.ChangeEvent<HTMLInputElement>;
+              (onChange as React.ChangeEventHandler<HTMLInputElement>)(
+                changeEvent
+              );
+            }
+
+            const inputEvent = new Event("input", { bubbles: true });
+            nativeInput.dispatchEvent(inputEvent);
+            const changeEventNative = new Event("change", { bubbles: true });
+            nativeInput.dispatchEvent(changeEventNative);
+          }
+          setDisplayValue("");
+          setInternalDate(null);
+        } else {
+          const parsed = parseDateFromString(newValue, format);
+          if (parsed) {
+            handleDateChange(parsed);
+          } else {
+            // Si no es válida, restaurar el valor anterior
+            const previousValue = inputRef.current?.value || "";
+            setDisplayValue(previousValue);
+          }
+        }
+
+        // Llamar al onBlur de register si existe
+        if (registerOnBlur) {
+          registerOnBlur(event);
+        }
+      } else {
+        // Modo Controller
+        if (!newValue) {
+          handleDateChange(null);
+        } else {
+          const parsed = parseDateFromString(newValue, format);
+          if (parsed) {
+            handleDateChange(parsed);
+          } else {
+            // Si no es válida, restaurar el valor anterior formateado
+            setDisplayValue(formatDateToString(internalDate, format));
+          }
+        }
+      }
     };
-  }, []);
 
-  const datePickerInitialViewDate =
-    internalDate ?? datePickerProps?.initialViewDate ?? dayjs();
+    const handleIconClick: React.MouseEventHandler<HTMLElement> = (event) => {
+      event.preventDefault();
+      setIsOpen((prev) => !prev);
+    };
 
-  return (
-    <div ref={containerRef} className="relative w-full">
-      <div ref={inputWrapperRef} className="relative">
+    React.useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(event.target as Node)
+        ) {
+          setIsOpen(false);
+        }
+      };
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, []);
+
+    // Combinar refs: el ref del componente y el ref interno
+    const combinedRef = React.useCallback(
+      (node: HTMLInputElement | null) => {
+        inputRef.current = node;
+        if (typeof ref === "function") {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
+
+        // Cuando el ref se establece en modo register, sincronizar el displayValue
+        if (isRegisterMode && node) {
+          [0, 10, 50, 100, 200, 500].forEach((delay) => {
+            setTimeout(() => {
+              if (node && inputRef.current === node) {
+                const formValue = node.value;
+                if (formValue) {
+                  const parsed = parseDateFromString(formValue, format);
+                  if (parsed) {
+                    setDisplayValue(formatDateToString(parsed, format));
+                    setInternalDate(parsed);
+                  } else {
+                    setDisplayValue(formValue);
+                  }
+                }
+              }
+            }, delay);
+          });
+        }
+      },
+      [ref, isRegisterMode, format]
+    );
+
+    const datePickerInitialViewDate =
+      internalDate ?? datePickerProps?.initialViewDate ?? dayjs();
+
+    return (
+      <div ref={containerRef} className="relative w-full">
         <Input
-          {...inputProps}
-          ref={ref}
+          {...restInputProps}
+          ref={combinedRef}
           type="text"
           value={inputValue}
           onChange={handleInputChange}
@@ -236,24 +560,23 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
           iconPosition={iconPosition}
           onIconClick={handleIconClick}
           placeholder={
-            inputProps.placeholder ??
+            restInputProps.placeholder ??
             (format === "mm/dd/yyyy" ? "mm/dd/yyyy" : "dd/mm/yyyy")
           }
           className={className}
         />
-      </div>
 
-      {isOpen && (
-        <div className="absolute z-20 mt-1 right-0">
-          <DatePicker
-            {...datePickerProps}
-            value={internalDate ?? datePickerInitialViewDate}
-            onChange={(date) => handleDateChange(date)}
-          />
-        </div>
-      )}
-    </div>
-  );
+        {isOpen && (
+          <div className="absolute z-20 mt-1 right-0">
+            <DatePicker
+              {...datePickerProps}
+              value={internalDate ?? datePickerInitialViewDate}
+              onChange={(date) => handleDateChange(date)}
+            />
+          </div>
+        )}
+      </div>
+    );
   }
 );
 

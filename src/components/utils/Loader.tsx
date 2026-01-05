@@ -103,7 +103,7 @@ export const Loader: React.FC<LoaderProps> = ({
           <div
             className={`absolute inset-0 flex items-center justify-center z-10 pointer-events-auto px-4 ${overlayClasses}`}
           >
-            <div className="bg-[var(--color-bg-default)] rounded-lg p-6 shadow-lg border border-[var(--color-border-default)] w-full">
+            <div className="bg-[var(--color-bg-default)] rounded-lg p-6 shadow-lg border border-[var(--color-border-default)] w-full max-w-2xl">
               <ProgressBar />
             </div>
           </div>

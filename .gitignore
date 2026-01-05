@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Compiled template files
+**/templates/**/*.js
+**/templates/**/*.d.ts
+**/templates/**/*.d.ts.map
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

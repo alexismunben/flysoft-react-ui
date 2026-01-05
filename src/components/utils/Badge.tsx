@@ -83,14 +83,53 @@ export const Badge: React.FC<BadgeProps> = ({
   };
 
   const sizeClasses = {
-    sm: "px-2 py-0.5 text-xs",
-    md: "px-2.5 py-0.5 text-sm",
-    lg: "px-3 py-1 text-base",
+    sm: "py-0.5 text-xs",
+    md: "py-0.5 text-sm",
+    lg: "py-1 text-base",
   };
+
+  // Padding horizontal: si hay icono, el badge no tiene padding, se aplica a los elementos internos
+  const horizontalPaddingClasses = icon
+    ? "" // Sin padding horizontal en el badge cuando hay icono
+    : size === "sm"
+    ? "px-2"
+    : size === "md"
+    ? "px-2.5"
+    : "px-3";
+
+  // Padding para el texto: flex-1 para ocupar el espacio, padding solo en el lado opuesto al icono
+  const textPaddingClasses = icon
+    ? iconPosition === "left"
+      ? size === "sm"
+        ? "flex-1 pr-2"
+        : size === "md"
+        ? "flex-1 pr-2.5"
+        : "flex-1 pr-3"
+      : size === "sm"
+      ? "flex-1 pl-2"
+      : size === "md"
+      ? "flex-1 pl-2.5"
+      : "flex-1 pl-3"
+    : "";
+
+  // Padding para el icono: solo en el lado del borde
+  const iconPaddingClasses = icon
+    ? iconPosition === "left"
+      ? size === "sm"
+        ? "pl-2"
+        : size === "md"
+        ? "pl-2.5"
+        : "pl-3"
+      : size === "sm"
+      ? "pr-2"
+      : size === "md"
+      ? "pr-2.5"
+      : "pr-3"
+    : "";
 
   const roundedClasses = rounded ? "rounded-full" : "rounded-md";
 
-  const gapClasses = icon ? "gap-2" : "";
+  const gapClasses = icon ? "gap-2" : ""; // Gap entre icono y texto cuando hay icono
 
   const iconSizeClasses =
     size === "sm" ? "text-xs" : size === "md" ? "text-sm" : "text-base";
@@ -109,7 +148,7 @@ export const Badge: React.FC<BadgeProps> = ({
   // Si hay onClick y no hay iconos, agregar cursor-pointer al badge completo
   const cursorClasses = onClick && !icon ? "cursor-pointer" : "";
 
-  const classes = `${baseClasses} ${backgroundClasses} ${sizeClasses[size]} ${roundedClasses} ${gapClasses} ${cursorClasses} ${className}`;
+  const classes = `${baseClasses} ${backgroundClasses} ${sizeClasses[size]} ${horizontalPaddingClasses} ${roundedClasses} ${gapClasses} ${cursorClasses} ${className}`;
 
   const renderIcon = () => {
     if (!icon) return null;
@@ -119,30 +158,32 @@ export const Badge: React.FC<BadgeProps> = ({
       : `fa ${icon} ${iconSizeClasses}`;
 
     return (
-      <i
-        className={iconClasses}
-        aria-hidden={!iconLabel}
-        aria-label={iconLabel}
-        onClick={onClick}
-        role={onClick ? "button" : undefined}
-        tabIndex={onClick ? 0 : undefined}
-        onKeyDown={
-          onClick
-            ? (e: React.KeyboardEvent) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  // Crear un evento sintético compatible con MouseEvent
-                  const syntheticEvent = {
-                    ...e,
-                    currentTarget: e.currentTarget,
-                    target: e.target,
-                  } as unknown as React.MouseEvent<HTMLElement>;
-                  onClick(syntheticEvent);
+      <span className={iconPaddingClasses}>
+        <i
+          className={iconClasses}
+          aria-hidden={!iconLabel}
+          aria-label={iconLabel}
+          onClick={onClick}
+          role={onClick ? "button" : undefined}
+          tabIndex={onClick ? 0 : undefined}
+          onKeyDown={
+            onClick
+              ? (e: React.KeyboardEvent) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    // Crear un evento sintético compatible con MouseEvent
+                    const syntheticEvent = {
+                      ...e,
+                      currentTarget: e.currentTarget,
+                      target: e.target,
+                    } as unknown as React.MouseEvent<HTMLElement>;
+                    onClick(syntheticEvent);
+                  }
                 }
-              }
-            : undefined
-        }
-      />
+              : undefined
+          }
+        />
+      </span>
     );
   };
 
@@ -171,7 +212,7 @@ export const Badge: React.FC<BadgeProps> = ({
   return (
     <span className={classes} style={inlineStyles} {...badgeProps}>
       {icon && iconPosition === "left" && renderIcon()}
-      <span>{children}</span>
+      <span className={textPaddingClasses}>{children}</span>
       {icon && iconPosition === "right" && renderIcon()}
     </span>
   );

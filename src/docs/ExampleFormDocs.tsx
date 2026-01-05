@@ -4,13 +4,15 @@ import {
   Card,
   Input,
   AutocompleteInput,
-  DatePicker,
   DateInput,
   SearchSelectInput,
   Button,
+  Checkbox,
+  RadioButtonGroup,
 } from "../index";
-import type { SearchSelectOption, AutocompleteOption } from "../index";
-import { useForm, Controller } from "react-hook-form";
+import type { AutocompleteOption } from "../index";
+import { useForm, FormProvider } from "react-hook-form";
+import dayjs from "dayjs";
 
 const autocompleteOptions: AutocompleteOption[] = [
   { label: "España", value: "es", description: "Madrid" },
@@ -20,68 +22,75 @@ const autocompleteOptions: AutocompleteOption[] = [
   { label: "Portugal", value: "pt", description: "Lisboa" },
 ];
 
-const searchSelectOptions: SearchSelectOption[] = [
+const searchSelectOptions: Array<{ label: string; id: number }> = [
   {
-    label: "España",
-    value: "es",
-    icon: "fa-flag",
-    description: "Madrid",
+    label: "Madrid",
+    id: 1,
   },
   {
-    label: "Estados Unidos",
-    value: "us",
-    icon: "fa-flag",
-    description: "Washington D.C.",
+    label: "París",
+    id: 2,
   },
   {
-    label: "México",
-    value: "mx",
-    icon: "fa-flag",
-    description: "Ciudad de México",
+    label: "Roma",
+    id: 3,
   },
   {
-    label: "Argentina",
-    value: "ar",
-    icon: "fa-flag",
-    description: "Buenos Aires",
+    label: "Berlín",
+    id: 4,
+  },
+  {
+    label: "Lisboa",
+    id: 5,
   },
 ];
 
 const mockSearchPromise = async (
   text: string
-): Promise<SearchSelectOption[]> => {
+): Promise<Array<{ label: string; id: number }>> => {
   await new Promise((resolve) => setTimeout(resolve, 300));
   const search = text.toLowerCase();
-  return searchSelectOptions.filter(
-    (option) =>
-      option.label.toLowerCase().includes(search) ||
-      option.value.toLowerCase().includes(search)
+  return searchSelectOptions.filter((option) =>
+    option.label.toLowerCase().includes(search)
   );
 };
 
+const mockSingleSearchPromise = async (
+  id: number
+): Promise<{ label: string; id: number } | undefined> => {
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  return searchSelectOptions.find((option) => option.id === id);
+};
+
 const ExampleFormDocs: React.FC = () => {
+  const methods = useForm<{
+    nombre: string;
+    pais: string;
+    fechaNacimiento: Dayjs | null;
+    ciudad: number | undefined;
+    aceptaTerminos: boolean;
+    genero: string;
+    tipoUsuario: string;
+  }>({
+    defaultValues: {
+      nombre: "Alexis Wursten",
+      pais: "de",
+      fechaNacimiento: dayjs("1990-01-01"),
+      ciudad: 3,
+      aceptaTerminos: false,
+      genero: "masculino",
+      tipoUsuario: "user",
+    },
+  });
+
   const {
     handleSubmit,
     reset,
     watch,
-    control,
     setFocus,
+    register,
     formState: { errors, isSubmitted },
-  } = useForm<{
-    nombre: string;
-    pais: string;
-    fechaSeleccion: Dayjs | null;
-    fechaNacimiento: Dayjs | null;
-    ciudad: SearchSelectOption;
-  }>({
-    defaultValues: {
-      nombre: "",
-      pais: "",
-      fechaSeleccion: null,
-      fechaNacimiento: null,
-      ciudad: undefined as SearchSelectOption | undefined,
-    },
-  });
+  } = methods;
 
   const onSubmit = () => {
     console.log(watch());
@@ -95,12 +104,16 @@ const ExampleFormDocs: React.FC = () => {
           setFocus("nombre");
         } else if (errors.pais) {
           setFocus("pais");
-        } else if (errors.fechaSeleccion) {
-          setFocus("fechaSeleccion");
         } else if (errors.fechaNacimiento) {
           setFocus("fechaNacimiento");
         } else if (errors.ciudad) {
           setFocus("ciudad");
+        } else if (errors.aceptaTerminos) {
+          // No se puede hacer focus en checkbox, pero podemos registrar el error
+        } else if (errors.genero) {
+          // No se puede hacer focus en radio button group, pero podemos registrar el error
+        } else if (errors.tipoUsuario) {
+          // No se puede hacer focus en radio button group, pero podemos registrar el error
         }
       }, 100);
       return () => clearTimeout(timer);
@@ -108,131 +121,175 @@ const ExampleFormDocs: React.FC = () => {
   }, [errors, isSubmitted, setFocus]);
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      <Card title="Formulario de Ejemplo">
-        <div className="space-y-6">
-          <p
-            className="text-sm"
-            style={{ color: "var(--flysoft-text-secondary)" }}
-          >
-            Este formulario demuestra el uso de todos los componentes de
-            formulario controlados por react-hook-form con validaciones
-            requeridas.
-          </p>
+    <FormProvider {...methods}>
+      <div className="max-w-5xl mx-auto space-y-8">
+        <Card title="Formulario de Ejemplo">
+          <div className="space-y-6">
+            <p
+              className="text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Este formulario demuestra el uso de todos los componentes de
+              formulario controlados por react-hook-form con validaciones
+              requeridas. Todos los campos usan <code>register</code> de forma
+              simplificada (sin Controller).
+            </p>
 
-          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-            <Controller
-              name="nombre"
-              control={control}
-              rules={{ required: "El nombre es obligatorio" }}
-              render={({ field, fieldState }) => (
-                <Input
-                  label="Nombre completo"
-                  placeholder="Ingresa tu nombre"
-                  icon="fa-user"
-                  {...field}
-                  error={fieldState.error?.message}
-                />
-              )}
-            />
-
-            <Controller
-              name="pais"
-              control={control}
-              rules={{ required: "El país es obligatorio" }}
-              render={({ field, fieldState }) => (
-                <AutocompleteInput
-                  label="País"
-                  placeholder="Selecciona un país"
-                  icon="fa-globe"
-                  options={autocompleteOptions}
-                  value={field.value}
-                  onChange={(value) => field.onChange(value)}
-                  error={fieldState.error?.message}
-                />
-              )}
-            />
-
-            <Controller
-              name="fechaSeleccion"
-              control={control}
-              rules={{ required: "La fecha de selección es obligatoria" }}
-              render={({ field, fieldState }) => (
-                <div>
-                  <label className="block text-sm text-[var(--color-primary)] mb-1 font-[var(--font-default)]">
-                    Fecha de selección
-                  </label>
-                  <DatePicker
-                    value={field.value ?? undefined}
-                    onChange={(date) => field.onChange(date)}
-                  />
-                  {fieldState.error && (
-                    <p className="mt-1 text-sm text-[var(--color-danger)] font-[var(--font-default)]">
-                      {fieldState.error.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            />
-
-            <Controller
-              name="fechaNacimiento"
-              control={control}
-              rules={{ required: "La fecha de nacimiento es obligatoria" }}
-              render={({ field, fieldState }) => (
-                <DateInput
-                  label="Fecha de nacimiento"
-                  placeholder="dd/mm/yyyy"
-                  {...field}
-                  error={fieldState.error?.message}
-                />
-              )}
-            />
-
-            <Controller
-              name="ciudad"
-              control={control}
-              rules={{ required: "La ciudad es obligatoria" }}
-              render={({ field, fieldState }) => (
-                <SearchSelectInput<SearchSelectOption, SearchSelectOption>
-                  label="Ciudad"
-                  placeholder="Busca y selecciona una ciudad"
-                  getOptionLabel={(option) =>
-                    option.description?.toString() || ""
+            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+              <Input
+                label="Nombre completo"
+                placeholder="Ingresa tu nombre"
+                icon="fa-user"
+                {...register("nombre", {
+                  required: "El nombre es obligatorio",
+                  minLength: {
+                    value: 3,
+                    message: "El nombre debe tener al menos 3 caracteres",
+                  },
+                })}
+                error={errors.nombre?.message}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    console.log("Enter");
+                    setTimeout(() => {
+                      setFocus("fechaNacimiento");
+                    }, 100);
                   }
-                  onSearchPromiseFn={mockSearchPromise}
-                  dialogTitle="Seleccione una ciudad"
-                  {...field}
-                  error={fieldState.error?.message}
-                />
-              )}
-            />
-
-            <div className="flex justify-end gap-2 pt-4">
-              <Button
-                variant="outline"
-                icon="fa-times"
-                type="button"
-                onClick={() => {
-                  reset({
-                    nombre: "",
-                    pais: "",
-                    fechaSeleccion: null,
-                    fechaNacimiento: null,
-                    ciudad: undefined as SearchSelectOption | undefined,
-                  });
                 }}
-              >
-                Resetear
-              </Button>
-              <Button variant="primary" icon="fa-check" type="submit">
-                Enviar
-              </Button>
-            </div>
-          </form>
-        </div>
-      </Card>
-    </div>
+              />
+
+              <AutocompleteInput
+                label="País"
+                placeholder="Selecciona un país"
+                icon="fa-globe"
+                options={autocompleteOptions}
+                getOptionValue={(option) => option.value}
+                {...register("pais", {
+                  required: "El país es obligatorio",
+                })}
+                error={errors.pais?.message}
+                onSelectOption={() => {
+                  // Al seleccionar un país, mover el foco a fecha de nacimiento
+                  setTimeout(() => {
+                    setFocus("fechaNacimiento");
+                  }, 100);
+                }}
+              />
+              <div>País: {watch("pais")}</div>
+
+              <DateInput
+                label="Fecha de nacimiento"
+                placeholder="dd/mm/yyyy"
+                icon="fa-calendar-alt"
+                {...register("fechaNacimiento", {
+                  required: "La fecha de nacimiento es obligatoria",
+                })}
+                error={errors.fechaNacimiento?.message}
+              />
+              <div>
+                Fecha de nacimiento:{" "}
+                {(watch("fechaNacimiento") && watch("fechaNacimiento")?.format
+                  ? watch("fechaNacimiento")?.format("DD/MM/YYYY")
+                  : "") || "N/A"}
+              </div>
+
+              <SearchSelectInput<{ label: string; id: number }, number>
+                label="Ciudad"
+                placeholder="Busca y selecciona una ciudad"
+                getOptionLabel={(option) => option.label}
+                getOptionValue={(option) => option.id}
+                onSearchPromiseFn={mockSearchPromise}
+                onSingleSearchPromiseFn={mockSingleSearchPromise}
+                dialogTitle="Seleccione una ciudad"
+                {...register("ciudad", {
+                  required: "La ciudad es obligatoria",
+                })}
+                error={errors.ciudad?.message}
+                onSelectOption={() => {
+                  // Al seleccionar una ciudad, mover el foco a nombre completo
+                  setTimeout(() => {
+                    setFocus("nombre");
+                  }, 100);
+                }}
+              />
+              <div>Ciudad: {watch("ciudad")}</div>
+
+              <Checkbox
+                label="Acepto los términos y condiciones"
+                {...register("aceptaTerminos", {
+                  required: "Debes aceptar los términos y condiciones",
+                })}
+                error={errors.aceptaTerminos?.message}
+              />
+              <div>
+                Acepta términos: {watch("aceptaTerminos") ? "Sí" : "No"}
+              </div>
+
+              <div>
+                <label className="block text-sm text-[var(--color-primary)] mb-1 font-[var(--font-default)]">
+                  Género
+                </label>
+                <RadioButtonGroup
+                  options={[
+                    { label: "Masculino", value: "masculino" },
+                    { label: "Femenino", value: "femenino" },
+                    { label: "Otro", value: "otro" },
+                  ]}
+                  {...register("genero", {
+                    required: "El género es obligatorio",
+                  })}
+                  error={errors.genero?.message}
+                />
+              </div>
+              <div>Género: {watch("genero")}</div>
+
+              <div>
+                <label className="block text-sm text-[var(--color-primary)] mb-1 font-[var(--font-default)]">
+                  Tipo de Usuario
+                </label>
+                <RadioButtonGroup
+                  options={[
+                    { label: "Administrador", value: "admin" },
+                    { label: "Usuario", value: "user" },
+                    { label: "Invitado", value: "guest" },
+                  ]}
+                  {...register("tipoUsuario", {
+                    required: "El tipo de usuario es obligatorio",
+                  })}
+                  error={errors.tipoUsuario?.message}
+                />
+              </div>
+              <div>Tipo de Usuario: {watch("tipoUsuario")}</div>
+
+              <div className="flex justify-end gap-2 pt-4">
+                <Button
+                  variant="outline"
+                  icon="fa-times"
+                  type="button"
+                  onClick={() => {
+                    reset({
+                      nombre: "",
+                      pais: "",
+                      fechaNacimiento: "",
+                      ciudad: undefined,
+                      aceptaTerminos: false,
+                      genero: "",
+                      tipoUsuario: "",
+                    });
+                  }}
+                >
+                  Resetear
+                </Button>
+                <Button variant="primary" icon="fa-check" type="submit">
+                  Enviar
+                </Button>
+              </div>
+            </form>
+          </div>
+        </Card>
+      </div>
+    </FormProvider>
   );
 };
 

@@ -11,6 +11,12 @@ export const DocsMenu = () => {
           <Link to="/docs/badge">Badge</Link>
         </li>
         <li>
+          <Link to="/docs/avatar">Avatar</Link>
+        </li>
+        <li>
+          <Link to="/docs/roadmap">RoadMap</Link>
+        </li>
+        <li>
           <Link to="/docs/card">Card</Link>
         </li>
         <li>
@@ -27,6 +33,12 @@ export const DocsMenu = () => {
         </li>
         <li>
           <Link to="/docs/dateinput">DateInput</Link>
+        </li>
+        <li>
+          <Link to="/docs/checkbox">Checkbox</Link>
+        </li>
+        <li>
+          <Link to="/docs/radiobuttongroup">RadioButtonGroup</Link>
         </li>
         <li>
           <Link to="/docs/theme">ThemeSwitcher</Link>
@@ -56,7 +68,13 @@ export const DocsMenu = () => {
           <Link to="/docs/auth">AuthContext</Link>
         </li>
         <li>
+          <Link to="/docs/listcrud">ListCrudContext</Link>
+        </li>
+        <li>
           <Link to="/docs/example-form">Formulario de Ejemplo</Link>
+        </li>
+        <li>
+          <Link to="/docs/admin">Admin (Mock Services)</Link>
         </li>
       </ul>
     </>
