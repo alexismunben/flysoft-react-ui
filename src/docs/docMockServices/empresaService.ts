@@ -59,7 +59,7 @@ export const empresaService = {
     }
 
     const total = todasFiltradas.length;
-    
+
     // Si limit es 0, devolver todos los elementos sin paginar
     if (limit === 0) {
       return {

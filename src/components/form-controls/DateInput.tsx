@@ -26,6 +26,11 @@ export interface DateInputProps
     | React.ChangeEventHandler<HTMLInputElement>;
   format?: DateInputFormat;
   datePickerProps?: Omit<DatePickerProps, "value" | "onChange">;
+  /**
+   * Si es true, el input será de solo lectura. No se podrá modificar ni desplegar el DatePicker.
+   * Por defecto es false.
+   */
+  readOnly?: boolean;
 }
 
 const pad = (value: number) => value.toString().padStart(2, "0");
@@ -159,6 +164,7 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
       icon = "fa-calendar-alt",
       iconPosition = "right",
       className = "",
+      readOnly = false,
       ...inputProps
     },
     ref
@@ -180,10 +186,11 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
 
     // Obtener setValue del contexto del formulario
     // Para usar objetos Dayjs con register, el formulario debe estar dentro de FormProvider
-    // useFormContext lanzará un error si no hay FormProvider, en cuyo caso el componente
-    // no funcionará correctamente con objetos Dayjs (guardará como string)
+    // useFormContext debe llamarse incondicionalmente (requisito de React Hooks)
+    // Si no hay FormProvider y se usa en modo register, useFormContext lanzará un error
+    // Para usar sin FormProvider, usar Controller en lugar de register
     const formContext = useFormContext();
-    const setValue = formContext.setValue;
+    const setValue = formContext?.setValue;
 
     const [internalDate, setInternalDate] = React.useState<Dayjs | null>(null);
     const [displayValue, setDisplayValue] = React.useState<string>("");
@@ -335,6 +342,8 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
     const inputValue = isRegisterMode ? displayValue : displayValue;
 
     const handleDateChange = (date: Dayjs | null) => {
+      if (readOnly) return;
+
       const dateString = formatDateToString(date, format);
 
       if (isRegisterMode) {
@@ -411,6 +420,8 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
     const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (
       event
     ) => {
+      if (readOnly) return;
+
       const newValue = event.target.value;
       isTypingRef.current = true;
 
@@ -491,6 +502,7 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
     };
 
     const handleIconClick: React.MouseEventHandler<HTMLElement> = (event) => {
+      if (readOnly) return;
       event.preventDefault();
       setIsOpen((prev) => !prev);
     };
@@ -547,6 +559,11 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
     const datePickerInitialViewDate =
       internalDate ?? datePickerProps?.initialViewDate ?? dayjs();
 
+    // Ocultar el ícono cuando está en modo readOnly
+    const displayIcon = readOnly ? undefined : icon;
+    const displayIconPosition = readOnly ? undefined : iconPosition;
+    const displayOnIconClick = readOnly ? undefined : handleIconClick;
+
     return (
       <div ref={containerRef} className="relative w-full">
         <Input
@@ -556,17 +573,18 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
           value={inputValue}
           onChange={handleInputChange}
           onBlur={handleInputBlur}
-          icon={icon}
-          iconPosition={iconPosition}
-          onIconClick={handleIconClick}
+          icon={displayIcon}
+          iconPosition={displayIconPosition}
+          onIconClick={displayOnIconClick}
           placeholder={
             restInputProps.placeholder ??
             (format === "mm/dd/yyyy" ? "mm/dd/yyyy" : "dd/mm/yyyy")
           }
           className={className}
+          readOnly={readOnly}
         />
 
-        {isOpen && (
+        {!readOnly && isOpen && (
           <div className="absolute z-20 mt-1 right-0">
             <DatePicker
               {...datePickerProps}

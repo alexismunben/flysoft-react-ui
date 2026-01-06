@@ -18,6 +18,7 @@ import PaginationDocs from "./PaginationDocs";
 import LoaderDocs from "./LoaderDocs";
 import DataTableDocs from "./DataTableDocs";
 import DropdownMenuDocs from "./DropdownMenuDocs";
+import FilterDocs from "./FilterDocs";
 import { AuthDocs } from "./AuthDocs.tsx/AuthDocs";
 import { ListCrudDocs } from "./ListCrudDocs.tsx/ListCrudDocs";
 import ExampleFormDocs from "./ExampleFormDocs";
@@ -49,6 +50,7 @@ export const DocsRouter: React.FC = () => {
       <Route path="loader" element={<LoaderDocs />} />
       <Route path="datatable" element={<DataTableDocs />} />
       <Route path="dropdownmenu" element={<DropdownMenuDocs />} />
+      <Route path="filter" element={<FilterDocs />} />
       <Route path="auth" element={<AuthDocs />} />
       <Route path="listcrud" element={<ListCrudDocs />} />
       <Route path="example-form" element={<ExampleFormDocs />} />

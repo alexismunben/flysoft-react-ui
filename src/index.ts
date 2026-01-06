@@ -79,6 +79,8 @@ export { Loader } from "./components/utils/Loader";
 export type { LoaderProps } from "./components/utils/Loader";
 export { DropdownMenu } from "./components/utils/DropdownMenu";
 export type { DropdownMenuProps } from "./components/utils/DropdownMenu";
+export { Filter } from "./components/utils/Filter";
+export type { FilterProps } from "./components/utils/Filter";
 
 // Theme system exports
 export * from "./contexts";

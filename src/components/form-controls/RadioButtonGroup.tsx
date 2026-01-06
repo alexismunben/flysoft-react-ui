@@ -57,6 +57,12 @@ export interface RadioButtonGroupProps
    * Puede recibir un evento (para compatibilidad con react-hook-form) o ser una función sin parámetros
    */
   onBlur?: (() => void) | React.FocusEventHandler<HTMLInputElement>;
+  /**
+   * Si es true, el radio group será de solo lectura. Las opciones no seleccionadas se verán deshabilitadas
+   * y la seleccionada se verá igual, pero no se podrá cambiar el valor.
+   * Por defecto es false.
+   */
+  readOnly?: boolean;
 }
 
 export const RadioButtonGroup = React.forwardRef<
@@ -77,6 +83,7 @@ export const RadioButtonGroup = React.forwardRef<
       name,
       disabled,
       onBlur,
+      readOnly = false,
       ...props
     },
     ref
@@ -161,7 +168,7 @@ export const RadioButtonGroup = React.forwardRef<
     };
 
     const handleOptionClick = (optionValue: string | number) => {
-      if (disabled) return;
+      if (disabled || readOnly) return;
 
       const valueString = String(optionValue);
 
@@ -287,7 +294,8 @@ export const RadioButtonGroup = React.forwardRef<
             const optionValue = String(option.value);
             const isSelected =
               actualValue !== undefined && String(actualValue) === optionValue;
-            const isDisabled = disabled || option.disabled;
+            // En modo readOnly, las opciones no seleccionadas se ven deshabilitadas
+            const isDisabled = disabled || option.disabled || (readOnly && !isSelected);
 
             const radioId = `${name || "radio"}-${index}-${option.value}`;
 
@@ -339,7 +347,7 @@ export const RadioButtonGroup = React.forwardRef<
                 aria-disabled={isDisabled}
                 tabIndex={isDisabled ? -1 : 0}
                 onKeyDown={(e) => {
-                  if (isDisabled) return;
+                  if (isDisabled || readOnly) return;
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
                     handleOptionClick(option.value);

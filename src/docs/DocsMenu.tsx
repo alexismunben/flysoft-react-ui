@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export const DocsMenu = () => {
   return (
     <>
-      <ul>
+      <ul className="px-4">
         <li>
           <Link to="/docs/button">Button</Link>
         </li>
@@ -63,6 +63,9 @@ export const DocsMenu = () => {
         </li>
         <li>
           <Link to="/docs/dropdownmenu">DropdownMenu</Link>
+        </li>
+        <li>
+          <Link to="/docs/filter">Filter</Link>
         </li>
         <li>
           <Link to="/docs/auth">AuthContext</Link>

@@ -63,6 +63,8 @@ const mockSingleSearchPromise = async (
 };
 
 const ExampleFormDocs: React.FC = () => {
+  const [isReadOnly, setIsReadOnly] = React.useState(false);
+
   const methods = useForm<{
     nombre: string;
     pais: string;
@@ -135,11 +137,19 @@ const ExampleFormDocs: React.FC = () => {
               simplificada (sin Controller).
             </p>
 
+            <div className="pb-4 border-b border-[var(--color-border-default)]">
+              <Checkbox
+                label="ReadOnly"
+                checked={isReadOnly}
+                onChange={(e) => setIsReadOnly(e.target.checked)}
+              />
+            </div>
+
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
               <Input
                 label="Nombre completo"
                 placeholder="Ingresa tu nombre"
-                icon="fa-user"
+                readOnly={isReadOnly}
                 {...register("nombre", {
                   required: "El nombre es obligatorio",
                   minLength: {
@@ -162,9 +172,9 @@ const ExampleFormDocs: React.FC = () => {
               <AutocompleteInput
                 label="País"
                 placeholder="Selecciona un país"
-                icon="fa-globe"
                 options={autocompleteOptions}
                 getOptionValue={(option) => option.value}
+                readOnly={isReadOnly}
                 {...register("pais", {
                   required: "El país es obligatorio",
                 })}
@@ -182,6 +192,7 @@ const ExampleFormDocs: React.FC = () => {
                 label="Fecha de nacimiento"
                 placeholder="dd/mm/yyyy"
                 icon="fa-calendar-alt"
+                readOnly={isReadOnly}
                 {...register("fechaNacimiento", {
                   required: "La fecha de nacimiento es obligatoria",
                 })}
@@ -202,6 +213,7 @@ const ExampleFormDocs: React.FC = () => {
                 onSearchPromiseFn={mockSearchPromise}
                 onSingleSearchPromiseFn={mockSingleSearchPromise}
                 dialogTitle="Seleccione una ciudad"
+                readOnly={isReadOnly}
                 {...register("ciudad", {
                   required: "La ciudad es obligatoria",
                 })}
@@ -217,6 +229,7 @@ const ExampleFormDocs: React.FC = () => {
 
               <Checkbox
                 label="Acepto los términos y condiciones"
+                readOnly={isReadOnly}
                 {...register("aceptaTerminos", {
                   required: "Debes aceptar los términos y condiciones",
                 })}
@@ -236,6 +249,7 @@ const ExampleFormDocs: React.FC = () => {
                     { label: "Femenino", value: "femenino" },
                     { label: "Otro", value: "otro" },
                   ]}
+                  readOnly={isReadOnly}
                   {...register("genero", {
                     required: "El género es obligatorio",
                   })}
@@ -254,6 +268,7 @@ const ExampleFormDocs: React.FC = () => {
                     { label: "Usuario", value: "user" },
                     { label: "Invitado", value: "guest" },
                   ]}
+                  readOnly={isReadOnly}
                   {...register("tipoUsuario", {
                     required: "El tipo de usuario es obligatorio",
                   })}

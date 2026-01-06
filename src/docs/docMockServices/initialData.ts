@@ -2,6 +2,7 @@ import type { Empresa, Persona, PersonaEmpresa } from "./interfaces";
 import { empresaService } from "./empresaService";
 import { personaService } from "./personaService";
 import { personaEmpresaService } from "./personaEmpresaService";
+import dayjs from "dayjs";
 
 /**
  * Datos iniciales de ejemplo para empresas
@@ -30,29 +31,40 @@ const empresasEjemplo: Omit<Empresa, "id">[] = [
 ];
 
 /**
+ * Genera una fecha aleatoria entre dos años
+ */
+const generarFechaAleatoria = (anoInicio: number, anoFin: number): dayjs.Dayjs => {
+  const ano = Math.floor(Math.random() * (anoFin - anoInicio + 1)) + anoInicio;
+  const mes = Math.floor(Math.random() * 12); // 0-11
+  const diasEnMes = dayjs(`${ano}-${mes + 1}-01`).daysInMonth();
+  const dia = Math.floor(Math.random() * diasEnMes) + 1;
+  return dayjs(`${ano}-${String(mes + 1).padStart(2, "0")}-${String(dia).padStart(2, "0")}`);
+};
+
+/**
  * Datos iniciales de ejemplo para personas
  */
 const personasEjemplo: Omit<Persona, "id">[] = [
-  { nombre: "Ana García", email: "ana.garcia@email.com" },
-  { nombre: "Carlos Martínez", email: "carlos.martinez@email.com" },
-  { nombre: "Laura Fernández", email: "laura.fernandez@email.com" },
-  { nombre: "Juan Rodríguez", email: "juan.rodriguez@email.com" },
-  { nombre: "María López", email: "maria.lopez@email.com" },
-  { nombre: "Pedro Sánchez", email: "pedro.sanchez@email.com" },
-  { nombre: "Carmen Ruiz", email: "carmen.ruiz@email.com" },
-  { nombre: "Diego Torres", email: "diego.torres@email.com" },
-  { nombre: "Sofia Vargas", email: "sofia.vargas@email.com" },
-  { nombre: "Miguel Herrera", email: "miguel.herrera@email.com" },
-  { nombre: "Elena Jiménez", email: "elena.jimenez@email.com" },
-  { nombre: "Roberto Díaz", email: "roberto.diaz@email.com" },
-  { nombre: "Patricia Moreno", email: "patricia.moreno@email.com" },
-  { nombre: "Javier Muñoz", email: "javier.munoz@email.com" },
-  { nombre: "Isabel Gutiérrez", email: "isabel.gutierrez@email.com" },
-  { nombre: "Fernando Castro", email: "fernando.castro@email.com" },
-  { nombre: "Lucía Ortega", email: "lucia.ortega@email.com" },
-  { nombre: "Alejandro Medina", email: "alejandro.medina@email.com" },
-  { nombre: "Marta Romero", email: "marta.romero@email.com" },
-  { nombre: "Ricardo Morales", email: "ricardo.morales@email.com" },
+  { nombre: "Ana García", email: "ana.garcia@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Carlos Martínez", email: "carlos.martinez@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Laura Fernández", email: "laura.fernandez@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Juan Rodríguez", email: "juan.rodriguez@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "María López", email: "maria.lopez@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Pedro Sánchez", email: "pedro.sanchez@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Carmen Ruiz", email: "carmen.ruiz@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Diego Torres", email: "diego.torres@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Sofia Vargas", email: "sofia.vargas@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Miguel Herrera", email: "miguel.herrera@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Elena Jiménez", email: "elena.jimenez@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Roberto Díaz", email: "roberto.diaz@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Patricia Moreno", email: "patricia.moreno@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Javier Muñoz", email: "javier.munoz@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Isabel Gutiérrez", email: "isabel.gutierrez@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Fernando Castro", email: "fernando.castro@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Lucía Ortega", email: "lucia.ortega@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Alejandro Medina", email: "alejandro.medina@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Marta Romero", email: "marta.romero@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
+  { nombre: "Ricardo Morales", email: "ricardo.morales@email.com", fechaNacimiento: generarFechaAleatoria(2006, 2046) },
 ];
 
 /**

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { RoadMap, Card } from "../index";
 
 const RoadMapDocs: React.FC = () => {
@@ -157,8 +157,9 @@ const RoadMapDocs: React.FC = () => {
               className="text-sm mt-3"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              El componente RoadMap muestra una serie de etapas conectadas con líneas.
-              Cada etapa tiene un círculo con el color según su variante.
+              El componente RoadMap muestra una serie de etapas conectadas con
+              líneas. Cada etapa tiene un círculo con el color según su
+              variante.
             </p>
           </section>
 
@@ -174,8 +175,8 @@ const RoadMapDocs: React.FC = () => {
               className="text-sm mt-3"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              Puedes agregar descripciones a cada etapa que se mostrarán debajo del
-              nombre en un texto más pequeño.
+              Puedes agregar descripciones a cada etapa que se mostrarán debajo
+              del nombre en un texto más pequeño.
             </p>
           </section>
 
@@ -191,8 +192,9 @@ const RoadMapDocs: React.FC = () => {
               className="text-sm mt-3"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              Cada etapa puede tener un ícono FontAwesome 5 que se mostrará dentro del
-              círculo. Usa clases como <code>fa-check</code>, <code>fa-code</code>, etc.
+              Cada etapa puede tener un ícono FontAwesome 5 que se mostrará
+              dentro del círculo. Usa clases como <code>fa-check</code>,{" "}
+              <code>fa-code</code>, etc.
             </p>
           </section>
 
@@ -208,8 +210,9 @@ const RoadMapDocs: React.FC = () => {
               className="text-sm mt-3"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              Las etapas con <code>disabled: true</code> se muestran con una opacidad de
-              0.5, tanto el círculo como el texto (nombre y descripción).
+              Las etapas con <code>disabled: true</code> se muestran con una
+              opacidad de 0.5, tanto el círculo como el texto (nombre y
+              descripción).
             </p>
           </section>
 
@@ -225,9 +228,9 @@ const RoadMapDocs: React.FC = () => {
               className="text-sm mt-3"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              Puedes usar la propiedad <code>bg</code> para definir un color de fondo
-              personalizado (hexadecimal, rgb, o nombre de color). Esto tiene prioridad
-              sobre la variante.
+              Puedes usar la propiedad <code>bg</code> para definir un color de
+              fondo personalizado (hexadecimal, rgb, o nombre de color). Esto
+              tiene prioridad sobre la variante.
             </p>
           </section>
 
@@ -244,10 +247,10 @@ const RoadMapDocs: React.FC = () => {
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
               Las variantes disponibles son: <code>primary</code>,{" "}
-              <code>secondary</code>, <code>success</code>, <code>warning</code>,{" "}
-              <code>danger</code>, e <code>info</code>. Las líneas conectadoras tienen un
-              gradiente que combina 50% del color de la etapa origen y 50% del color de
-              la etapa destino.
+              <code>secondary</code>, <code>success</code>, <code>warning</code>
+              , <code>danger</code>, e <code>info</code>. Las líneas
+              conectadoras tienen un gradiente que combina 50% del color de la
+              etapa origen y 50% del color de la etapa destino.
             </p>
           </section>
 
@@ -296,8 +299,8 @@ const RoadMapDocs: React.FC = () => {
               className="text-sm mt-3"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              Ejemplo completo combinando todas las características: variantes, íconos y
-              descripciones.
+              Ejemplo completo combinando todas las características: variantes,
+              íconos y descripciones.
             </p>
           </section>
         </div>
@@ -307,4 +310,3 @@ const RoadMapDocs: React.FC = () => {
 };
 
 export default RoadMapDocs;
-

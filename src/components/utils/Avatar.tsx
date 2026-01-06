@@ -44,7 +44,7 @@ const getInitials = (text: string): string => {
   if (words.length === 0) return "";
 
   const firstLetter = words[0].charAt(0).toUpperCase();
-  
+
   if (words.length === 1) {
     return firstLetter;
   }
@@ -87,15 +87,15 @@ export interface AvatarProps {
 
 /**
  * Avatar component displays a circular avatar with initials or an image
- * 
+ *
  * @example
  * // Basic usage with text
  * <Avatar text="John Doe" />
- * 
+ *
  * @example
  * // With image
  * <Avatar text="John Doe" image="https://example.com/avatar.jpg" />
- * 
+ *
  * @example
  * // Custom colors
  * <Avatar text="Jane Smith" bgColor="#3b82f6" textColor="#ffffff" />
@@ -162,4 +162,3 @@ export const Avatar: React.FC<AvatarProps> = ({
 };
 
 Avatar.displayName = "Avatar";
-

@@ -226,6 +226,18 @@
     @apply transition-shadow duration-200;
     box-shadow: var(--flysoft-shadow-lg);
   }
+
+  /* Scrollbar hide utility */
+  .scrollbar-hide {
+    /* Firefox */
+    scrollbar-width: none;
+    /* Safari and Chrome */
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @keyframes flysoft-button-ripple {

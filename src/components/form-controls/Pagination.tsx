@@ -68,9 +68,13 @@ export const Pagination: React.FC<PaginationProps> = ({
           aria-label="Página anterior"
         />
       </div>
-      <div className="text-xs">
+      <div
+        className={`text-xs h-[32px] min-w-[100px] text-center flex flex-col justify-center`}
+      >
         {isLoading ? (
-          <span className="block">Cargando...</span>
+          <>
+            <span className="block">Cargando...</span>
+          </>
         ) : (
           <>
             <span className="block">
@@ -103,44 +107,5 @@ export const Pagination: React.FC<PaginationProps> = ({
         />
       </div>
     </div>
-    // <div className="flex flex-col items-center gap-0 font-[var(--font-default)]">
-    //   {/* Botones de navegación */}
-    //   <div className="flex items-center gap-2">
-    //
-
-    //     {/* Texto de página */}
-    //     <span
-    //       className="text-xs px-3 leading-none"
-    //       style={{ color: "var(--color-text-primary)" }}
-    //     >
-    //       Página {page} de {pages}
-    //     </span>
-
-    //     <Button
-    //       variant="ghost"
-    //       size="sm"
-    //       icon="fa-angle-right"
-    //       onClick={goToNextPage}
-    //       disabled={isLastPage || !hasPages}
-    //       aria-label="Página siguiente"
-    //     />
-    //     <Button
-    //       variant="ghost"
-    //       size="sm"
-    //       icon="fa-angle-double-right"
-    //       onClick={goToLastPage}
-    //       disabled={isLastPage || !hasPages}
-    //       aria-label="Última página"
-    //     />
-    //   </div>
-
-    //   {/* Texto de elementos */}
-    //   <span
-    //     className="text-xs leading-none"
-    //     style={{ color: "var(--color-text-secondary)" }}
-    //   >
-    //     {total} elemento{total !== 1 ? "s" : ""}
-    //   </span>
-    // </div>
   );
 };

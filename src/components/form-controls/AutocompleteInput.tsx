@@ -42,6 +42,11 @@ export interface AutocompleteInputProps<T = AutocompleteOption, K = string>
    * Renderizado personalizado de cada opción. Si se define, se ignora el render por defecto.
    */
   renderOption?: (item: T) => React.ReactNode;
+  /**
+   * Si es true, el input será de solo lectura. No se podrá modificar ni desplegar las opciones.
+   * Por defecto es false.
+   */
+  readOnly?: boolean;
 }
 
 const AutocompleteInputInner = React.forwardRef<
@@ -60,6 +65,7 @@ const AutocompleteInputInner = React.forwardRef<
       getOptionValue,
       getOptionDescription,
       renderOption,
+      readOnly = false,
       ...inputProps
     },
     ref: React.ForwardedRef<HTMLInputElement>
@@ -72,6 +78,7 @@ const AutocompleteInputInner = React.forwardRef<
     const [highlightedIndex, setHighlightedIndex] = React.useState<number>(-1);
     const containerRef = React.useRef<HTMLDivElement | null>(null);
     const inputRef = React.useRef<HTMLInputElement | null>(null);
+    const justClearedRef = React.useRef<boolean>(false);
 
     // Detectar si estamos en modo register: si viene 'name' de register, estamos en modo register
     // register siempre pasa 'name', 'onChange', 'onBlur', y 'ref'
@@ -241,6 +248,8 @@ const AutocompleteInputInner = React.forwardRef<
     const handleChange: React.ChangeEventHandler<HTMLInputElement> = (
       event
     ) => {
+      if (readOnly) return;
+
       const newValue = event.target.value;
 
       if (isRegisterMode) {
@@ -261,6 +270,8 @@ const AutocompleteInputInner = React.forwardRef<
     };
 
     const handleSelect = (option: any) => {
+      if (readOnly) return;
+
       const label = labelGetter(option);
       const selectedValue = valueGetter(option);
       const valueString = String(selectedValue ?? "");
@@ -336,6 +347,8 @@ const AutocompleteInputInner = React.forwardRef<
     const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (
       event
     ) => {
+      if (readOnly) return;
+
       if (!isOpen && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
         setIsOpen(true);
         return;
@@ -409,7 +422,7 @@ const AutocompleteInputInner = React.forwardRef<
     }, [value, options, valueGetter, labelGetter, isRegisterMode]);
 
     const showDropdown =
-      isOpen && (filteredOptions.length > 0 || noResultsText);
+      !readOnly && isOpen && (filteredOptions.length > 0 || noResultsText);
 
     // Detectar si hay un valor seleccionado
     // Un valor está seleccionado si el value coincide con el getOptionValue de alguna opción
@@ -431,8 +444,13 @@ const AutocompleteInputInner = React.forwardRef<
     // Función para limpiar el valor
     const handleClear = React.useCallback(
       (event: React.MouseEvent<HTMLElement>) => {
+        if (readOnly) return;
+
         event.preventDefault();
         event.stopPropagation();
+
+        // Marcar que acabamos de limpiar para prevenir que onFocus abra el diálogo
+        justClearedRef.current = true;
 
         if (isRegisterMode) {
           // En modo register, limpiar el input nativo y disparar eventos
@@ -473,16 +491,30 @@ const AutocompleteInputInner = React.forwardRef<
         }
 
         setIsOpen(false);
+
+        // Resetear el flag después de un pequeño delay para permitir que otros eventos se procesen
+        setTimeout(() => {
+          justClearedRef.current = false;
+        }, 100);
       },
-      [value, onChange, isRegisterMode]
+      [value, onChange, isRegisterMode, readOnly]
     );
 
     // Determinar qué ícono mostrar: si hay valor seleccionado, mostrar "X", sino usar el ícono original
-    const displayIcon = hasSelectedValue ? "fa-times" : inputProps.icon;
-    const displayIconPosition = hasSelectedValue
+    // Si está en readOnly, no mostrar el ícono de limpiar ni permitir clicks
+    const displayIcon = readOnly
+      ? inputProps.icon
+      : hasSelectedValue
+      ? "fa-times"
+      : inputProps.icon;
+    const displayIconPosition = readOnly
+      ? inputProps.iconPosition || "left"
+      : hasSelectedValue
       ? "right"
       : inputProps.iconPosition || "left";
-    const displayOnIconClick = hasSelectedValue
+    const displayOnIconClick = readOnly
+      ? undefined
+      : hasSelectedValue
       ? handleClear
       : inputProps.onIconClick;
 
@@ -531,12 +563,17 @@ const AutocompleteInputInner = React.forwardRef<
           ref={combinedRef}
           value={inputValue}
           onChange={handleChange}
-          onFocus={() => setIsOpen(true)}
+          onFocus={() => {
+            if (!readOnly && !justClearedRef.current) {
+              setIsOpen(true);
+            }
+          }}
           onKeyDown={handleKeyDown}
           className={className}
           icon={displayIcon}
           iconPosition={displayIconPosition}
           onIconClick={displayOnIconClick}
+          readOnly={readOnly}
         />
 
         {showDropdown && (

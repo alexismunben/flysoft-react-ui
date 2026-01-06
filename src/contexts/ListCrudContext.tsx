@@ -36,6 +36,7 @@ interface ListCrudProviderProps<T> {
   getPromise: (
     params?: Record<string, any>
   ) => Promise<Array<T> | PaginationInterface<T> | undefined>;
+  postPromise?: (item: T) => Promise<T | undefined>;
   urlParams?: Array<string>;
   limit?: number;
   pageParam?: string;
@@ -44,6 +45,7 @@ interface ListCrudProviderProps<T> {
 export function ListCrudProvider<T>({
   children,
   getPromise,
+  postPromise,
   limit = 15,
   pageParam = "pagina",
   urlParams = [],
@@ -83,6 +85,13 @@ export function ListCrudProvider<T>({
     });
 
     return params;
+  };
+
+  // Función para crear un nuevo item
+  const createItem = async (item: T) => {
+    if (postPromise) {
+      return postPromise(item);
+    }
   };
 
   // Función para obtener los datos

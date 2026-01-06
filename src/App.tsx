@@ -1,17 +1,11 @@
-import {
-  AppLayout,
-  Badge,
-  Button,
-  Card,
-  Collection,
-  DataField,
-} from "./components";
+import { Badge, Button, Card, Collection, DataField } from "./components";
 import { Routes, Route, Link } from "react-router-dom";
-import { ThemeProvider } from "./index";
+import { AppLayoutProvider } from "./index";
 import "./index.css";
 import { DocsMenu } from "./docs/DocsMenu";
 import DocsRouter from "./docs/DocsRouter";
 import { AuthDocs } from "./docs/AuthDocs.tsx/AuthDocs";
+import packageJson from "../package.json";
 
 function HomeContent() {
   return (
@@ -48,25 +42,43 @@ function HomeContent() {
   );
 }
 
+function LeftDrawerHeader() {
+  return (
+    <div className="h-[64px] flex flex-col  justify-center px-4">
+      <h2>
+        <Link to="/">Flysoft React UI</Link>
+      </h2>
+    </div>
+  );
+}
+
+function LeftDrawerFooter() {
+  return (
+    <div className="px-4">
+      <span>v {packageJson.version}</span>
+    </div>
+  );
+}
+
 function App() {
   return (
-    <ThemeProvider initialTheme={"light"} forceInitialTheme={false}>
-      <AppLayout
-        navBarDrawer={
-          <div>
-            <h2>
-              <Link to="/">Flysoft React UI</Link>
-            </h2>
-          </div>
-        }
-        leftDrawer={<DocsMenu />}
-      >
-        <Routes>
-          <Route path="/" element={<HomeContent />} />
-          <Route path="/docs/*" element={<DocsRouter />} />
-        </Routes>
-      </AppLayout>
-    </ThemeProvider>
+    <AppLayoutProvider
+      initialTheme={"light"}
+      forceInitialTheme={false}
+      initialNavbar={{
+        fullWidthNavbar: false,
+      }}
+      initialLeftDrawer={{
+        headerNode: <LeftDrawerHeader />,
+        contentNode: <DocsMenu />,
+        footerNode: <LeftDrawerFooter />,
+      }}
+    >
+      <Routes>
+        <Route path="/" element={<HomeContent />} />
+        <Route path="/docs/*" element={<DocsRouter />} />
+      </Routes>
+    </AppLayoutProvider>
   );
 }
 

@@ -1,5 +1,6 @@
 import type { Persona } from "./interfaces";
 import type { PaginationInterface } from "../../components/form-controls/Pagination";
+import dayjs from "dayjs";
 
 const STORAGE_KEY = "docMockServices_personas";
 
@@ -12,17 +13,23 @@ const simulateNetworkDelay = (ms: number = 500) => {
 
 /**
  * Obtiene todas las personas del almacenamiento (función helper interna)
+ * Convierte las fechas de string ISO a dayjs
  */
 const _obtenerTodas = (): Persona[] => {
   const data = localStorage.getItem(STORAGE_KEY);
-  return data ? JSON.parse(data) : [];
+  if (!data) return [];
+  const personas = JSON.parse(data);
+  // Convertir fechaNacimiento de string ISO a dayjs
+  return personas.map((persona: any) => ({
+    ...persona,
+    fechaNacimiento: dayjs(persona.fechaNacimiento),
+  }));
 };
 
 /**
  * Servicio mock para gestionar Personas en localStorage
  */
 export const personaService = {
-
   /**
    * Obtiene personas opcionalmente filtradas por nombre
    */
@@ -51,16 +58,16 @@ export const personaService = {
     const limit = params?.limit ?? 20;
     const todas = _obtenerTodas();
     let todasFiltradas = todas;
-    
+
     if (params?.filtro) {
       const filtroLower = params.filtro.toLowerCase();
       todasFiltradas = todas.filter((per) =>
         per.nombre.toLowerCase().includes(filtroLower)
       );
     }
-    
+
     const total = todasFiltradas.length;
-    
+
     // Si limit es 0, devolver todos los elementos sin paginar
     if (limit === 0) {
       return {
@@ -108,7 +115,12 @@ export const personaService = {
       ...persona,
     };
     personas.push(nuevaPersona);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(personas));
+    // Guardar convirtiendo fechaNacimiento a string ISO
+    const personasParaGuardar = personas.map((p) => ({
+      ...p,
+      fechaNacimiento: p.fechaNacimiento.toISOString(),
+    }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(personasParaGuardar));
     return nuevaPersona;
   },
 
@@ -125,7 +137,12 @@ export const personaService = {
     if (index === -1) return null;
 
     personas[index] = { ...personas[index], ...datos };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(personas));
+    // Guardar convirtiendo fechaNacimiento a string ISO
+    const personasParaGuardar = personas.map((p) => ({
+      ...p,
+      fechaNacimiento: p.fechaNacimiento.toISOString(),
+    }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(personasParaGuardar));
     return personas[index];
   },
 
@@ -143,4 +160,3 @@ export const personaService = {
     return true;
   },
 };
-

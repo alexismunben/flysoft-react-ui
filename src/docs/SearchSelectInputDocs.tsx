@@ -2,7 +2,7 @@ import React from "react";
 import type { Dayjs } from "dayjs";
 import { Card, SearchSelectInput, Button, Input, DateInput } from "../index";
 import type { SearchSelectOption, PaginationInterface } from "../index";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 const sampleOptions: SearchSelectOption[] = [
   {
@@ -105,10 +105,18 @@ const mockSearchPromise = async (
   return sampleOptions.filter(
     (option) =>
       option.label.toLowerCase().includes(search) ||
-      option.value.toLowerCase().includes(search) ||
+      (option.value && option.value.toLowerCase().includes(search)) ||
       (option.description &&
         String(option.description).toLowerCase().includes(search))
   );
+};
+
+// Simular búsqueda de un elemento individual por valor
+const mockSingleSearchPromise = async (
+  value: string
+): Promise<SearchSelectOption | undefined> => {
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  return sampleOptions.find((option) => option.value === value);
 };
 
 // Simular búsqueda con PaginationInterface
@@ -120,7 +128,7 @@ const mockSearchWithPagination = async (
   const filtered = sampleOptions.filter(
     (option) =>
       option.label.toLowerCase().includes(search) ||
-      option.value.toLowerCase().includes(search) ||
+      (option.value && option.value.toLowerCase().includes(search)) ||
       (option.description &&
         String(option.description).toLowerCase().includes(search))
   );
@@ -146,19 +154,28 @@ const mockUserSearch = async (text: string): Promise<User[]> => {
   );
 };
 
+// Simular búsqueda de un usuario individual por ID
+const mockSingleUserSearch = async (
+  userId: number
+): Promise<User | undefined> => {
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  return users.find((user) => user.id === userId);
+};
+
 const SearchSelectInputDocs: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = React.useState<
     SearchSelectOption | undefined
   >();
-  const [value, setValue] = React.useState("");
+  const [internalValue, setInternalValue] = React.useState("");
+
   const [selectedUser, setSelectedUser] = React.useState<User | undefined>();
   const {
     register,
     handleSubmit,
     reset,
-    control,
     setFocus,
     formState: { errors, isSubmitted },
+    watch,
   } = useForm<{
     country: SearchSelectOption;
     birthDate: Dayjs | null;
@@ -208,6 +225,7 @@ const SearchSelectInputDocs: React.FC = () => {
                   placeholder="Escribe y presiona Enter o click en buscar..."
                   icon="fa-globe"
                   onSearchPromiseFn={mockSearchPromise}
+                  onSingleSearchPromiseFn={mockSingleSearchPromise}
                   onSelectOption={(option) => setSelectedCountry(option)}
                 />
                 <p
@@ -231,9 +249,9 @@ const SearchSelectInputDocs: React.FC = () => {
                     style={{ color: "var(--flysoft-text-secondary)" }}
                   >
                     {selectedCountry
-                      ? `${
-                          selectedCountry.label
-                        } (${selectedCountry.value.toUpperCase()})`
+                      ? `${selectedCountry.label} (${
+                          selectedCountry.value?.toUpperCase() ?? "N/A"
+                        })`
                       : "Ningún país seleccionado"}
                   </p>
                 </Card>
@@ -254,8 +272,8 @@ const SearchSelectInputDocs: React.FC = () => {
                   label="Botón a la derecha (por defecto)"
                   placeholder="Escribe y busca..."
                   icon="fa-search"
-                  searchButtonPosition="right"
                   onSearchPromiseFn={mockSearchPromise}
+                  onSingleSearchPromiseFn={mockSingleSearchPromise}
                 />
                 <p
                   className="text-sm"
@@ -269,8 +287,9 @@ const SearchSelectInputDocs: React.FC = () => {
                   label="Botón a la izquierda"
                   placeholder="Escribe y busca..."
                   icon="fa-search"
-                  searchButtonPosition="left"
+                  iconPosition="left"
                   onSearchPromiseFn={mockSearchPromise}
+                  onSingleSearchPromiseFn={mockSingleSearchPromise}
                 />
                 <p
                   className="text-sm"
@@ -296,6 +315,7 @@ const SearchSelectInputDocs: React.FC = () => {
                   placeholder="Escribe y busca..."
                   icon="fa-search"
                   onSearchPromiseFn={mockSearchPromise}
+                  onSingleSearchPromiseFn={mockSingleSearchPromise}
                 />
                 <p
                   className="text-sm"
@@ -310,13 +330,15 @@ const SearchSelectInputDocs: React.FC = () => {
                   label="SearchSelectInput controlado"
                   placeholder="Escribe y busca..."
                   icon="fa-search"
-                  value={value}
+                  value={internalValue}
+                  getOptionValue={(option) => option.value ?? ""}
                   onChange={(val: SearchSelectOption | string) => {
                     if (typeof val === "string") {
-                      setValue(val);
+                      setInternalValue(val);
                     }
                   }}
                   onSearchPromiseFn={mockSearchPromise}
+                  onSingleSearchPromiseFn={mockSingleSearchPromise}
                 />
                 <p
                   className="text-sm"
@@ -327,7 +349,7 @@ const SearchSelectInputDocs: React.FC = () => {
                 </p>
                 <Input
                   label="Valor actual"
-                  value={value}
+                  value={internalValue}
                   readOnly
                   icon="fa-code"
                 />
@@ -348,6 +370,7 @@ const SearchSelectInputDocs: React.FC = () => {
                 placeholder="Escribe y busca países..."
                 icon="fa-globe"
                 onSearchPromiseFn={mockSearchWithPagination}
+                onSingleSearchPromiseFn={mockSingleSearchPromise}
                 dialogTitle="Seleccione un país"
                 onSelectOption={(option) => {
                   console.log("País seleccionado:", option);
@@ -380,6 +403,7 @@ const SearchSelectInputDocs: React.FC = () => {
                 dialogTitle="Buscar y seleccionar un país"
                 noResultsText="No se encontraron países con ese criterio"
                 onSearchPromiseFn={mockSearchPromise}
+                onSingleSearchPromiseFn={mockSingleSearchPromise}
               />
               <p
                 className="text-sm"
@@ -406,6 +430,7 @@ const SearchSelectInputDocs: React.FC = () => {
                   placeholder="Escribe nombre, email o rol..."
                   icon="fa-users"
                   onSearchPromiseFn={mockUserSearch}
+                  onSingleSearchPromiseFn={mockSingleUserSearch}
                   getOptionLabel={(user) =>
                     `${user.firstName} ${user.lastName}`
                   }
@@ -516,41 +541,26 @@ const SearchSelectInputDocs: React.FC = () => {
               subtitle="Combinación de SearchSelectInput, DateInput, Input y Button"
             >
               <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-                <Controller
-                  name="country"
-                  control={control}
-                  rules={{ required: "Campo obligatorio" }}
-                  render={({ field, fieldState }) => (
-                    <SearchSelectInput
-                      label="País de residencia"
-                      placeholder="Busca y selecciona un país"
-                      getOptionLabel={(option) => option.label + "a"}
-                      getOptionValue={(option) => option.value}
-                      onSearchPromiseFn={mockSearchPromise}
-                      dialogTitle="Seleccione un país"
-                      {...field}
-                      error={fieldState.error?.message}
-                    />
-                  )}
+                <SearchSelectInput<SearchSelectOption, string>
+                  label="País de residencia"
+                  {...register("country")}
+                  placeholder="Busca y selecciona un país"
+                  getOptionLabel={(option) => option.label}
+                  getOptionValue={(option) => option.value ?? ""}
+                  onSearchPromiseFn={mockSearchPromise}
+                  onSingleSearchPromiseFn={mockSingleSearchPromise}
+                  dialogTitle="Seleccione un país"
                 />
-                <Controller
-                  name="birthDate"
-                  control={control}
-                  rules={{ required: "Campo obligatorio" }}
-                  render={({ field, fieldState }) => (
-                    <DateInput
-                      label="Fecha de nacimiento"
-                      placeholder="dd/mm/yyyy"
-                      {...field}
-                      error={fieldState.error?.message}
-                    />
-                  )}
+                <div>País de residencia: {watch("country")?.toString()}</div>
+                <DateInput
+                  label="Fecha de nacimiento"
+                  placeholder="dd/mm/yyyy"
+                  {...register("birthDate")}
                 />
                 <Input
                   label="Ciudad"
                   placeholder="Introduce tu ciudad"
                   icon="fa-city"
-                  {...register("city", { required: "Campo obligatorio" })}
                   error={errors.city?.message}
                 />
                 <div className="flex justify-end gap-2">
@@ -562,7 +572,7 @@ const SearchSelectInputDocs: React.FC = () => {
                   >
                     Limpiar
                   </Button>
-                  <Button variant="primary" icon="fa-search">
+                  <Button variant="primary" icon="fa-search" type="submit">
                     Buscar
                   </Button>
                 </div>
@@ -583,18 +593,21 @@ const SearchSelectInputDocs: React.FC = () => {
                 placeholder="Escribe y busca..."
                 size="sm"
                 onSearchPromiseFn={mockSearchPromise}
+                onSingleSearchPromiseFn={mockSingleSearchPromise}
               />
               <SearchSelectInput
                 label="Tamaño mediano (por defecto)"
                 placeholder="Escribe y busca..."
                 size="md"
                 onSearchPromiseFn={mockSearchPromise}
+                onSingleSearchPromiseFn={mockSingleSearchPromise}
               />
               <SearchSelectInput
                 label="Tamaño grande"
                 placeholder="Escribe y busca..."
                 size="lg"
                 onSearchPromiseFn={mockSearchPromise}
+                onSingleSearchPromiseFn={mockSingleSearchPromise}
               />
             </div>
           </section>
@@ -613,6 +626,7 @@ const SearchSelectInputDocs: React.FC = () => {
                   placeholder="Escribe y busca..."
                   error="Este campo es requerido"
                   onSearchPromiseFn={mockSearchPromise}
+                  onSingleSearchPromiseFn={mockSingleSearchPromise}
                 />
                 <p
                   className="text-sm"
@@ -628,6 +642,7 @@ const SearchSelectInputDocs: React.FC = () => {
                   icon="fa-ban"
                   disabled
                   onSearchPromiseFn={mockSearchPromise}
+                  onSingleSearchPromiseFn={mockSingleSearchPromise}
                 />
                 <p
                   className="text-sm"

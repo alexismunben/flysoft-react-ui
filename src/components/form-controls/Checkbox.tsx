@@ -9,6 +9,11 @@ export interface CheckboxProps
   labelPosition?: "left" | "right";
   error?: string;
   size?: "sm" | "md" | "lg";
+  /**
+   * Si es true, el checkbox será de solo lectura. No se podrá modificar pero se verá igual visualmente.
+   * Por defecto es false.
+   */
+  readOnly?: boolean;
 }
 
 export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
@@ -20,6 +25,9 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       size = "md",
       className = "",
       id,
+      readOnly = false,
+      onClick,
+      onChange,
       ...props
     },
     ref
@@ -70,6 +78,45 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       ${labelPosition === "left" ? "flex-row-reverse" : "flex-row"}
     `;
 
+    // Prevenir cambios cuando está en modo readOnly
+    const handleClick = (e: React.MouseEvent<HTMLInputElement>) => {
+      if (readOnly) {
+        e.preventDefault();
+        return false;
+      }
+      // Llamar al onClick original si existe
+      if (onClick) {
+        onClick(e);
+      }
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (readOnly) {
+        e.preventDefault();
+        return;
+      }
+      // Llamar al onChange original si existe
+      if (onChange) {
+        onChange(e);
+      }
+    };
+
+    const handleLabelClick = (e: React.MouseEvent<HTMLLabelElement>) => {
+      if (readOnly) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    };
+
+    const handleLabelMouseDown = (e: React.MouseEvent<HTMLLabelElement>) => {
+      if (readOnly) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    };
+
     return (
       <div className="w-full">
         <div className={containerClasses}>
@@ -79,10 +126,18 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             id={checkboxId}
             className={checkboxClasses}
             style={checkboxStyle}
+            readOnly={readOnly}
+            onClick={handleClick}
+            onChange={handleChange}
             {...props}
           />
           {label && (
-            <label htmlFor={checkboxId} className={labelClasses}>
+            <label
+              htmlFor={readOnly ? undefined : checkboxId}
+              className={labelClasses}
+              onClick={handleLabelClick}
+              onMouseDown={handleLabelMouseDown}
+            >
               {label}
             </label>
           )}
