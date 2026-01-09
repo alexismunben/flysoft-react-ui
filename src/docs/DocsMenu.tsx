@@ -77,6 +77,9 @@ export const DocsMenu = () => {
           <Link to="/docs/example-form">Formulario de Ejemplo</Link>
         </li>
         <li>
+          <Link to="/docs/snackbar">Snackbar</Link>
+        </li>
+        <li>
           <Link to="/docs/admin">Admin (Mock Services)</Link>
         </li>
       </ul>

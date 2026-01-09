@@ -1,8 +1,13 @@
 import { useEffect } from "react";
 import { useAppLayout } from "../../contexts";
 import { ListCrudProvider } from "../../contexts/ListCrudContext";
-import { personaService } from "../docMockServices";
-import { ListCrudDocsContent } from "./ListCrudDocsContent";
+import {
+  empresaService,
+  personaService,
+  type Empresa,
+} from "../docMockServices";
+import { ListCrudDocsContentPersonas } from "./ListCrudDocsContentPersonas";
+import { Collection } from "../../components";
 
 /**
  * Componente de Documentación del ListCrudContext
@@ -14,7 +19,8 @@ import { ListCrudDocsContent } from "./ListCrudDocsContent";
  * - getPromise: Obtiene una lista de items (Array o PaginationInterface)
  */
 export const ListCrudDocs = () => {
-  const { listarPaginados } = personaService;
+  const { listarPaginados, eliminar } = personaService;
+  const { listarPaginados: listarPaginadosEmpresa } = empresaService;
 
   const { setNavBarLeftNode } = useAppLayout();
 
@@ -25,8 +31,21 @@ export const ListCrudDocs = () => {
   }, [setNavBarLeftNode]);
 
   return (
-    <ListCrudProvider getPromise={listarPaginados}>
-      <ListCrudDocsContent />
-    </ListCrudProvider>
+    <Collection>
+      <ListCrudProvider
+        getPromise={listarPaginados}
+        deletePromise={eliminar}
+        urlParams={["filtro", "idEmpresa"]}
+      >
+        <ListCrudDocsContentPersonas />
+      </ListCrudProvider>
+
+      <ListCrudProvider<Empresa>
+        getPromise={listarPaginadosEmpresa}
+        urlParams={["filtroEmpresa", "idEmpresaEmpresa"]}
+      >
+        Empresas
+      </ListCrudProvider>
+    </Collection>
   );
 };

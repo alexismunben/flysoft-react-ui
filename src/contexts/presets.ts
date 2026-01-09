@@ -195,9 +195,9 @@ export const blueTheme: Theme = {
     textDisabled: "#94a3b8",
   },
   shadows: {
-    sm: "0 1px 2px 0 rgb(30 64 175 / 0.05)",
-    md: "0 4px 6px -1px rgb(30 64 175 / 0.1), 0 2px 4px -2px rgb(30 64 175 / 0.1)",
-    lg: "0 10px 15px -3px rgb(30 64 175 / 0.1), 0 4px 6px -4px rgb(30 64 175 / 0.1)",
+    sm: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+    md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+    lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
   },
   radius: {
     sm: "0.375rem",
@@ -268,9 +268,9 @@ export const greenTheme: Theme = {
     textDisabled: "#9ca3af",
   },
   shadows: {
-    sm: "0 1px 2px 0 rgb(5 150 105 / 0.05)",
-    md: "0 4px 6px -1px rgb(5 150 105 / 0.1), 0 2px 4px -2px rgb(5 150 105 / 0.1)",
-    lg: "0 10px 15px -3px rgb(5 150 105 / 0.1), 0 4px 6px -4px rgb(5 150 105 / 0.1)",
+    sm: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+    md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+    lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
   },
   radius: {
     sm: "0.375rem",

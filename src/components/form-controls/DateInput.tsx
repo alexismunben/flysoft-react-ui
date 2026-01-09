@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import dayjs, { type Dayjs } from "dayjs";
 import { useFormContext } from "react-hook-form";
 import { Input } from "./Input";
@@ -195,7 +196,13 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
     const [internalDate, setInternalDate] = React.useState<Dayjs | null>(null);
     const [displayValue, setDisplayValue] = React.useState<string>("");
     const [isOpen, setIsOpen] = React.useState(false);
+    const [pickerPosition, setPickerPosition] = React.useState<{
+      top: number;
+      left: number;
+      width: number;
+    } | null>(null);
     const containerRef = React.useRef<HTMLDivElement | null>(null);
+    const pickerRef = React.useRef<HTMLDivElement | null>(null);
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const isTypingRef = React.useRef(false);
 
@@ -508,20 +515,28 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
     };
 
     React.useEffect(() => {
+      if (!isOpen) return;
+
       const handleClickOutside = (event: MouseEvent) => {
-        if (
-          containerRef.current &&
-          !containerRef.current.contains(event.target as Node)
-        ) {
+        const target = event.target as Node;
+        const isClickInsideContainer = containerRef.current?.contains(target);
+        const isClickInsidePicker = pickerRef.current?.contains(target);
+        
+        if (!isClickInsideContainer && !isClickInsidePicker) {
           setIsOpen(false);
         }
       };
 
-      document.addEventListener("mousedown", handleClickOutside);
+      // Pequeño delay para asegurar que el portal esté montado
+      const timer = setTimeout(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+      }, 0);
+
       return () => {
+        clearTimeout(timer);
         document.removeEventListener("mousedown", handleClickOutside);
       };
-    }, []);
+    }, [isOpen]);
 
     // Combinar refs: el ref del componente y el ref interno
     const combinedRef = React.useCallback(
@@ -564,6 +579,45 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
     const displayIconPosition = readOnly ? undefined : iconPosition;
     const displayOnIconClick = readOnly ? undefined : handleIconClick;
 
+    // Verificar que estamos en el navegador
+    // Inicializar isMounted de forma síncrona si es posible
+    const [isMounted, setIsMounted] = React.useState(() => {
+      return typeof document !== "undefined" && !!document.body;
+    });
+
+    React.useEffect(() => {
+      if (!isMounted && typeof document !== "undefined" && document.body) {
+        setIsMounted(true);
+      }
+    }, [isMounted]);
+
+    // Actualizar posición del picker cuando se abre
+    React.useEffect(() => {
+      if (isOpen && !readOnly && containerRef.current && isMounted) {
+        const updatePosition = () => {
+          const rect = containerRef.current?.getBoundingClientRect();
+          if (rect) {
+            setPickerPosition({
+              top: rect.bottom + window.scrollY + 4,
+              left: rect.right + window.scrollX - 280, // Alinear a la derecha
+              width: rect.width,
+            });
+          }
+        };
+
+        updatePosition();
+        window.addEventListener("scroll", updatePosition, true);
+        window.addEventListener("resize", updatePosition);
+
+        return () => {
+          window.removeEventListener("scroll", updatePosition, true);
+          window.removeEventListener("resize", updatePosition);
+        };
+      } else {
+        setPickerPosition(null);
+      }
+    }, [isOpen, readOnly, isMounted]);
+
     return (
       <div ref={containerRef} className="relative w-full">
         <Input
@@ -584,15 +638,40 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
           readOnly={readOnly}
         />
 
-        {!readOnly && isOpen && (
-          <div className="absolute z-20 mt-1 right-0">
-            <DatePicker
-              {...datePickerProps}
-              value={internalDate ?? datePickerInitialViewDate}
-              onChange={(date) => handleDateChange(date)}
-            />
-          </div>
-        )}
+        {(() => {
+          // Verificar de forma segura que document.body existe y es válido
+          const bodyElement =
+            typeof document !== "undefined" &&
+            document.body &&
+            document.body instanceof HTMLElement
+              ? document.body
+              : null;
+
+          return (
+            !readOnly &&
+            isOpen &&
+            pickerPosition &&
+            isMounted &&
+            bodyElement &&
+            createPortal(
+              <div
+                ref={pickerRef}
+                className="fixed z-[2001] min-w-[280px] w-max"
+                style={{
+                  top: `${pickerPosition.top}px`,
+                  left: `${pickerPosition.left}px`,
+                }}
+              >
+                <DatePicker
+                  {...datePickerProps}
+                  value={internalDate ?? datePickerInitialViewDate}
+                  onChange={(date) => handleDateChange(date)}
+                />
+              </div>,
+              bodyElement
+            )
+          );
+        })()}
       </div>
     );
   }

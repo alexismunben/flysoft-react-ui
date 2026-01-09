@@ -10,6 +10,8 @@ import React, {
 import { ThemeProvider, useTheme } from "./ThemeContext";
 import type { Theme, ThemeContextType } from "./types";
 import { AppLayout } from "../components/layout/AppLayout";
+import { SnackbarProvider } from "./SnackbarContext";
+import { SnackbarContainer } from "../components/utils/SnackbarContainer";
 
 export interface NavbarInterface {
   navBarLeftNode?: string | ReactNode;
@@ -191,13 +193,16 @@ export const AppLayoutProvider: React.FC<AppLayoutProviderProps> = ({
       storageKey={storageKey}
       forceInitialTheme={forceInitialTheme}
     >
-      <AppLayoutProviderInner
-        initialNavbar={initialNavbar}
-        initialLeftDrawer={initialLeftDrawer}
-        initialClassName={className}
-      >
-        {children}
-      </AppLayoutProviderInner>
+      <SnackbarProvider>
+        <AppLayoutProviderInner
+          initialNavbar={initialNavbar}
+          initialLeftDrawer={initialLeftDrawer}
+          initialClassName={className}
+        >
+          {children}
+        </AppLayoutProviderInner>
+        <SnackbarContainer position="bottom-right" />
+      </SnackbarProvider>
     </ThemeProvider>
   );
 };

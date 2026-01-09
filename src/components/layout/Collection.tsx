@@ -10,7 +10,7 @@ export interface CollectionProps {
 
 export const Collection: React.FC<CollectionProps> = ({
   children,
-  gap = "0",
+  gap = "1rem",
   direction = "column",
   wrap = false,
   className = "",

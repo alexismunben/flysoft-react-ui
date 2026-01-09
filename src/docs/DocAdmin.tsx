@@ -128,7 +128,7 @@ const DocAdmin: React.FC = () => {
           {/* Botón de Reset */}
           <div className="flex justify-center">
             <Button
-              variant="danger"
+              variant="primary"
               icon="fa-redo"
               onClick={handleReset}
               disabled={isResetting}

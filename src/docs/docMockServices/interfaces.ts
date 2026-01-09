@@ -16,6 +16,13 @@ export interface Persona {
   fechaNacimiento: Dayjs;
 }
 
+/**
+ * Persona con sus empresas relacionadas
+ */
+export interface PersonaConEmpresas extends Persona {
+  empresas: Empresa[];
+}
+
 export interface PersonaEmpresa {
   idPersona: number;
   idEmpresa: number;

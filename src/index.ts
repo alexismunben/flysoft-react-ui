@@ -81,6 +81,15 @@ export { DropdownMenu } from "./components/utils/DropdownMenu";
 export type { DropdownMenuProps } from "./components/utils/DropdownMenu";
 export { Filter } from "./components/utils/Filter";
 export type { FilterProps } from "./components/utils/Filter";
+export { FiltersDialog } from "./components/utils/FiltersDialog";
+export type {
+  FiltersDialogProps,
+  FilterConfig,
+} from "./components/utils/FiltersDialog";
+export { Snackbar } from "./components/utils/Snackbar";
+export type { SnackbarProps } from "./components/utils/Snackbar";
+export { SnackbarContainer } from "./components/utils/SnackbarContainer";
+export type { SnackbarContainerProps } from "./components/utils/SnackbarContainer";
 
 // Theme system exports
 export * from "./contexts";

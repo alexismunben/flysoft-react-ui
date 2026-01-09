@@ -74,9 +74,10 @@ export const Dialog: React.FC<DialogProps> = ({
       <div
         className="relative w-auto max-w-lg min-w-[400px] bg-[var(--color-bg-default)] rounded-lg shadow-[var(--shadow-xl)] border border-[var(--color-border-default)] font-[var(--font-default)] max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
+        style={{ overflow: "visible" }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border-default)]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border-default)] flex-shrink-0">
           <h2
             id="dialog-title"
             className="text-lg font-semibold text-[var(--color-text-primary)]"
@@ -95,7 +96,14 @@ export const Dialog: React.FC<DialogProps> = ({
         </div>
 
         {/* Body */}
-        <div className="px-6 py-4 overflow-y-auto flex-1 text-[var(--color-text-primary)] min-w-0">
+        <div 
+          className="px-6 py-4 flex-1 text-[var(--color-text-primary)] min-w-0"
+          style={{ 
+            overflowY: "auto",
+            overflowX: "visible",
+            maxHeight: "calc(90vh - 200px)"
+          }}
+        >
           {dialogBody}
         </div>
 

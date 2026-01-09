@@ -19,10 +19,6 @@ export interface SearchSelectOption {
 }
 export interface SearchSelectInputProps<T = SearchSelectOption, K = string>
   extends Omit<InputProps, "onChange" | "value" | "ref"> {
-  /**
-   * Valor del input (controlado).
-   * Puede ser la opción completa (T), el valor extraído (K si hay getOptionValue), o un string (para compatibilidad con react-hook-form).
-   */
   value?: T | K | string;
   /**
    * Callback cuando cambia el valor del input.

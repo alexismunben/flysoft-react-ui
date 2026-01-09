@@ -5,6 +5,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useCallback,
   type ReactNode,
 } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -12,6 +13,7 @@ import {
   Pagination,
   type PaginationInterface,
 } from "../components/form-controls/Pagination";
+import { useAsyncRequest } from "../hooks/useAsyncRequest";
 
 export interface ListCrudContextType<T> {
   list: Array<T> | undefined;
@@ -21,6 +23,10 @@ export interface ListCrudContextType<T> {
   limit: number;
   isLoading: boolean;
   pagination: ReactNode;
+  params: Record<string, any>;
+  refetch: (params?: Record<string, any>) => Promise<void>;
+  createItem: (item: T) => Promise<T | undefined>;
+  deleteItem: (item: T) => Promise<void>;
 }
 
 const createListCrudContext = <T,>() => {
@@ -37,6 +43,7 @@ interface ListCrudProviderProps<T> {
     params?: Record<string, any>
   ) => Promise<Array<T> | PaginationInterface<T> | undefined>;
   postPromise?: (item: T) => Promise<T | undefined>;
+  deletePromise?: (item: T) => Promise<void>;
   urlParams?: Array<string>;
   limit?: number;
   pageParam?: string;
@@ -46,6 +53,7 @@ export function ListCrudProvider<T>({
   children,
   getPromise,
   postPromise,
+  deletePromise,
   limit = 15,
   pageParam = "pagina",
   urlParams = [],
@@ -54,9 +62,22 @@ export function ListCrudProvider<T>({
   const [page, setPage] = useState<number>(1);
   const [pages, setPages] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const getPromiseRef = useRef(getPromise);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const lastFetchParamsRef = useRef<string>("");
+
+  // Hooks para manejar las peticiones asíncronas
+  // fetchDataAsync sin mensaje para cargas automáticas
+  const fetchDataAsync = useAsyncRequest();
+  // fetchDataAsyncManual con mensaje para refetch manual
+  const fetchDataAsyncManual = useAsyncRequest({
+    successMessage: "Datos cargados correctamente",
+  });
+  const createItemAsync = useAsyncRequest();
+  const deleteItemAsync = useAsyncRequest();
+
+  // El isLoading del contexto combina ambos hooks de fetchData
+  const isLoading = fetchDataAsync.isLoading || fetchDataAsyncManual.isLoading;
 
   // Actualizar la referencia cuando cambie getPromise
   useEffect(() => {
@@ -64,7 +85,7 @@ export function ListCrudProvider<T>({
   }, [getPromise]);
 
   // Función para obtener los parámetros de la URL
-  const getUrlParams = () => {
+  const getUrlParams = useCallback(() => {
     const params: Record<string, any> = { limit };
 
     // Agregar pageParam si existe en la URL
@@ -85,66 +106,177 @@ export function ListCrudProvider<T>({
     });
 
     return params;
-  };
-
-  // Función para crear un nuevo item
-  const createItem = async (item: T) => {
-    if (postPromise) {
-      return postPromise(item);
-    }
-  };
+  }, [searchParams, pageParam, urlParams, limit]);
 
   // Función para obtener los datos
-  const fetchData = async (params?: Record<string, any>) => {
-    setIsLoading(true);
-    try {
-      const requestParams = params || getUrlParams();
-      const result = await getPromiseRef.current(requestParams);
-      if (result && typeof result === "object" && "list" in result) {
-        // Es un PaginationInterface
-        const { list, page, pages, total } = result as PaginationInterface<T>;
-        setList(list);
-        setPage(page);
-        setPages(pages);
-        setTotal(total);
-      } else if (Array.isArray(result)) {
-        // Es un array simple
-        setList(result);
-        setPage(1);
-        setTotal(result.length);
-        setPages(Math.ceil(result.length / limit));
-      } else {
-        // Resultado undefined o null
-        setList(undefined);
-        setPage(1);
-        setPages(1);
-        setTotal(0);
-      }
-    } catch (error) {
-      console.error("Error fetching data in ListCrudContext:", error);
-      setList(undefined);
-      setPage(1);
-      setPages(1);
-      setTotal(0);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const fetchData = useCallback(
+    async (params?: Record<string, any>, showSuccessMessage = false) => {
+      const asyncRequest = showSuccessMessage
+        ? fetchDataAsyncManual
+        : fetchDataAsync;
 
-  // useEffect para escuchar cambios en getPromise
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getPromise]);
+      // Obtener los parámetros que se van a usar
+      const requestParams = params || getUrlParams();
+
+      // Crear una clave única para estos parámetros
+      const paramsKey = JSON.stringify({
+        ...requestParams,
+        showSuccessMessage,
+      });
+
+      // Evitar ejecuciones duplicadas con los mismos parámetros
+      if (!showSuccessMessage && lastFetchParamsRef.current === paramsKey) {
+        console.log("Skipping duplicate fetchData call");
+        return;
+      }
+
+      lastFetchParamsRef.current = paramsKey;
+
+      console.log("fetchData called", {
+        showSuccessMessage,
+        isLoading: asyncRequest.isLoading,
+        params: requestParams,
+      });
+
+      const result = await asyncRequest.execute(async () => {
+        console.log("Executing promise with params:", requestParams);
+        const promiseResult = await getPromiseRef.current(requestParams);
+        console.log("Promise result:", promiseResult);
+        return promiseResult;
+      });
+
+      console.log("fetchData result:", result);
+
+      // Solo procesar el resultado si no es undefined (undefined significa error)
+      if (result !== undefined) {
+        if (result && typeof result === "object" && "list" in result) {
+          // Es un PaginationInterface
+          const { list, page, pages, total } = result as PaginationInterface<T>;
+          setList(list);
+          setPage(page);
+          setPages(pages);
+          setTotal(total);
+        } else if (Array.isArray(result)) {
+          // Es un array simple
+          setList(result);
+          setPage(1);
+          setTotal(result.length);
+          setPages(Math.ceil(result.length / limit));
+        } else {
+          // Resultado null
+          setList(undefined);
+          setPage(1);
+          setPages(1);
+          setTotal(0);
+        }
+      } else {
+        console.log("Result is undefined, not processing");
+      }
+    },
+    [getUrlParams, limit, fetchDataAsync, fetchDataAsyncManual]
+  );
+
+  // Ref para almacenar los valores anteriores de urlParams
+  const prevUrlParamsValuesRef = useRef<Record<string, string | null>>({});
+
+  // Memoizar los valores actuales de los urlParams
+  const urlParamsValues = useMemo(() => {
+    const values: Record<string, string | null> = {};
+    urlParams.forEach((paramName) => {
+      values[paramName] = searchParams.get(paramName);
+    });
+    return values;
+  }, [searchParams, urlParams]);
 
   // Memoizar los parámetros de URL para evitar re-renders innecesarios
   const urlParamsKey = useMemo(() => urlParams.join(","), [urlParams]);
 
-  // useEffect para escuchar cambios en los query params
-  useEffect(() => {
-    fetchData();
+  // Memoizar los parámetros actuales para exponerlos
+  const currentParams = useMemo(
+    () => getUrlParams(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, pageParam, urlParamsKey]);
+    [searchParams, pageParam, urlParamsKey, limit, urlParams]
+  );
+
+  // Función para recargar los datos
+  const refetch = useCallback(
+    async (params?: Record<string, any>) => {
+      await fetchData(params, true); // Mostrar mensaje de éxito en refetch manual
+    },
+    [fetchData]
+  );
+
+  // Función para crear un item
+  const createItem = useCallback(
+    async (item: T): Promise<T | undefined> => {
+      if (!postPromise) {
+        throw new Error(
+          "postPromise is not defined. Please provide postPromise to ListCrudProvider."
+        );
+      }
+      return await createItemAsync.execute(async () => {
+        return await postPromise(item);
+      });
+    },
+    [postPromise, createItemAsync]
+  );
+
+  // Función para eliminar un item
+  const deleteItem = useCallback(
+    async (item: T): Promise<void> => {
+      if (!deletePromise) {
+        throw new Error(
+          "deletePromise is not defined. Please provide deletePromise to ListCrudProvider."
+        );
+      }
+      await deleteItemAsync.execute(async () => {
+        await deletePromise(item);
+      });
+    },
+    [deletePromise, deleteItemAsync]
+  );
+
+  // useEffect para resetear pageParam a 1 cuando cambien los urlParams
+  useEffect(() => {
+    // Verificar si hay algún urlParam definido
+    if (urlParams.length === 0) {
+      prevUrlParamsValuesRef.current = {};
+      return;
+    }
+
+    // Comparar valores actuales con los anteriores
+    const prevValues = prevUrlParamsValuesRef.current;
+    const hasChanged = urlParams.some(
+      (paramName) => prevValues[paramName] !== urlParamsValues[paramName]
+    );
+
+    // Si los urlParams cambiaron, resetear pageParam a 1
+    if (hasChanged) {
+      const currentPage = searchParams.get(pageParam);
+      if (currentPage && currentPage !== "1") {
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.set(pageParam, "1");
+        setSearchParams(newSearchParams, { replace: true });
+        // No hacer fetchData aquí, se hará cuando cambien los searchParams
+        return;
+      }
+    }
+
+    // Actualizar los valores anteriores
+    prevUrlParamsValuesRef.current = { ...urlParamsValues };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(urlParamsValues), pageParam, urlParamsKey]);
+
+  // useEffect consolidado para escuchar cambios que requieren recargar datos
+  useEffect(() => {
+    // Usar un pequeño delay para agrupar múltiples cambios rápidos en el mismo tick
+    const timeoutId = setTimeout(() => {
+      fetchData();
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getPromise, searchParams, pageParam, urlParamsKey]);
 
   const value: ListCrudContextType<T> = {
     list,
@@ -153,6 +285,10 @@ export function ListCrudProvider<T>({
     total,
     limit,
     isLoading,
+    params: currentParams,
+    refetch,
+    createItem,
+    deleteItem,
     pagination: (
       <Pagination
         page={page}

@@ -30,6 +30,8 @@ export interface DataTableProps<T> {
   className?: string;
   maxRows?: number; // Máximo número de filas visibles antes de activar scroll
   locale?: string; // Locale para formateo de números (por defecto 'es-AR')
+  isLoading?: boolean; // Estado de carga (por defecto false)
+  loadingRows?: number; // Número de filas skeleton a mostrar cuando está cargando (por defecto 5)
 }
 
 export const DataTable = <T,>({
@@ -38,9 +40,12 @@ export const DataTable = <T,>({
   className = "",
   maxRows,
   locale = "es-AR",
+  isLoading = false,
+  loadingRows = 5,
 }: DataTableProps<T>) => {
   // Calcular si necesitamos scroll
-  const needsScroll = maxRows !== undefined && rows.length > maxRows;
+  const displayRows = isLoading ? loadingRows : rows.length;
+  const needsScroll = maxRows !== undefined && displayRows > maxRows;
 
   // Altura aproximada de una fila (px-4 py-3 = ~48px por fila)
   const rowHeight = 48;
@@ -181,6 +186,11 @@ export const DataTable = <T,>({
     }));
   };
 
+  // Componente Skeleton para celdas de carga
+  const SkeletonCell = () => (
+    <div className="h-4 bg-[var(--color-border-default)]/40 rounded animate-pulse w-full" />
+  );
+
   return (
     <div className={`overflow-x-auto ${className}`}>
       <div
@@ -206,10 +216,11 @@ export const DataTable = <T,>({
                     `}
                     style={{
                       ...(column.width ? { width: column.width } : {}),
-                      fontStretch: "75%",
                     }}
                   >
-                    {hasHeaderActions ? (
+                    {isLoading ? (
+                      <SkeletonCell />
+                    ) : hasHeaderActions ? (
                       <div className="flex items-center justify-between gap-2">
                         <span>{column.header || ""}</span>
                         <DropdownMenu<ActionItem>
@@ -230,67 +241,85 @@ export const DataTable = <T,>({
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, rowIndex) => (
-              <tr
-                key={rowIndex}
-                className="group/row border-b border-[var(--color-border-default)] transition-colors hover:bg-[var(--color-bg-secondary)]"
-                style={{
-                  fontStretch: "75%",
-                }}
-              >
-                {columns.map((column, colIndex) => {
-                  const cellValue = getCellValue(column, row);
-                  const formattedValue = formatValue(
-                    cellValue as string | number | React.ReactNode,
-                    column.type
-                  );
-                  const tooltip = column.tooltip
-                    ? column.tooltip(row)
-                    : undefined;
-                  const rowActions = column.actions?.(row);
-                  const hasRowActions = rowActions && rowActions.length > 0;
+            {isLoading
+              ? Array.from({ length: loadingRows }).map((_, rowIndex) => (
+                  <tr
+                    key={`skeleton-${rowIndex}`}
+                    className="border-b border-[var(--color-border-default)]"
+                  >
+                    {columns.map((column, colIndex) => (
+                      <td
+                        key={colIndex}
+                        className={`
+                          px-4 py-3 text-sm text-[var(--color-text-primary)]
+                          ${getAlignmentClass(column.align, column.type)}
+                        `}
+                        style={{
+                          ...(column.width ? { width: column.width } : {}),
+                        }}
+                      >
+                        <SkeletonCell />
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              : rows.map((row, rowIndex) => (
+                  <tr
+                    key={rowIndex}
+                    className="group/row border-b border-[var(--color-border-default)] transition-colors hover:bg-[var(--color-bg-secondary)]"
+                  >
+                    {columns.map((column, colIndex) => {
+                      const cellValue = getCellValue(column, row);
+                      const formattedValue = formatValue(
+                        cellValue as string | number | React.ReactNode,
+                        column.type
+                      );
+                      const tooltip = column.tooltip
+                        ? column.tooltip(row)
+                        : undefined;
+                      const rowActions = column.actions?.(row);
+                      const hasRowActions = rowActions && rowActions.length > 0;
 
-                  return (
-                    <td
-                      key={colIndex}
-                      className={`
-                        px-4 py-3 text-sm text-[var(--color-text-primary)]
-                        ${getAlignmentClass(column.align, column.type)}
-                      `}
-                      style={{
-                        ...(column.width ? { width: column.width } : {}),
-                        fontVariationSettings: '"wdth" 75',
-                      }}
-                      title={
-                        tooltip
-                          ? typeof tooltip === "string"
-                            ? tooltip
-                            : undefined
-                          : undefined
-                      }
-                    >
-                      {hasRowActions ? (
-                        <div className="flex items-center justify-between gap-2">
-                          <span>{formattedValue}</span>
-                          <div className="lg:opacity-0 lg:group-hover/row:opacity-100 transition-opacity">
-                            <DropdownMenu<ActionItem>
-                              options={convertActionsToOptions(rowActions)}
-                              onOptionSelected={() => {
-                                // Las acciones ya manejan sus propios eventos
-                              }}
-                              renderOption={(item) => item.content}
-                              replaceOnSingleOption={true}
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        formattedValue
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
+                      return (
+                        <td
+                          key={colIndex}
+                          className={`
+                            px-4 py-3 text-sm text-[var(--color-text-primary)]
+                            ${getAlignmentClass(column.align, column.type)}
+                          `}
+                          style={{
+                            ...(column.width ? { width: column.width } : {}),
+                          }}
+                          title={
+                            tooltip
+                              ? typeof tooltip === "string"
+                                ? tooltip
+                                : undefined
+                              : undefined
+                          }
+                        >
+                          {hasRowActions ? (
+                            <div className="flex items-center justify-between gap-2">
+                              <span>{formattedValue}</span>
+                              <div className="lg:opacity-0 lg:group-hover/row:opacity-100 transition-opacity">
+                                <DropdownMenu<ActionItem>
+                                  options={convertActionsToOptions(rowActions)}
+                                  onOptionSelected={() => {
+                                    // Las acciones ya manejan sus propios eventos
+                                  }}
+                                  renderOption={(item) => item.content}
+                                  replaceOnSingleOption={true}
+                                />
+                              </div>
+                            </div>
+                          ) : (
+                            formattedValue
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
           </tbody>
           {hasFooter && (
             <tfoot className={needsScroll ? "sticky bottom-0 z-10" : ""}>
@@ -305,10 +334,9 @@ export const DataTable = <T,>({
                     `}
                     style={{
                       ...(column.width ? { width: column.width } : {}),
-                      fontStretch: "75%",
                     }}
                   >
-                    {column.footer || ""}
+                    {isLoading ? <SkeletonCell /> : column.footer || ""}
                   </td>
                 ))}
               </tr>

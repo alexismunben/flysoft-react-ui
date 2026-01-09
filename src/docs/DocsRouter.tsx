@@ -24,6 +24,7 @@ import { ListCrudDocs } from "./ListCrudDocs.tsx/ListCrudDocs";
 import ExampleFormDocs from "./ExampleFormDocs";
 import CheckboxDocs from "./CheckboxDocs";
 import RadioButtonGroupDocs from "./RadioButtonGroupDocs";
+import SnackbarDocs from "./SnackbarDocs";
 import DocAdmin from "./DocAdmin";
 
 export const DocsRouter: React.FC = () => {
@@ -54,6 +55,7 @@ export const DocsRouter: React.FC = () => {
       <Route path="auth" element={<AuthDocs />} />
       <Route path="listcrud" element={<ListCrudDocs />} />
       <Route path="example-form" element={<ExampleFormDocs />} />
+      <Route path="snackbar" element={<SnackbarDocs />} />
       <Route path="admin" element={<DocAdmin />} />
     </Routes>
   );

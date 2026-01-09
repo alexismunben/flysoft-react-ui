@@ -37,3 +37,11 @@ export type {
   NavbarInterface,
   LeftDrawerInterface,
 } from "./AppLayoutContext";
+
+// Snackbar system exports
+export { SnackbarProvider, useSnackbar } from "./SnackbarContext";
+export type {
+  SnackbarContextType,
+  SnackbarMessage,
+  SnackbarVariant,
+} from "./SnackbarContext";

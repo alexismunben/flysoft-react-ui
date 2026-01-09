@@ -1,6 +1,8 @@
-import type { Persona } from "./interfaces";
+import type { Persona, PersonaConEmpresas, Empresa } from "./interfaces";
 import type { PaginationInterface } from "../../components/form-controls/Pagination";
 import dayjs from "dayjs";
+import { personaEmpresaService } from "./personaEmpresaService";
+import { empresaService } from "./empresaService";
 
 const STORAGE_KEY = "docMockServices_personas";
 
@@ -27,51 +29,122 @@ const _obtenerTodas = (): Persona[] => {
 };
 
 /**
+ * Enriquece una persona con sus empresas relacionadas
+ * Optimizado para obtener todas las empresas de una vez
+ */
+const _enriquecerConEmpresas = async (
+  persona: Persona,
+  todasLasEmpresas?: Empresa[]
+): Promise<PersonaConEmpresas> => {
+  const relaciones = await personaEmpresaService.buscarPorPersona(persona.id);
+  const empresasIds = relaciones.map((rel) => rel.idEmpresa);
+
+  let empresas: Empresa[] = [];
+
+  if (todasLasEmpresas) {
+    // Si ya tenemos todas las empresas, filtrar por IDs
+    empresas = todasLasEmpresas.filter((emp) => empresasIds.includes(emp.id));
+  } else {
+    // Si no, obtener cada empresa individualmente
+    for (const idEmpresa of empresasIds) {
+      const empresa = await empresaService.buscarPorId(idEmpresa);
+      if (empresa) {
+        empresas.push(empresa);
+      }
+    }
+  }
+
+  return {
+    ...persona,
+    empresas,
+  };
+};
+
+/**
  * Servicio mock para gestionar Personas en localStorage
  */
 export const personaService = {
   /**
-   * Obtiene personas opcionalmente filtradas por nombre
+   * Obtiene personas opcionalmente filtradas por nombre, con sus empresas relacionadas
    */
-  async listar(params?: { filtro?: string }): Promise<Persona[]> {
+  async listar(params?: { filtro?: string }): Promise<PersonaConEmpresas[]> {
     await simulateNetworkDelay();
     const todas = _obtenerTodas();
-    if (!params?.filtro) {
-      return todas;
+    let personasFiltradas = todas;
+
+    if (params?.filtro) {
+      const filtroLower = params.filtro.toLowerCase();
+      personasFiltradas = todas.filter((per) =>
+        per.nombre.toLowerCase().includes(filtroLower)
+      );
     }
-    const filtroLower = params.filtro.toLowerCase();
-    return todas.filter((per) =>
-      per.nombre.toLowerCase().includes(filtroLower)
+
+    // Obtener todas las empresas de una vez para optimizar
+    const todasLasEmpresas = await empresaService.listar();
+
+    // Enriquecer cada persona con sus empresas
+    const personasConEmpresas = await Promise.all(
+      personasFiltradas.map((p) => _enriquecerConEmpresas(p, todasLasEmpresas))
     );
+
+    return personasConEmpresas;
   },
 
   /**
-   * Obtiene personas paginadas opcionalmente filtradas por nombre
+   * Obtiene personas paginadas opcionalmente filtradas por nombre y/o idEmpresa, con sus empresas relacionadas
    */
   async listarPaginados(params?: {
     filtro?: string;
-    pagina?: number;
-    limit?: number;
-  }): Promise<PaginationInterface<Persona>> {
+    pagina?: string;
+    limit?: string;
+    idEmpresa?: string;
+  }): Promise<PaginationInterface<PersonaConEmpresas>> {
     await simulateNetworkDelay();
     const pagina = params?.pagina ?? 1;
     const limit = params?.limit ?? 20;
     const todas = _obtenerTodas();
     let todasFiltradas = todas;
-
+    // Filtro por nombre
     if (params?.filtro) {
       const filtroLower = params.filtro.toLowerCase();
-      todasFiltradas = todas.filter((per) =>
+      todasFiltradas = todasFiltradas.filter((per) =>
         per.nombre.toLowerCase().includes(filtroLower)
+      );
+    }
+
+    // Filtro por idEmpresa: obtener todas las relaciones de esa empresa
+    // y filtrar las personas que tienen esa relación
+    if (params?.idEmpresa !== undefined) {
+      const relaciones = await personaEmpresaService.buscarPorEmpresa(
+        Number(params.idEmpresa)
+      );
+
+      const personasIdsConEmpresa = new Set(
+        relaciones.map((rel) => rel.idPersona)
+      );
+      todasFiltradas = todasFiltradas.filter((per) =>
+        personasIdsConEmpresa.has(per.id)
       );
     }
 
     const total = todasFiltradas.length;
 
+    // Obtener todas las empresas de una vez para optimizar
+    const todasLasEmpresas = await empresaService.listar();
+
+    // Enriquecer cada persona con sus empresas antes de paginar
+    const personasConEmpresas = await Promise.all(
+      todasFiltradas.map((p) => _enriquecerConEmpresas(p, todasLasEmpresas))
+    );
+
+    const limitNumber = parseInt(limit.toString(), 10);
+    const paginaNumber = parseInt(pagina.toString(), 10);
+    const totalNumber = parseInt(total.toString(), 10);
+
     // Si limit es 0, devolver todos los elementos sin paginar
-    if (limit === 0) {
+    if (limitNumber === 0) {
       return {
-        list: todasFiltradas,
+        list: personasConEmpresas,
         limit: 0,
         page: 1,
         pages: 1,
@@ -79,15 +152,15 @@ export const personaService = {
       };
     }
 
-    const pages = Math.ceil(total / limit);
-    const inicio = (pagina - 1) * limit;
-    const fin = inicio + limit;
-    const list = todasFiltradas.slice(inicio, fin);
+    const pages = Math.ceil(totalNumber / limitNumber);
+    const inicio = (paginaNumber - 1) * limitNumber;
+    const fin = inicio + limitNumber;
+    const list = personasConEmpresas.slice(inicio, fin);
 
     return {
       list,
-      limit,
-      page: pagina,
+      limit: limitNumber,
+      page: paginaNumber,
       pages,
       total,
     };
@@ -149,14 +222,12 @@ export const personaService = {
   /**
    * Elimina una persona por ID
    */
-  async eliminar(id: number): Promise<boolean> {
+  async eliminar(persona: Persona): Promise<void> {
     await simulateNetworkDelay();
     const personas = _obtenerTodas();
-    const index = personas.findIndex((per) => per.id === id);
-    if (index === -1) return false;
+    const index = personas.findIndex((per) => per.id === persona.id);
 
     personas.splice(index, 1);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(personas));
-    return true;
   },
 };

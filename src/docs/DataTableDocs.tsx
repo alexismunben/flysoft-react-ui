@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, DataTable, Button, Badge } from "../index";
 import type { DataTableColumn } from "../components/layout/DataTable";
 
@@ -12,6 +12,8 @@ interface Product {
 }
 
 const DataTableDocs: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const allProducts: Product[] = [
     {
       id: 1,
@@ -447,6 +449,47 @@ const DataTableDocs: React.FC = () => {
               className="text-lg font-semibold mb-4"
               style={{ color: "var(--flysoft-text-primary)" }}
             >
+              Tabla con estado de carga (Loading)
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Usando las props <code>isLoading</code> y <code>loadingRows</code>{" "}
+              puedes mostrar un estado de carga con skeleton loaders. Cuando{" "}
+              <code>isLoading</code> es <code>true</code>, la tabla muestra las
+              columnas pero reemplaza las filas de datos con filas skeleton que
+              simulan el contenido. El número de filas skeleton se controla con{" "}
+              <code>loadingRows</code> (por defecto 5).
+            </p>
+            <div className="mb-4">
+              <Button
+                variant="primary"
+                icon="fa-sync-alt"
+                onClick={() => {
+                  setIsLoading(true);
+                  setTimeout(() => setIsLoading(false), 3000);
+                }}
+                disabled={isLoading}
+              >
+                {isLoading ? "Cargando..." : "Simular carga"}
+              </Button>
+            </div>
+            <Card>
+              <DataTable
+                columns={fullColumns}
+                rows={products}
+                isLoading={isLoading}
+                loadingRows={5}
+              />
+            </Card>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
               Características
             </h3>
             <div className="space-y-3">
@@ -596,6 +639,32 @@ const DataTableDocs: React.FC = () => {
                       defecto es <code>'es-AR'</code>. Ejemplos:{" "}
                       <code>'en-US'</code>, <code>'es-ES'</code>,{" "}
                       <code>'de-DE'</code>
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td className="p-3">
+                      <code className="text-sm text-[var(--color-primary)]">
+                        isLoading
+                      </code>
+                    </td>
+                    <td className="p-3 text-sm">boolean</td>
+                    <td className="p-3 text-sm">
+                      Estado de carga. Cuando es <code>true</code>, muestra
+                      filas skeleton en lugar de los datos. Por defecto es{" "}
+                      <code>false</code>
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td className="p-3">
+                      <code className="text-sm text-[var(--color-primary)]">
+                        loadingRows
+                      </code>
+                    </td>
+                    <td className="p-3 text-sm">number</td>
+                    <td className="p-3 text-sm">
+                      Número de filas skeleton a mostrar cuando{" "}
+                      <code>isLoading</code> es <code>true</code>. Por defecto es{" "}
+                      <code>5</code>
                     </td>
                   </tr>
                 </tbody>

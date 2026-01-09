@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import { Input } from "./Input";
 import type { InputProps } from "./Input";
 
@@ -76,7 +77,13 @@ const AutocompleteInputInner = React.forwardRef<
     const [displayValue, setDisplayValue] = React.useState<string>("");
     const [isOpen, setIsOpen] = React.useState(false);
     const [highlightedIndex, setHighlightedIndex] = React.useState<number>(-1);
+    const [dropdownPosition, setDropdownPosition] = React.useState<{
+      top: number;
+      left: number;
+      width: number;
+    } | null>(null);
     const containerRef = React.useRef<HTMLDivElement | null>(null);
+    const dropdownRef = React.useRef<HTMLDivElement | null>(null);
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const justClearedRef = React.useRef<boolean>(false);
 
@@ -385,20 +392,28 @@ const AutocompleteInputInner = React.forwardRef<
     };
 
     React.useEffect(() => {
+      if (!isOpen) return;
+
       const handleClickOutside = (event: MouseEvent) => {
-        if (
-          containerRef.current &&
-          !containerRef.current.contains(event.target as Node)
-        ) {
+        const target = event.target as Node;
+        const isClickInsideContainer = containerRef.current?.contains(target);
+        const isClickInsideDropdown = dropdownRef.current?.contains(target);
+        
+        if (!isClickInsideContainer && !isClickInsideDropdown) {
           setIsOpen(false);
         }
       };
 
-      document.addEventListener("mousedown", handleClickOutside);
+      // Pequeño delay para asegurar que el portal esté montado
+      const timer = setTimeout(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+      }, 0);
+
       return () => {
+        clearTimeout(timer);
         document.removeEventListener("mousedown", handleClickOutside);
       };
-    }, []);
+    }, [isOpen]);
 
     React.useEffect(() => {
       if (!isRegisterMode) {
@@ -423,6 +438,45 @@ const AutocompleteInputInner = React.forwardRef<
 
     const showDropdown =
       !readOnly && isOpen && (filteredOptions.length > 0 || noResultsText);
+
+    // Verificar que estamos en el navegador
+    // Inicializar isMounted de forma síncrona si es posible
+    const [isMounted, setIsMounted] = React.useState(() => {
+      return typeof document !== "undefined" && !!document.body;
+    });
+
+    React.useEffect(() => {
+      if (!isMounted && typeof document !== "undefined" && document.body) {
+        setIsMounted(true);
+      }
+    }, [isMounted]);
+
+    // Actualizar posición del dropdown cuando se abre
+    React.useEffect(() => {
+      if (showDropdown && containerRef.current && isMounted) {
+        const updatePosition = () => {
+          const rect = containerRef.current?.getBoundingClientRect();
+          if (rect) {
+            setDropdownPosition({
+              top: rect.bottom + window.scrollY + 4,
+              left: rect.left + window.scrollX,
+              width: rect.width,
+            });
+          }
+        };
+
+        updatePosition();
+        window.addEventListener("scroll", updatePosition, true);
+        window.addEventListener("resize", updatePosition);
+
+        return () => {
+          window.removeEventListener("scroll", updatePosition, true);
+          window.removeEventListener("resize", updatePosition);
+        };
+      } else {
+        setDropdownPosition(null);
+      }
+    }, [showDropdown, isMounted]);
 
     // Detectar si hay un valor seleccionado
     // Un valor está seleccionado si el value coincide con el getOptionValue de alguna opción
@@ -576,66 +630,89 @@ const AutocompleteInputInner = React.forwardRef<
           readOnly={readOnly}
         />
 
-        {showDropdown && (
-          <div
-            className="absolute z-20 mt-1 w-full rounded-md border border-[var(--color-border-default)] 
-          bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] max-h-60 overflow-auto"
-          >
-            {filteredOptions.length > 0 ? (
-              <ul className="py-1">
-                {filteredOptions.map((option, index) => {
-                  const label = labelGetter(option);
-                  const description = descriptionGetter(option);
-                  const anyOption = option as unknown as { icon?: string };
+        {(() => {
+          // Verificar de forma segura que document.body existe y es válido
+          const bodyElement =
+            typeof document !== "undefined" &&
+            document.body &&
+            document.body instanceof HTMLElement
+              ? document.body
+              : null;
 
-                  return (
-                    <li
-                      key={String(valueGetter(option) ?? label ?? index)}
-                      className={`px-3 py-2 cursor-pointer flex items-start gap-2 text-sm
+          return (
+            showDropdown &&
+            dropdownPosition &&
+            isMounted &&
+            bodyElement &&
+            createPortal(
+              <div
+                ref={dropdownRef}
+                className="fixed z-[2001] min-w-full w-max rounded-md border border-[var(--color-border-default)] 
+          bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] max-h-60 overflow-auto"
+                style={{
+                  top: `${dropdownPosition.top}px`,
+                  left: `${dropdownPosition.left}px`,
+                  minWidth: `${dropdownPosition.width}px`,
+                }}
+              >
+                {filteredOptions.length > 0 ? (
+                  <ul className="py-1">
+                    {filteredOptions.map((option, index) => {
+                      const label = labelGetter(option);
+                      const description = descriptionGetter(option);
+                      const anyOption = option as unknown as { icon?: string };
+
+                      return (
+                        <li
+                          key={String(valueGetter(option) ?? label ?? index)}
+                          className={`px-3 py-2 cursor-pointer flex items-start gap-2 text-sm
                       ${
                         index === highlightedIndex
                           ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
                           : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
                       }`}
-                      onMouseDown={(event) => {
-                        event.preventDefault();
-                        handleSelect(option);
-                      }}
-                      onMouseEnter={() => setHighlightedIndex(index)}
-                    >
-                      {renderOption ? (
-                        renderOption(option)
-                      ) : (
-                        <>
-                          {anyOption.icon && (
-                            <i
-                              className={`fa ${anyOption.icon} mt-0.5 text-[var(--color-text-muted)]`}
-                            />
-                          )}
-                          <div className="flex flex-col">
-                            <span className="font-[var(--font-default)]">
-                              {label}
-                            </span>
-                            {description !== undefined &&
-                              description !== null && (
-                                <span className="text-xs text-[var(--color-text-secondary)]">
-                                  {description}
-                                </span>
+                          onMouseDown={(event) => {
+                            event.preventDefault();
+                            handleSelect(option);
+                          }}
+                          onMouseEnter={() => setHighlightedIndex(index)}
+                        >
+                          {renderOption ? (
+                            renderOption(option)
+                          ) : (
+                            <>
+                              {anyOption.icon && (
+                                <i
+                                  className={`fa ${anyOption.icon} mt-0.5 text-[var(--color-text-muted)] flex-shrink-0`}
+                                />
                               )}
-                          </div>
-                        </>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : (
-              <div className="px-3 py-2 text-sm text-[var(--color-text-secondary)]">
-                {noResultsText}
-              </div>
-            )}
-          </div>
-        )}
+                              <div className="flex flex-col min-w-0">
+                                <span className="font-[var(--font-default)] whitespace-nowrap">
+                                  {label}
+                                </span>
+                                {description !== undefined &&
+                                  description !== null && (
+                                    <span className="text-xs text-[var(--color-text-secondary)] break-words">
+                                      {description}
+                                    </span>
+                                  )}
+                              </div>
+                            </>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <div className="px-3 py-2 text-sm text-[var(--color-text-secondary)]">
+                    {noResultsText}
+                  </div>
+                )}
+              </div>,
+              bodyElement
+            )
+          );
+        })()}
       </div>
     );
   }
