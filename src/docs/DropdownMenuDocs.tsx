@@ -301,9 +301,9 @@ const DropdownMenuDocs: React.FC = () => {
                   }}
                   renderNode={
                     <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-bg-secondary)] rounded cursor-pointer hover:bg-[var(--color-bg-hover)] transition-colors">
-                      <i className="fa fa-user-circle" />
+                      <i className="fal fa-user-circle" />
                       <span>Usuario</span>
-                      <i className="fa fa-chevron-down text-xs" />
+                      <i className="fal fa-chevron-down text-xs" />
                     </div>
                   }
                 />

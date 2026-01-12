@@ -106,7 +106,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-sm text-red-600">
-              <i className="fa fa-exclamation-triangle mr-2" />
+              <i className="fal fa-exclamation-triangle mr-2" />
               {error}
             </p>
           </div>

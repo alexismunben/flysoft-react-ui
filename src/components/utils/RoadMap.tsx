@@ -1,4 +1,5 @@
 import React from "react";
+import { normalizeIconClass } from "./iconUtils";
 
 /**
  * Helper function to convert color names to CSS values
@@ -202,7 +203,7 @@ export const RoadMap: React.FC<RoadMapProps> = ({
                 }}
               >
                 {stage.icon ? (
-                  <i className={`fa ${stage.icon} text-xs`} />
+                  <i className={`${normalizeIconClass(stage.icon)} text-xs`} />
                 ) : null}
               </div>
 

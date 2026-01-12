@@ -443,7 +443,7 @@ const SearchSelectInputDocs: React.FC = () => {
                   renderOption={(user) => (
                     <div className="flex items-start gap-3 w-full">
                       <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--color-primary-soft)] flex items-center justify-center">
-                        <i className="fa fa-user text-[var(--color-primary)]" />
+                        <i className="fal fa-user text-[var(--color-primary)]" />
                       </div>
                       <div className="flex flex-col flex-1 min-w-0">
                         <span className="font-medium text-[var(--color-text-primary)]">

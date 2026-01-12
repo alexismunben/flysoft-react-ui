@@ -5,6 +5,7 @@ import type { InputProps } from "./Input";
 import { Button } from "./Button";
 import { Dialog } from "../utils/Dialog";
 import type { PaginationInterface } from "./Pagination";
+import { normalizeIconClass } from "../utils/iconUtils";
 
 // Interfaz por defecto para mantener compatibilidad
 export interface SearchSelectOption {
@@ -1237,7 +1238,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
             />
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
-                <i className="fa fa-spinner fa-spin text-2xl text-[var(--color-primary)]" />
+                <i className="fal fa-spinner fa-spin text-2xl text-[var(--color-primary)]" />
               </div>
             ) : options.length > 0 ? (
               <ul className="space-y-1 max-h-96 overflow-y-auto">
@@ -1259,7 +1260,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
                         <>
                           {anyOption.icon && (
                             <i
-                              className={`fa ${anyOption.icon} mt-0.5 text-[var(--color-text-muted)]`}
+                              className={`${normalizeIconClass(anyOption.icon)} mt-0.5 text-[var(--color-text-muted)]`}
                             />
                           )}
                           <div className="flex flex-col flex-1">

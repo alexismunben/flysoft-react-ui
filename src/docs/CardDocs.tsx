@@ -131,13 +131,13 @@ const CardDocs: React.FC = () => {
             <Card
               title={
                 <div className="flex items-center gap-2">
-                  <i className="fa fa-user-circle" />
+                  <i className="fal fa-user-circle" />
                   <span>Usuario Personalizado</span>
                 </div>
               }
               subtitle={
                 <div className="flex items-center gap-2">
-                  <i className="fa fa-envelope" />
+                  <i className="fal fa-envelope" />
                   <span>usuario@ejemplo.com</span>
                 </div>
               }

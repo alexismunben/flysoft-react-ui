@@ -1,4 +1,5 @@
 export { Button } from "./Button";
+export { LinkButton } from "./LinkButton";
 export { Input } from "./Input";
 export { AutocompleteInput } from "./AutocompleteInput";
 export { SearchSelectInput } from "./SearchSelectInput-OLD";
@@ -8,6 +9,7 @@ export { Pagination } from "./Pagination";
 export { Checkbox } from "./Checkbox";
 export { RadioButtonGroup } from "./RadioButtonGroup";
 export type { ButtonProps } from "./Button";
+export type { LinkButtonProps } from "./LinkButton";
 export type { InputProps } from "./Input";
 export type {
   AutocompleteInputProps,

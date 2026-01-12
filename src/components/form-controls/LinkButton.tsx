@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { normalizeIconClass } from "../utils/iconUtils";
 
 // Función helper para convertir nombres de colores comunes a valores CSS válidos
@@ -32,8 +33,10 @@ const getColorValue = (color?: string): string | undefined => {
   return colorMap[color.toLowerCase()] || color;
 };
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface LinkButtonProps
+  extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
+  to: string;
+  target?: string;
   variant?: "primary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
   color?: "primary" | "secondary" | "success" | "warning" | "danger" | "info";
@@ -41,7 +44,6 @@ export interface ButtonProps
   textColor?: string;
   icon?: string;
   iconPosition?: "left" | "right";
-  loading?: boolean;
   children?: React.ReactNode;
 }
 
@@ -52,7 +54,9 @@ type Ripple = {
   size: number;
 };
 
-export const Button: React.FC<ButtonProps> = ({
+export const LinkButton: React.FC<LinkButtonProps> = ({
+  to,
+  target,
   variant = "primary",
   size = "md",
   color = "primary",
@@ -60,20 +64,17 @@ export const Button: React.FC<ButtonProps> = ({
   textColor,
   icon,
   iconPosition = "left",
-  loading = false,
   children,
   className = "",
-  disabled,
   onClick,
   ...props
 }) => {
-  const buttonRef = React.useRef<HTMLButtonElement | null>(null);
   const [ripples, setRipples] = React.useState<Ripple[]>([]);
 
   const baseClasses = `
     inline-flex items-center justify-center font-medium rounded-sm transition-colors 
-    cursor-pointer relative overflow-hidden
-    disabled:opacity-50 disabled:cursor-not-allowed
+    cursor-pointer relative overflow-hidden no-underline outline-none focus:outline-none 
+    focus-visible:outline-none active:outline-none focus:ring-0 focus:ring-offset-0
     font-[var(--font-default)]
   `;
 
@@ -84,33 +85,32 @@ export const Button: React.FC<ButtonProps> = ({
       if (variantType === "primary") {
         return `
           bg-[var(--color-primary)] text-[var(--color-primary-contrast)] 
-          hover:bg-[var(--color-primary-dark)] focus:ring-[var(--color-primary)]
+          hover:bg-[var(--color-primary-dark)]
         `;
       } else if (variantType === "outline") {
         return `
           border border-[var(--color-primary)] text-[var(--color-primary)] 
-          hover:bg-[var(--color-bg-secondary)] focus:ring-[var(--color-primary)]
+          hover:bg-[var(--color-bg-secondary)]
         `;
       } else {
         return `
-          text-[var(--color-primary)] hover:bg-[var(--color-bg-secondary)] 
-          focus:ring-[var(--color-primary)]
+          text-[var(--color-primary)] hover:bg-[var(--color-bg-secondary)]
         `;
       }
     }
     // Para otros colores, retornar clases base sin color (se aplicarán con estilos inline)
     if (variantType === "primary") {
-      return `focus:ring-2 focus:ring-offset-2`;
+      return ``;
     } else if (variantType === "outline") {
-      return `border hover:bg-[var(--color-bg-secondary)] focus:ring-2 focus:ring-offset-2`;
+      return `border hover:bg-[var(--color-bg-secondary)]`;
     } else {
-      return `hover:bg-[var(--color-bg-secondary)] focus:ring-2 focus:ring-offset-2`;
+      return `hover:bg-[var(--color-bg-secondary)]`;
     }
   };
 
   // Si se proporciona bg personalizado, no usar las clases de variante
   const variantClasses = bg ? "" : getVariantClasses(variant, color);
-
+  
   // Determinar si necesitamos usar estilos inline para colores del sistema
   const needsInlineStyles = !bg && color !== "primary";
 
@@ -190,14 +190,6 @@ export const Button: React.FC<ButtonProps> = ({
     return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
   };
 
-  // Agregar hover style cuando hay bg personalizado y variant es primary
-  const hoverStyle: React.CSSProperties =
-    bg && variant === "primary" && !disabled && !loading
-      ? ({
-          "--hover-bg": darkenColor(getColorValue(bg) || bg, 15),
-        } as React.CSSProperties)
-      : {};
-
   const renderIcon = () => {
     if (!icon) return null;
 
@@ -222,9 +214,10 @@ export const Button: React.FC<ButtonProps> = ({
     ? "rgba(255, 255, 255, 0.45)"
     : "rgba(0, 0, 0, 0.15)";
 
-  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
-    if (!disabled && !loading && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
+  const handleClick: React.MouseEventHandler<HTMLAnchorElement> = (event) => {
+    const targetElement = event.currentTarget;
+    if (targetElement) {
+      const rect = targetElement.getBoundingClientRect();
       const size = Math.max(rect.width, rect.height) * 1.2;
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
@@ -241,40 +234,108 @@ export const Button: React.FC<ButtonProps> = ({
     onClick?.(event);
   };
 
-  // Combinar estilos inline
-  const combinedStyles = { ...inlineStyles, ...hoverStyle };
+  // Determinar si es una ruta externa (http/https) o interna
+  const isExternal = to.startsWith("http://") || to.startsWith("https://") || to.startsWith("mailto:") || to.startsWith("tel:");
+
+  // Combinar estilos inline - agregar outline: none para asegurar que no aparezca
+  const combinedStyles: React.CSSProperties = {
+    ...inlineStyles,
+    outline: "none",
+    outlineWidth: "0",
+    outlineStyle: "none",
+    outlineOffset: "0",
+    WebkitTapHighlightColor: "transparent",
+    boxShadow: "none",
+  };
+
+  const linkProps = {
+    className: classes,
+    style: combinedStyles,
+    onClick: handleClick,
+    onFocus: (e: React.FocusEvent<HTMLAnchorElement>) => {
+      e.currentTarget.style.outline = "none";
+      e.currentTarget.style.outlineWidth = "0";
+      e.currentTarget.style.outlineStyle = "none";
+      e.currentTarget.style.outlineOffset = "0";
+      e.currentTarget.style.boxShadow = "none";
+    },
+    onBlur: (e: React.FocusEvent<HTMLAnchorElement>) => {
+      e.currentTarget.style.outline = "none";
+      e.currentTarget.style.outlineWidth = "0";
+      e.currentTarget.style.outlineStyle = "none";
+      e.currentTarget.style.outlineOffset = "0";
+      e.currentTarget.style.boxShadow = "none";
+    },
+    onKeyDown: (e: React.KeyboardEvent<HTMLAnchorElement>) => {
+      // Eliminar outline cuando se presiona cualquier tecla
+      if (e.key === "Tab" || e.key === "Enter" || e.key === " ") {
+        e.currentTarget.style.outline = "none";
+        e.currentTarget.style.outlineWidth = "0";
+        e.currentTarget.style.outlineStyle = "none";
+        e.currentTarget.style.outlineOffset = "0";
+        e.currentTarget.style.boxShadow = "none";
+      }
+    },
+    onMouseEnter: (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (variant === "primary") {
+        if (bg) {
+          const hoverBg = darkenColor(getColorValue(bg) || bg, 15);
+          e.currentTarget.style.backgroundColor = hoverBg;
+        } else if (needsInlineStyles) {
+          const hoverBg = getCSSVariable(`--color-${color}-dark`);
+          e.currentTarget.style.backgroundColor = hoverBg;
+        }
+      }
+    },
+    onMouseLeave: (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (variant === "primary") {
+        if (bg) {
+          e.currentTarget.style.backgroundColor = getColorValue(bg) || bg;
+        } else if (needsInlineStyles) {
+          e.currentTarget.style.backgroundColor = getCSSVariable(
+            `--color-${color}`
+          );
+        }
+      }
+    },
+    ...props,
+  };
+
+  if (isExternal) {
+    const externalTarget = target || "_blank";
+    return (
+      <a
+        href={to}
+        target={externalTarget}
+        rel={externalTarget === "_blank" ? "noopener noreferrer" : undefined}
+        {...linkProps}
+      >
+        <span className="absolute inset-0 pointer-events-none">
+          {ripples.map((ripple) => (
+            <span
+              key={ripple.id}
+              className="absolute rounded-full opacity-40 flysoft-button-ripple"
+              style={{
+                top: ripple.y,
+                left: ripple.x,
+                width: ripple.size,
+                height: ripple.size,
+                backgroundColor: rippleColor,
+              }}
+            />
+          ))}
+        </span>
+        <span className="relative inline-flex items-center justify-center">
+          {icon && iconPosition === "left" && renderIcon()}
+          {children}
+          {icon && iconPosition === "right" && renderIcon()}
+        </span>
+      </a>
+    );
+  }
 
   return (
-    <button
-      ref={buttonRef}
-      className={classes}
-      style={combinedStyles}
-      disabled={disabled || loading}
-      onClick={handleClick}
-      onMouseEnter={(e) => {
-        if (variant === "primary" && !disabled && !loading) {
-          if (bg) {
-            const hoverBg = darkenColor(getColorValue(bg) || bg, 15);
-            e.currentTarget.style.backgroundColor = hoverBg;
-          } else if (needsInlineStyles) {
-            const hoverBg = getCSSVariable(`--color-${color}-dark`);
-            e.currentTarget.style.backgroundColor = hoverBg;
-          }
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (variant === "primary") {
-          if (bg) {
-            e.currentTarget.style.backgroundColor = getColorValue(bg) || bg;
-          } else if (needsInlineStyles) {
-            e.currentTarget.style.backgroundColor = getCSSVariable(
-              `--color-${color}`
-            );
-          }
-        }
-      }}
-      {...props}
-    >
+    <Link to={to} {...linkProps}>
       <span className="absolute inset-0 pointer-events-none">
         {ripples.map((ripple) => (
           <span
@@ -291,13 +352,11 @@ export const Button: React.FC<ButtonProps> = ({
         ))}
       </span>
       <span className="relative inline-flex items-center justify-center">
-        {loading && (
-          <i className={`${normalizeIconClass("fa-spinner fa-spin")} mr-2`} />
-        )}
-        {icon && iconPosition === "left" && !loading && renderIcon()}
+        {icon && iconPosition === "left" && renderIcon()}
         {children}
-        {icon && iconPosition === "right" && !loading && renderIcon()}
+        {icon && iconPosition === "right" && renderIcon()}
       </span>
-    </button>
+    </Link>
   );
 };
+

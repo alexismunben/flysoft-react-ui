@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, Badge } from "../../index";
+import { normalizeIconClass } from "../../components/utils/iconUtils";
 
 /**
  * Template de Layout con Sidebar
@@ -94,7 +95,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
             onClick={toggleSidebar}
             className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600"
           >
-            <i className="fa fa-times" />
+            <i className="fal fa-times" />
           </button>
         </div>
 
@@ -118,7 +119,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
                   }
                 `}
               >
-                <i className={`fa ${item.icon} mr-3 flex-shrink-0`} />
+                <i className={`${normalizeIconClass(item.icon)} mr-3 flex-shrink-0`} />
                 <span className="flex-1">{item.label}</span>
                 {item.badge && (
                   <Badge variant="primary" size="sm" className="ml-2">
@@ -135,7 +136,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                <i className={`fa ${user.avatar || "fa-user"} text-gray-600`} />
+                <i className={`${normalizeIconClass(user.avatar || "fa-user")} text-gray-600`} />
               </div>
             </div>
             <div className="ml-3 flex-1">
@@ -150,7 +151,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
                 className="ml-2 p-1 text-gray-400 hover:text-gray-600"
                 title="Cerrar sesión"
               >
-                <i className="fa fa-sign-out-alt" />
+                <i className="fal fa-sign-out-alt" />
               </button>
             )}
           </div>
@@ -166,7 +167,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               onClick={toggleSidebar}
               className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600"
             >
-              <i className="fa fa-bars" />
+              <i className="fal fa-bars" />
             </button>
 
             <div className="flex items-center space-x-4">

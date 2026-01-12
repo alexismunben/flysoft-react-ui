@@ -74,7 +74,9 @@ export function ListCrudProvider<T>({
     successMessage: "Datos cargados correctamente",
   });
   const createItemAsync = useAsyncRequest();
-  const deleteItemAsync = useAsyncRequest();
+  const deleteItemAsync = useAsyncRequest({
+    successMessage: "Item eliminado correctamente",
+  });
 
   // El isLoading del contexto combina ambos hooks de fetchData
   const isLoading = fetchDataAsync.isLoading || fetchDataAsyncManual.isLoading;
@@ -126,26 +128,14 @@ export function ListCrudProvider<T>({
 
       // Evitar ejecuciones duplicadas con los mismos parámetros
       if (!showSuccessMessage && lastFetchParamsRef.current === paramsKey) {
-        console.log("Skipping duplicate fetchData call");
         return;
       }
 
       lastFetchParamsRef.current = paramsKey;
 
-      console.log("fetchData called", {
-        showSuccessMessage,
-        isLoading: asyncRequest.isLoading,
-        params: requestParams,
-      });
-
       const result = await asyncRequest.execute(async () => {
-        console.log("Executing promise with params:", requestParams);
-        const promiseResult = await getPromiseRef.current(requestParams);
-        console.log("Promise result:", promiseResult);
-        return promiseResult;
+        return await getPromiseRef.current(requestParams);
       });
-
-      console.log("fetchData result:", result);
 
       // Solo procesar el resultado si no es undefined (undefined significa error)
       if (result !== undefined) {
@@ -169,8 +159,6 @@ export function ListCrudProvider<T>({
           setPages(1);
           setTotal(0);
         }
-      } else {
-        console.log("Result is undefined, not processing");
       }
     },
     [getUrlParams, limit, fetchDataAsync, fetchDataAsyncManual]

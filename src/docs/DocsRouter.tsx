@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import ButtonDocs from "./ButtonDocs";
+import LinkButtonDocs from "./LinkButtonDocs";
 import CardDocs from "./CardDocs";
 import InputDocs from "./InputDocs";
 import ThemeSwitcherDocs from "./ThemeSwitcherDocs";
@@ -25,6 +26,7 @@ import ExampleFormDocs from "./ExampleFormDocs";
 import CheckboxDocs from "./CheckboxDocs";
 import RadioButtonGroupDocs from "./RadioButtonGroupDocs";
 import SnackbarDocs from "./SnackbarDocs";
+import AccordionDocs from "./AccordionDocs";
 import DocAdmin from "./DocAdmin";
 
 export const DocsRouter: React.FC = () => {
@@ -32,6 +34,7 @@ export const DocsRouter: React.FC = () => {
     <Routes>
       <Route path="" element={<Navigate to="button" replace />} />
       <Route path="button" element={<ButtonDocs />} />
+      <Route path="linkbutton" element={<LinkButtonDocs />} />
       <Route path="badge" element={<BadgeDocs />} />
       <Route path="avatar" element={<AvatarDocs />} />
       <Route path="roadmap" element={<RoadMapDocs />} />
@@ -56,6 +59,7 @@ export const DocsRouter: React.FC = () => {
       <Route path="listcrud" element={<ListCrudDocs />} />
       <Route path="example-form" element={<ExampleFormDocs />} />
       <Route path="snackbar" element={<SnackbarDocs />} />
+      <Route path="accordion" element={<AccordionDocs />} />
       <Route path="admin" element={<DocAdmin />} />
     </Routes>
   );

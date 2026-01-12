@@ -1,4 +1,5 @@
 import React from "react";
+import { normalizeIconClass } from "../utils/iconUtils";
 
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
@@ -69,7 +70,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     const iconElement = (
       <i
-        className={`fa ${icon} ${iconClasses} text-[var(--color-text-muted)] absolute top-1/2 transform -translate-y-1/2 ${
+        className={`${normalizeIconClass(icon)} ${iconClasses} text-[var(--color-text-muted)] absolute top-1/2 transform -translate-y-1/2 ${
           iconPosition === "left" ? "left-3" : "right-3"
         } ${onIconClick && !readOnly ? "cursor-pointer hover:text-[var(--color-primary)] transition-colors" : ""}`}
         onClick={readOnly ? undefined : onIconClick}

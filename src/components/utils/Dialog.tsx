@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { normalizeIconClass } from "./iconUtils";
 
 export interface DialogProps {
   isOpen: boolean;
@@ -90,7 +91,7 @@ export const Dialog: React.FC<DialogProps> = ({
               className="ml-4 p-1 rounded-md text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] transition-colors cursor-pointer"
               aria-label="Cerrar dialog"
             >
-              <i className="fa fa-times" />
+              <i className={normalizeIconClass("fa-times")} />
             </button>
           )}
         </div>

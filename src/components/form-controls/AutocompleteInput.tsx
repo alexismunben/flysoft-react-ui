@@ -2,6 +2,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 import { Input } from "./Input";
 import type { InputProps } from "./Input";
+import { normalizeIconClass } from "../utils/iconUtils";
 
 // Interfaz por defecto para mantener compatibilidad
 export interface AutocompleteOption {
@@ -683,7 +684,7 @@ const AutocompleteInputInner = React.forwardRef<
                             <>
                               {anyOption.icon && (
                                 <i
-                                  className={`fa ${anyOption.icon} mt-0.5 text-[var(--color-text-muted)] flex-shrink-0`}
+                                  className={`${normalizeIconClass(anyOption.icon)} mt-0.5 text-[var(--color-text-muted)] flex-shrink-0`}
                                 />
                               )}
                               <div className="flex flex-col min-w-0">

@@ -10,6 +10,7 @@ import { Input, type InputProps } from "./Input";
 import type { PaginationInterface } from "./Pagination";
 import { Button } from "./Button";
 import { Dialog, Loader } from "../utils";
+import { normalizeIconClass } from "../utils/iconUtils";
 
 export interface SearchSelectOption {
   label: string;
@@ -425,7 +426,9 @@ const SearchSelectInputInner = React.forwardRef<
                           <>
                             {anyOption.icon && (
                               <i
-                                className={`fa ${anyOption.icon} mt-0.5 text-[var(--color-text-muted)]`}
+                                className={`${normalizeIconClass(
+                                  anyOption.icon
+                                )} mt-0.5 text-[var(--color-text-muted)]`}
                               />
                             )}
                             <div className="flex flex-col flex-1">

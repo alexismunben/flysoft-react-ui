@@ -5,6 +5,9 @@ import "./index.css";
 export { Button } from "./components/form-controls/Button";
 export type { ButtonProps } from "./components/form-controls/Button";
 
+export { LinkButton } from "./components/form-controls/LinkButton";
+export type { LinkButtonProps } from "./components/form-controls/LinkButton";
+
 export { Input } from "./components/form-controls/Input";
 export type { InputProps } from "./components/form-controls/Input";
 
@@ -66,6 +69,8 @@ export type {
   DataTableProps,
   DataTableColumn,
 } from "./components/layout/DataTable";
+export { Accordion } from "./components/layout/Accordion";
+export type { AccordionProps } from "./components/layout/Accordion";
 
 export { Badge } from "./components/utils/Badge";
 export type { BadgeProps } from "./components/utils/Badge";

@@ -11,6 +11,7 @@ import { SearchSelectInput } from "../form-controls/SearchSelectInput";
 import type { SearchSelectOption } from "../form-controls/SearchSelectInput";
 import type { PaginationInterface } from "../form-controls/Pagination";
 import { DataField } from "../layout/DataField";
+import { normalizeIconClass } from "./iconUtils";
 
 export interface StaticOption {
   text: string;
@@ -678,7 +679,9 @@ export const Filter: React.FC<FilterProps> = (props) => {
         {/* Chevron hacia abajo siempre */}
         <span className="p-0.5 hover:bg-[var(--color-bg-secondary)] rounded transition-colors flex items-center justify-center">
           <i
-            className={`fa fa-chevron-down text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-all ${
+            className={`${normalizeIconClass(
+              "fa-chevron-down"
+            )} text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-all ${
               isOpen ? "rotate-180" : ""
             }`}
           />
@@ -692,7 +695,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
             aria-label="Borrar filtro"
             type="button"
           >
-            <i className="fa fa-times text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors" />
+            <i
+              className={`${normalizeIconClass(
+                "fa-times"
+              )} text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors`}
+            />
           </button>
         )}
       </div>

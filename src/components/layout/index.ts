@@ -12,3 +12,5 @@ export { TabPanel } from "./TabPanel";
 export type { TabPanelProps } from "./TabPanel";
 export { DataTable } from "./DataTable";
 export type { DataTableProps, DataTableColumn } from "./DataTable";
+export { Accordion } from "./Accordion";
+export type { AccordionProps } from "./Accordion";

@@ -1,4 +1,5 @@
 import React from "react";
+import { normalizeIconClass } from "../src/components/utils/iconUtils";
 
 /**
  * Template para Nuevos Componentes
@@ -179,7 +180,7 @@ export const ComponentName: React.FC<ComponentNameProps> = ({
       size === "sm" ? "w-4 h-4" : size === "md" ? "w-5 h-5" : "w-6 h-6";
 
     return (
-      <i className={`fa ${icon} ${iconClasses} mr-2`} aria-hidden="true" />
+      <i className={`${normalizeIconClass(icon)} ${iconClasses} mr-2`} aria-hidden="true" />
     );
   };
 

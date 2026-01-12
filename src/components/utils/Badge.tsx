@@ -1,4 +1,5 @@
 import React from "react";
+import { normalizeIconClass } from "./iconUtils";
 
 // Función helper para convertir nombres de colores comunes a valores CSS válidos
 const getColorValue = (color?: string): string | undefined => {
@@ -154,8 +155,8 @@ export const Badge: React.FC<BadgeProps> = ({
     if (!icon) return null;
     // Si hay onClick y hay iconos, el onClick se aplica solo a los iconos
     const iconClasses = onClick
-      ? `fa ${icon} ${iconSizeClasses} cursor-pointer`
-      : `fa ${icon} ${iconSizeClasses}`;
+      ? `${normalizeIconClass(icon)} ${iconSizeClasses} cursor-pointer`
+      : `${normalizeIconClass(icon)} ${iconSizeClasses}`;
 
     return (
       <span className={iconPaddingClasses}>

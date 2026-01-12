@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import type { SnackbarVariant } from "../../contexts/SnackbarContext";
+import { normalizeIconClass } from "./iconUtils";
 
 export interface SnackbarProps {
   id: string;
@@ -182,7 +183,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
         {displayIcon && (
           <div className="flex-shrink-0 -mt-0.5">
             <i
-              className={`fa ${displayIcon} text-base`}
+              className={`${normalizeIconClass(displayIcon)} text-base`}
               aria-hidden={!iconLabel}
               aria-label={iconLabel}
             />
@@ -203,7 +204,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
           aria-label="Cerrar notificación"
           type="button"
         >
-          <i className="fa fa-times text-sm" />
+          <i className={`${normalizeIconClass("fa-times")} text-sm`} />
         </button>
       </div>
     </div>

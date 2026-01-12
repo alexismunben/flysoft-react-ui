@@ -261,7 +261,7 @@ const DataTableDocs: React.FC = () => {
     {
       header: (
         <div className="flex items-center gap-2">
-          <i className="fa fa-hashtag" />
+          <i className="fal fa-hashtag" />
           <span>ID</span>
         </div>
       ),
@@ -273,7 +273,7 @@ const DataTableDocs: React.FC = () => {
     {
       header: (
         <div className="flex items-center gap-2">
-          <i className="fa fa-box" />
+          <i className="fal fa-box" />
           <span>Producto</span>
         </div>
       ),
@@ -283,7 +283,7 @@ const DataTableDocs: React.FC = () => {
     {
       header: (
         <div className="flex items-center gap-2">
-          <i className="fa fa-euro-sign" />
+          <i className="fal fa-euro-sign" />
           <span>Precio</span>
         </div>
       ),

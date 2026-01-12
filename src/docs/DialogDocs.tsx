@@ -165,7 +165,7 @@ const DialogDocs: React.FC = () => {
                 isOpen={isOpenConfirm}
                 title={
                   <div className="flex items-center gap-2">
-                    <i className="fa fa-exclamation-triangle text-[var(--color-danger)]" />
+                    <i className="fal fa-exclamation-triangle text-[var(--color-danger)]" />
                     <span>Confirmar Eliminación</span>
                   </div>
                 }
@@ -291,7 +291,7 @@ const DialogDocs: React.FC = () => {
                 isOpen={isOpenCustom}
                 title={
                   <div className="flex items-center gap-2">
-                    <i className="fa fa-info-circle text-[var(--color-primary)]" />
+                    <i className="fal fa-info-circle text-[var(--color-primary)]" />
                     <span>Información Importante</span>
                     <Badge variant="info" size="sm">
                       Nuevo
@@ -309,7 +309,7 @@ const DialogDocs: React.FC = () => {
                         className="text-sm"
                         style={{ color: "var(--flysoft-text-secondary)" }}
                       >
-                        <i className="fa fa-lightbulb mr-2" />
+                        <i className="fal fa-lightbulb mr-2" />
                         Puedes usar cualquier componente React en el título,
                         body y acciones.
                       </p>

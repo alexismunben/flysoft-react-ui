@@ -113,9 +113,9 @@ export const Card: React.FC<CardProps> = ({
                 </h3>
               )}
               {subtitle && (
-                <p className="text-sm text-[var(--color-text-secondary)] mt-1">
+                <div className="text-sm text-[var(--color-text-secondary)] mt-1">
                   {subtitle}
-                </p>
+                </div>
               )}
             </div>
           </div>

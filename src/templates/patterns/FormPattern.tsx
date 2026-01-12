@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, Input, Card } from "../../index";
+import { normalizeIconClass } from "../../components/utils/iconUtils";
 
 /**
  * Template de Patrón de Formulario Reutilizable
@@ -133,7 +134,7 @@ export const FormPattern: React.FC<FormPatternProps> = ({
           <div className="relative">
             {field.icon && (
               <i
-                className={`fa ${field.icon} text-[var(--color-text-muted)] absolute top-3 left-3 w-5 h-5`}
+                className={`${normalizeIconClass(field.icon)} text-[var(--color-text-muted)] absolute top-3 left-3 w-5 h-5`}
               />
             )}
             <textarea
@@ -179,7 +180,7 @@ export const FormPattern: React.FC<FormPatternProps> = ({
       >
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i className="fa fa-check text-green-600 text-2xl" />
+            <i className="fal fa-check text-green-600 text-2xl" />
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             ¡Operación exitosa!
@@ -205,7 +206,7 @@ export const FormPattern: React.FC<FormPatternProps> = ({
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-sm text-red-600">
-              <i className="fa fa-exclamation-triangle mr-2" />
+              <i className="fal fa-exclamation-triangle mr-2" />
               {error}
             </p>
           </div>

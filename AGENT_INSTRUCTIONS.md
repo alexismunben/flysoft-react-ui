@@ -203,18 +203,29 @@ export const TEMPLATES: TemplateConfig[] = [
 
 ## 🎨 Reglas para Iconos
 
-### FontAwesome 5 Exclusivamente
+### FontAwesome 5 Exclusivamente - Estilo Light (Outlined) por Defecto
+
+Los iconos en este proyecto usan el estilo **light (fal)** por defecto, que proporciona un aspecto outlined/ligero. Los componentes normalizan automáticamente las clases de iconos.
 
 ```tsx
-// ✅ Correcto
-<i className="fa fa-user" />
-<i className="fa fa-envelope" />
-<i className="fa fa-lock" />
+// ✅ Correcto - Los componentes normalizan automáticamente a "fal"
+<Button icon="fa-user" />
+<Input icon="fa-envelope" />
+<Badge icon="fa-lock" />
 
-// ❌ Incorrecto
+// ✅ También funciona con prefijos explícitos
+<Button icon="fas fa-user" /> // Se normaliza a "fal fa-user"
+<Button icon="far fa-user" /> // Se normaliza a "fal fa-user"
+
+// ✅ Para uso directo en JSX, usar "fal" explícitamente
+<i className="fal fa-user" />
+
+// ❌ Incorrecto - No usar otras librerías de iconos
 <i className="lucide-user" />
 <Icon name="user" />
 ```
+
+**Nota:** Los componentes internos usan la función `normalizeIconClass()` que convierte automáticamente cualquier prefijo de estilo (fa, fas, far, fal) a "fal" (light/outlined) por defecto.
 
 ### Categorías de Iconos Disponibles
 

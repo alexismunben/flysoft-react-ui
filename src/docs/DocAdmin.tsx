@@ -115,7 +115,7 @@ const DocAdmin: React.FC = () => {
           {/* Información */}
           <div className="p-4 bg-[var(--color-bg-secondary)] rounded-lg border border-[var(--color-border-default)]">
             <h4 className="font-semibold mb-2 text-[var(--color-text-primary)]">
-              <i className="fa fa-info-circle mr-2 text-[var(--color-info)]" />
+              <i className="fal fa-info-circle mr-2 text-[var(--color-info)]" />
               Información
             </h4>
             <p className="text-sm text-[var(--color-text-secondary)]">

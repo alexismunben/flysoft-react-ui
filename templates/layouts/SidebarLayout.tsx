@@ -95,7 +95,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
             onClick={toggleSidebar}
             className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600"
           >
-            <i className="fa fa-times" />
+            <i className="fal fa-times" />
           </button>
         </div>
 
@@ -151,7 +151,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
                 className="ml-2 p-1 text-gray-400 hover:text-gray-600"
                 title="Cerrar sesión"
               >
-                <i className="fa fa-sign-out-alt" />
+                <i className="fal fa-sign-out-alt" />
               </button>
             )}
           </div>
@@ -167,7 +167,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               onClick={toggleSidebar}
               className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600"
             >
-              <i className="fa fa-bars" />
+              <i className="fal fa-bars" />
             </button>
 
             <div className="flex items-center space-x-4">

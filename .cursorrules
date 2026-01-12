@@ -31,7 +31,7 @@
 1. **Para formularios**: SIEMPRE usar `Input` y `Button` de flysoft-react-ui
 2. **Para contenedores**: SIEMPRE usar `Card` de flysoft-react-ui
 3. **Para etiquetas/estados**: SIEMPRE usar `Badge` de flysoft-react-ui
-4. **Para iconos**: SIEMPRE usar FontAwesome 5 con clases `fa fa-*`
+4. **Para iconos**: SIEMPRE usar FontAwesome 5 con clases `fa fa-*` (se normalizan automáticamente a estilo light/outlined `fal`)
 5. **Para temas**: SIEMPRE usar el sistema de temas de flysoft-react-ui
 
 ### Patrones Comunes:

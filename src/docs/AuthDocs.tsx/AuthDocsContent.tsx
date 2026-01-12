@@ -185,7 +185,7 @@ export const AuthDocsContent = () => {
         <Card>
           <div className="flex items-center justify-center py-8">
             <div className="flex items-center gap-3">
-              <i className="fa fa-spinner fa-spin text-[var(--color-primary)] text-xl"></i>
+              <i className="fal fa-spinner fa-spin text-[var(--color-primary)] text-xl"></i>
               <span className="text-[var(--color-text-secondary)]">
                 Iniciando sesión...
               </span>
@@ -328,7 +328,7 @@ export const AuthDocsContent = () => {
         <div className="space-y-4">
           <div className="bg-[var(--color-info-light)] border border-[var(--color-info)] rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <i className="fa fa-info-circle text-[var(--color-info)] mt-1"></i>
+              <i className="fal fa-info-circle text-[var(--color-info)] mt-1"></i>
               <div className="flex-1">
                 <p className="text-sm text-[var(--color-text-primary)]">
                   Esta es una demostración del{" "}
