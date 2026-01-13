@@ -13,7 +13,8 @@ export interface DateInputProps
   extends Omit<InputProps, "type" | "value" | "onChange" | "ref"> {
   /**
    * Valor de la fecha.
-   * En modo register: string (fecha formateada) o undefined
+   * En modo register con FormProvider: Dayjs | null (se guarda como Dayjs en el formulario)
+   * En modo register sin FormProvider: string ISO (se guarda como ISO string, se puede parsear a Dayjs)
    * En modo Controller: Dayjs | null
    */
   value?: Dayjs | null | string;
@@ -21,6 +22,9 @@ export interface DateInputProps
    * Callback cuando cambia la fecha.
    * En modo register: ChangeEventHandler (de register)
    * En modo Controller: (date: Dayjs | null) => void
+   *
+   * NOTA: Para usar Dayjs directamente con register, el formulario debe estar envuelto en FormProvider.
+   * Sin FormProvider, el valor se guarda como ISO string y se puede parsear de vuelta a Dayjs usando normalizeToDayjs.
    */
   onChange?:
     | ((date: Dayjs | null) => void)
@@ -186,20 +190,12 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
         : undefined;
 
     // Obtener setValue del contexto del formulario
-    // Intentar obtener el contexto de forma segura
-    // Si no hay FormProvider, formContext será undefined pero no lanzará error
-    let formContext: ReturnType<typeof useFormContext> | undefined;
-    let setValue: ((name: string, value: any, options?: any) => void) | undefined;
-    
-    try {
-      formContext = useFormContext();
-      setValue = formContext?.setValue;
-    } catch (error) {
-      // Si no hay FormProvider, formContext será undefined
-      // Esto es esperado cuando se usa sin FormProvider
-      formContext = undefined;
-      setValue = undefined;
-    }
+    // useFormContext debe llamarse incondicionalmente (requisito de React Hooks)
+    // Si no hay FormProvider, esto lanzará un error
+    // Para usar sin FormProvider, el componente guardará el valor Dayjs serializado (ISO string)
+    // en el input, y se puede parsear de vuelta a Dayjs cuando se lee el valor del formulario
+    const formContext = useFormContext();
+    const setValue = formContext?.setValue;
 
     const [internalDate, setInternalDate] = React.useState<Dayjs | null>(null);
     const [displayValue, setDisplayValue] = React.useState<string>("");
@@ -212,7 +208,9 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
     const containerRef = React.useRef<HTMLDivElement | null>(null);
     const pickerRef = React.useRef<HTMLDivElement | null>(null);
     const inputRef = React.useRef<HTMLInputElement | null>(null);
+    const hiddenInputRef = React.useRef<HTMLInputElement | null>(null);
     const isTypingRef = React.useRef(false);
+    const lastDayjsValueRef = React.useRef<Dayjs | null>(null);
 
     // Función helper para sincronizar displayValue con el valor del formulario en modo register
     const syncDisplayValue = React.useCallback(() => {
@@ -371,11 +369,11 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
             shouldDirty: true,
             shouldTouch: true,
           });
-          
+
           // Actualizar el displayValue y el estado interno
           setDisplayValue(dateString);
           setInternalDate(date);
-          
+
           // Actualizar el input nativo con el valor visual (string) para mantener la sincronización
           // Esto es solo para mostrar el valor correcto en el input
           // El valor real (Dayjs) ya está guardado en el formulario vía setValue
@@ -385,7 +383,7 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
               window.HTMLInputElement.prototype,
               "value"
             )?.set;
-            
+
             if (nativeInputValueSetter) {
               nativeInputValueSetter.call(nativeInput, dateString);
             } else {
@@ -393,7 +391,15 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
             }
           }
         } else {
-          // Fallback: actualizar el input nativo con el string de fecha
+          // Sin FormProvider: guardar el valor Dayjs serializado (ISO string) en el input
+          // react-hook-form leerá este valor y se puede parsear de vuelta a Dayjs cuando se lee
+          lastDayjsValueRef.current = date;
+
+          // Guardar el valor Dayjs serializado (como ISO string)
+          const dayjsIsoString = date ? date.toISOString() : "";
+
+          // Actualizar el input visible con el valor Dayjs serializado
+          // Esto es lo que react-hook-form leerá y guardará
           if (inputRef.current) {
             const nativeInput = inputRef.current;
 
@@ -403,12 +409,12 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
             )?.set;
 
             if (nativeInputValueSetter) {
-              nativeInputValueSetter.call(nativeInput, dateString);
+              nativeInputValueSetter.call(nativeInput, dayjsIsoString);
             } else {
-              nativeInput.value = dateString;
+              nativeInput.value = dayjsIsoString;
             }
 
-            // Llamar al onChange de register
+            // Llamar al onChange de register con el valor Dayjs serializado
             if (onChange) {
               const changeEvent = {
                 target: nativeInput,
@@ -433,8 +439,9 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
             });
             nativeInput.dispatchEvent(changeEventNative);
           }
-          
-          // Actualizar el displayValue y el estado interno
+
+          // Actualizar el displayValue con el string formateado para mostrar al usuario
+          // Aunque el input tiene el ISO string, mostramos el formato legible
           setDisplayValue(dateString);
           setInternalDate(date);
         }
@@ -524,17 +531,17 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
           if (parsed) {
             // handleDateChange ya usa setValue si está disponible
             handleDateChange(parsed);
-            
+
             // Si usamos setValue, asegurarse de que el valor Dayjs se mantenga
             // después del blur, ya que registerOnBlur puede causar que react-hook-form
             // lea el valor del input como string
             if (setValue && fieldName && registerOnBlur) {
               // Guardar el valor Dayjs antes de llamar a registerOnBlur
               const dayjsValue = parsed;
-              
+
               // Llamar al onBlur de register
               registerOnBlur(event);
-              
+
               // Usar setTimeout para asegurarse de que esto se ejecuta después de registerOnBlur
               // y restaurar el valor Dayjs si react-hook-form lo sobrescribió con un string
               setTimeout(() => {
@@ -548,7 +555,7 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
                   });
                 }
               }, 0);
-              
+
               // No llamar a registerOnBlur más abajo ya que ya lo llamamos aquí
               return;
             }
@@ -593,7 +600,7 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
         const target = event.target as Node;
         const isClickInsideContainer = containerRef.current?.contains(target);
         const isClickInsidePicker = pickerRef.current?.contains(target);
-        
+
         if (!isClickInsideContainer && !isClickInsidePicker) {
           setIsOpen(false);
         }
@@ -692,6 +699,19 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
 
     return (
       <div ref={containerRef} className="relative w-full">
+        {/* Input hidden para almacenar el valor Dayjs serializado cuando no hay FormProvider */}
+        {isRegisterMode && !setValue && fieldName && (
+          <input
+            ref={hiddenInputRef}
+            type="hidden"
+            name={fieldName}
+            value={
+              lastDayjsValueRef.current
+                ? lastDayjsValueRef.current.toISOString()
+                : ""
+            }
+          />
+        )}
         <Input
           {...restInputProps}
           ref={combinedRef}
