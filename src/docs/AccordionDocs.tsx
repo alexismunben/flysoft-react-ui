@@ -23,6 +23,39 @@ const AccordionDocs: React.FC = () => {
               className="text-lg font-semibold mb-4"
               style={{ color: "var(--flysoft-text-primary)" }}
             >
+              Variantes
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              El componente Accordion soporta tres variantes visuales: default,
+              elevated (con sombra) y outlined (con borde destacado).
+            </p>
+            <div className="space-y-3">
+              <Accordion variant="default" title="Default">
+                <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                  Accordion con variante por defecto.
+                </p>
+              </Accordion>
+              <Accordion variant="elevated" title="Elevated">
+                <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                  Accordion con sombra elevada.
+                </p>
+              </Accordion>
+              <Accordion variant="outlined" title="Outlined">
+                <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                  Accordion con borde destacado.
+                </p>
+              </Accordion>
+            </div>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
               Uso básico
             </h3>
             <p
@@ -143,14 +176,23 @@ const AccordionDocs: React.FC = () => {
                 title="Configuración Avanzada"
                 icon="fa-sliders-h"
                 rightNode={
-                  <Button size="sm" variant="ghost" icon="fa-edit">
-                    Editar
-                  </Button>
+                  <div
+                    className="flex items-center gap-2 px-2 py-1 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] cursor-pointer rounded transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log("Editar configuración");
+                    }}
+                  >
+                    <i className="fal fa-edit" />
+                    <span>Editar</span>
+                  </div>
                 }
               >
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                  Este accordion incluye un botón de acción en el rightNode,
-                  permitiendo acciones rápidas sin abrir el accordion.
+                  Este accordion incluye un elemento de acción en el rightNode,
+                  permitiendo acciones rápidas sin abrir el accordion. Nota: No
+                  uses componentes Button dentro de rightNode ya que causaría un
+                  error de anidación de botones.
                 </p>
               </Accordion>
             </div>
@@ -297,6 +339,50 @@ const AccordionDocs: React.FC = () => {
               className="text-lg font-semibold mb-4"
               style={{ color: "var(--flysoft-text-primary)" }}
             >
+              Background Personalizado
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              El componente detecta automáticamente las clases de background
+              (bg-*) desde la prop className y las aplica al background del
+              accordion. Las demás clases se aplican normalmente al contenedor.
+            </p>
+            <div className="space-y-3">
+              <Accordion
+                title="Accordion con bg-blue-50"
+                className="bg-blue-50"
+              >
+                <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                  Accordion con background personalizado usando clases de Tailwind.
+                </p>
+              </Accordion>
+              <Accordion
+                title="Accordion con bg-gradient"
+                className="bg-gradient-to-br from-purple-100 to-pink-100"
+              >
+                <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                  Accordion con gradiente personalizado.
+                </p>
+              </Accordion>
+              <Accordion
+                title="Accordion con bg y otras clases"
+                className="bg-green-50"
+              >
+                <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                  Puedes combinar clases de background con otras clases de
+                  Tailwind.
+                </p>
+              </Accordion>
+            </div>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
               Title como ReactNode
             </h3>
             <p
@@ -380,6 +466,15 @@ const AccordionDocs: React.FC = () => {
                   <li>
                     <strong>Chevron dinámico:</strong> El chevron cambia
                     automáticamente entre arriba (abierto) y abajo (cerrado).
+                  </li>
+                  <li>
+                    <strong>Variantes:</strong> Soporta tres variantes: default,
+                    elevated (con sombra) y outlined (con borde destacado).
+                  </li>
+                  <li>
+                    <strong>Background personalizado:</strong> El componente
+                    detecta automáticamente las clases de background (bg-*) y las
+                    aplica correctamente.
                   </li>
                 </ul>
               </div>
@@ -591,6 +686,32 @@ const AccordionDocs: React.FC = () => {
                       className="px-4 py-2 text-sm font-mono"
                       style={{ color: "var(--flysoft-text-primary)" }}
                     >
+                      variant
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      "default" | "elevated" | "outlined"
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      No
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Variante visual del accordion. Por defecto es "default".
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td
+                      className="px-4 py-2 text-sm font-mono"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
                       className
                     </td>
                     <td
@@ -609,7 +730,8 @@ const AccordionDocs: React.FC = () => {
                       className="px-4 py-2 text-sm"
                       style={{ color: "var(--flysoft-text-secondary)" }}
                     >
-                      Clases CSS adicionales para el contenedor del accordion.
+                      Clases CSS adicionales. Las clases de background (bg-*) se
+                      aplican automáticamente al background del accordion.
                     </td>
                   </tr>
                 </tbody>

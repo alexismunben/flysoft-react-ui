@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Button } from "../index";
+import { Card, Button, DropdownMenu } from "../index";
 
 const CardDocs: React.FC = () => {
   return (
@@ -44,44 +44,50 @@ const CardDocs: React.FC = () => {
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
               El componente Card soporta acciones en el header usando la
-              propiedad <code>headerActions</code>. Las acciones se muestran en
-              un DropdownMenu. En pantallas grandes (lg+), las acciones solo se
-              muestran al hacer hover sobre el Card. En pantallas pequeñas,
-              siempre son visibles.
+              propiedad <code>headerActions</code>. Puedes pasar cualquier
+              ReactNode que se mostrará directamente en el header, alineado a la
+              derecha.
             </p>
             <div className="space-y-4">
               <Card
                 title="Card con múltiples acciones"
-                subtitle="Ejemplo con DropdownMenu"
-                headerActions={() => [
-                  <Button
-                    key="edit"
-                    size="sm"
-                    variant="ghost"
-                    icon="fa-edit"
-                    onClick={() => console.log("Editar")}
-                  >
-                    Editar
-                  </Button>,
-                  <Button
-                    key="delete"
-                    size="sm"
-                    variant="ghost"
-                    icon="fa-trash"
-                    onClick={() => console.log("Eliminar")}
-                  >
-                    Eliminar
-                  </Button>,
-                  <Button
-                    key="share"
-                    size="sm"
-                    variant="ghost"
-                    icon="fa-share"
-                    onClick={() => console.log("Compartir")}
-                  >
-                    Compartir
-                  </Button>,
-                ]}
+                subtitle="Ejemplo con botones en el header"
+                headerActions={
+                  <div>
+                    <DropdownMenu
+                      options={[
+                        {
+                          label: "Editar",
+                          icon: "fa-edit",
+                        },
+                        {
+                          label: "Eliminar",
+                          icon: "fa-trash",
+                        },
+                        {
+                          label: "Compartir",
+                          icon: "fa-share",
+                        },
+                      ]}
+                      onOptionSelected={(item) => {
+                        console.log(item.label);
+                      }}
+                      renderOption={(item) => (
+                        <Button size="sm" variant="ghost" icon={item.icon}>
+                          {item.label}
+                        </Button>
+                      )}
+                      renderNode={
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          icon="fa-ellipsis-h"
+                          aria-label="Acciones"
+                        />
+                      }
+                    />
+                  </div>
+                }
                 footer={
                   <div className="flex justify-end gap-2">
                     <Button size="sm" variant="outline">
@@ -94,28 +100,27 @@ const CardDocs: React.FC = () => {
                 }
               >
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                  Card con múltiples acciones en el header. En pantallas
-                  grandes, pasa el mouse sobre el Card para ver las acciones.
+                  Card con múltiples acciones en el header. Puedes pasar
+                  cualquier ReactNode, como botones, iconos, o componentes
+                  personalizados.
                 </p>
               </Card>
 
               <Card
                 title="Card con una sola acción"
-                subtitle="Se muestra directamente sin menú"
-                headerActions={() => [
+                subtitle="Se muestra directamente"
+                headerActions={
                   <Button
-                    key="view"
                     size="sm"
                     variant="ghost"
                     icon="fa-search"
                     onClick={() => console.log("Ver detalles")}
-                  />,
-                ]}
+                  />
+                }
               >
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                  Cuando hay una sola acción, se muestra directamente gracias a{" "}
-                  <code>replaceOnSingleOption</code>, sin necesidad de abrir un
-                  menú.
+                  Puedes pasar un solo botón o cualquier otro componente
+                  directamente en <code>headerActions</code>.
                 </p>
               </Card>
             </div>
@@ -209,21 +214,9 @@ const CardDocs: React.FC = () => {
                   </li>
                   <li>
                     <strong>HeaderActions:</strong> Usa la propiedad{" "}
-                    <code>headerActions</code> para mostrar un DropdownMenu con
-                    acciones en el header. Las acciones se muestran en un menú
-                    desplegable.
-                  </li>
-                  <li>
-                    <strong>Comportamiento responsive:</strong> En pantallas
-                    grandes (lg+), las acciones del header solo se muestran al
-                    hacer hover sobre el Card. En pantallas pequeñas, siempre
-                    son visibles.
-                  </li>
-                  <li>
-                    <strong>Opción única:</strong> Cuando hay una sola acción,
-                    se muestra directamente gracias a{" "}
-                    <code>replaceOnSingleOption</code>, sin necesidad de abrir
-                    un menú.
+                    <code>headerActions</code> para mostrar cualquier ReactNode
+                    en el header, alineado a la derecha. Puedes pasar botones,
+                    iconos, o cualquier componente personalizado.
                   </li>
                   <li>
                     <strong>Title y Subtitle flexibles:</strong> Pueden ser
@@ -371,7 +364,7 @@ const CardDocs: React.FC = () => {
                       className="px-4 py-2 text-sm"
                       style={{ color: "var(--flysoft-text-secondary)" }}
                     >
-                      () =&gt; Array&lt;ReactNode&gt;
+                      ReactNode
                     </td>
                     <td
                       className="px-4 py-2 text-sm"
@@ -383,10 +376,9 @@ const CardDocs: React.FC = () => {
                       className="px-4 py-2 text-sm"
                       style={{ color: "var(--flysoft-text-secondary)" }}
                     >
-                      Función que retorna un array de ReactNode que se mostrarán
-                      en un DropdownMenu en el header. En pantallas grandes
-                      (lg+), solo se muestran al hacer hover. Las acciones deben
-                      manejar sus propios eventos onClick.
+                      Contenido que se mostrará en el header de la card,
+                      alineado a la derecha. Puede ser cualquier ReactNode, como
+                      botones, iconos, o componentes personalizados.
                     </td>
                   </tr>
                   <tr className="border-b border-[var(--color-border-default)]">

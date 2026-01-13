@@ -280,7 +280,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <div className={navbarLeftClasses}>
                   {/* Botón de menú para móvil/tablet */}
                   {shouldShowMobileDrawer && hasLeftDrawerContent && (
-                    <div className="pr-4 lg:px-4 md:px-3">
+                    <div className="absolute top-0 right-0 pr-4 lg:px-4 md:px-3">
                       <Button
                         variant="ghost"
                         icon="fa-bars"
@@ -392,7 +392,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     <div className={navbarLeftClasses}>
                       {/* Botón de menú para móvil/tablet */}
                       {shouldShowMobileDrawer && hasLeftDrawerContent && (
-                        <div className="pr-4 lg:px-4 md:px-3">
+                        <div className="pr-4 px-2">
                           <Button
                             variant="ghost"
                             icon="fa-bars"
@@ -458,7 +458,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <div className="flex-1" />
             )}
             {/* Botón de cerrar */}
-            <div className="p-4">
+            <div className="absolute top-3 right-2">
               <Button
                 variant="ghost"
                 icon="fa-times"

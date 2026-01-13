@@ -186,12 +186,20 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
         : undefined;
 
     // Obtener setValue del contexto del formulario
-    // Para usar objetos Dayjs con register, el formulario debe estar dentro de FormProvider
-    // useFormContext debe llamarse incondicionalmente (requisito de React Hooks)
-    // Si no hay FormProvider y se usa en modo register, useFormContext lanzará un error
-    // Para usar sin FormProvider, usar Controller en lugar de register
-    const formContext = useFormContext();
-    const setValue = formContext?.setValue;
+    // Intentar obtener el contexto de forma segura
+    // Si no hay FormProvider, formContext será undefined pero no lanzará error
+    let formContext: ReturnType<typeof useFormContext> | undefined;
+    let setValue: ((name: string, value: any, options?: any) => void) | undefined;
+    
+    try {
+      formContext = useFormContext();
+      setValue = formContext?.setValue;
+    } catch (error) {
+      // Si no hay FormProvider, formContext será undefined
+      // Esto es esperado cuando se usa sin FormProvider
+      formContext = undefined;
+      setValue = undefined;
+    }
 
     const [internalDate, setInternalDate] = React.useState<Dayjs | null>(null);
     const [displayValue, setDisplayValue] = React.useState<string>("");
@@ -361,7 +369,29 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
           setValue(fieldName, date, {
             shouldValidate: true,
             shouldDirty: true,
+            shouldTouch: true,
           });
+          
+          // Actualizar el displayValue y el estado interno
+          setDisplayValue(dateString);
+          setInternalDate(date);
+          
+          // Actualizar el input nativo con el valor visual (string) para mantener la sincronización
+          // Esto es solo para mostrar el valor correcto en el input
+          // El valor real (Dayjs) ya está guardado en el formulario vía setValue
+          if (inputRef.current) {
+            const nativeInput = inputRef.current;
+            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+              window.HTMLInputElement.prototype,
+              "value"
+            )?.set;
+            
+            if (nativeInputValueSetter) {
+              nativeInputValueSetter.call(nativeInput, dateString);
+            } else {
+              nativeInput.value = dateString;
+            }
+          }
         } else {
           // Fallback: actualizar el input nativo con el string de fecha
           if (inputRef.current) {
@@ -403,11 +433,11 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
             });
             nativeInput.dispatchEvent(changeEventNative);
           }
+          
+          // Actualizar el displayValue y el estado interno
+          setDisplayValue(dateString);
+          setInternalDate(date);
         }
-
-        // Actualizar el displayValue
-        setDisplayValue(dateString);
-        setInternalDate(date);
       } else {
         // Modo Controller - comportamiento original
         setInternalDate(date);
@@ -452,35 +482,76 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
         // En modo register, validar y actualizar el input nativo
         if (!newValue) {
           // Limpiar el valor
-          if (inputRef.current) {
-            const nativeInput = inputRef.current;
-            const setter = Object.getOwnPropertyDescriptor(
-              window.HTMLInputElement.prototype,
-              "value"
-            )?.set;
-            setter?.call(nativeInput, "");
+          if (setValue && fieldName) {
+            // Si tenemos setValue, usar setValue para limpiar el valor como null
+            setValue(fieldName, null as any, {
+              shouldValidate: true,
+              shouldDirty: true,
+              shouldTouch: true,
+            });
+            setDisplayValue("");
+            setInternalDate(null);
+          } else {
+            // Fallback: actualizar el input nativo
+            if (inputRef.current) {
+              const nativeInput = inputRef.current;
+              const setter = Object.getOwnPropertyDescriptor(
+                window.HTMLInputElement.prototype,
+                "value"
+              )?.set;
+              setter?.call(nativeInput, "");
 
-            if (onChange) {
-              const changeEvent = {
-                target: nativeInput,
-                currentTarget: nativeInput,
-              } as React.ChangeEvent<HTMLInputElement>;
-              (onChange as React.ChangeEventHandler<HTMLInputElement>)(
-                changeEvent
-              );
+              if (onChange) {
+                const changeEvent = {
+                  target: nativeInput,
+                  currentTarget: nativeInput,
+                } as React.ChangeEvent<HTMLInputElement>;
+                (onChange as React.ChangeEventHandler<HTMLInputElement>)(
+                  changeEvent
+                );
+              }
+
+              const inputEvent = new Event("input", { bubbles: true });
+              nativeInput.dispatchEvent(inputEvent);
+              const changeEventNative = new Event("change", { bubbles: true });
+              nativeInput.dispatchEvent(changeEventNative);
             }
-
-            const inputEvent = new Event("input", { bubbles: true });
-            nativeInput.dispatchEvent(inputEvent);
-            const changeEventNative = new Event("change", { bubbles: true });
-            nativeInput.dispatchEvent(changeEventNative);
+            setDisplayValue("");
+            setInternalDate(null);
           }
-          setDisplayValue("");
-          setInternalDate(null);
         } else {
           const parsed = parseDateFromString(newValue, format);
           if (parsed) {
+            // handleDateChange ya usa setValue si está disponible
             handleDateChange(parsed);
+            
+            // Si usamos setValue, asegurarse de que el valor Dayjs se mantenga
+            // después del blur, ya que registerOnBlur puede causar que react-hook-form
+            // lea el valor del input como string
+            if (setValue && fieldName && registerOnBlur) {
+              // Guardar el valor Dayjs antes de llamar a registerOnBlur
+              const dayjsValue = parsed;
+              
+              // Llamar al onBlur de register
+              registerOnBlur(event);
+              
+              // Usar setTimeout para asegurarse de que esto se ejecuta después de registerOnBlur
+              // y restaurar el valor Dayjs si react-hook-form lo sobrescribió con un string
+              setTimeout(() => {
+                const currentValue = formContext?.watch(fieldName);
+                // Si el valor actual es un string en lugar de Dayjs, restaurarlo
+                if (currentValue && typeof currentValue === "string") {
+                  setValue(fieldName, dayjsValue, {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                    shouldTouch: true,
+                  });
+                }
+              }, 0);
+              
+              // No llamar a registerOnBlur más abajo ya que ya lo llamamos aquí
+              return;
+            }
           } else {
             // Si no es válida, restaurar el valor anterior
             const previousValue = inputRef.current?.value || "";
@@ -489,6 +560,7 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
         }
 
         // Llamar al onBlur de register si existe
+        // Solo se llama aquí si no usamos setValue o si no había un valor válido
         if (registerOnBlur) {
           registerOnBlur(event);
         }

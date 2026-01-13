@@ -24,9 +24,22 @@ export interface ListCrudContextType<T> {
   isLoading: boolean;
   pagination: ReactNode;
   params: Record<string, any>;
-  refetch: (params?: Record<string, any>) => Promise<void>;
-  createItem: (item: T) => Promise<T | undefined>;
-  deleteItem: (item: T) => Promise<void>;
+  fetchItems: {
+    execute: (params?: Record<string, any>) => Promise<void>;
+    isLoading: boolean;
+  };
+  createItem: {
+    execute: (item: T) => Promise<T | undefined | null>;
+    isLoading: boolean;
+  };
+  updateItem: {
+    execute: (item: T) => Promise<T | undefined | null>;
+    isLoading: boolean;
+  };
+  deleteItem: {
+    execute: (item: T) => Promise<void>;
+    isLoading: boolean;
+  };
 }
 
 const createListCrudContext = <T,>() => {
@@ -37,13 +50,31 @@ const createListCrudContext = <T,>() => {
 // Los usuarios pueden crear su propio contexto con su tipo específico
 export const ListCrudContext = createListCrudContext<any>();
 
+export interface PromiseWithOptions<TResult, TParams extends any[] = []> {
+  execute: (...params: TParams) => Promise<TResult>;
+  successMessage?: string;
+  errorMessage?: string;
+}
+
 interface ListCrudProviderProps<T> {
   children: ReactNode;
-  getPromise: (
-    params?: Record<string, any>
-  ) => Promise<Array<T> | PaginationInterface<T> | undefined>;
-  postPromise?: (item: T) => Promise<T | undefined>;
-  deletePromise?: (item: T) => Promise<void>;
+  getPromise:
+    | ((
+        params?: Record<string, any>
+      ) => Promise<Array<T> | PaginationInterface<T> | undefined>)
+    | PromiseWithOptions<
+        Array<T> | PaginationInterface<T> | undefined,
+        [params?: Record<string, any>]
+      >;
+  postPromise?:
+    | ((item: T) => Promise<T | undefined | null>)
+    | PromiseWithOptions<T | undefined | null, [item: T]>;
+  putPromise?:
+    | ((item: T) => Promise<T | undefined | null>)
+    | PromiseWithOptions<T | undefined | null, [item: T]>;
+  deletePromise?:
+    | ((item: T) => Promise<void>)
+    | PromiseWithOptions<void, [item: T]>;
   urlParams?: Array<string>;
   limit?: number;
   pageParam?: string;
@@ -53,6 +84,7 @@ export function ListCrudProvider<T>({
   children,
   getPromise,
   postPromise,
+  putPromise,
   deletePromise,
   limit = 15,
   pageParam = "pagina",
@@ -62,29 +94,86 @@ export function ListCrudProvider<T>({
   const [page, setPage] = useState<number>(1);
   const [pages, setPages] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
-  const getPromiseRef = useRef(getPromise);
   const [searchParams, setSearchParams] = useSearchParams();
   const lastFetchParamsRef = useRef<string>("");
 
-  // Hooks para manejar las peticiones asíncronas
-  // fetchDataAsync sin mensaje para cargas automáticas
-  const fetchDataAsync = useAsyncRequest();
-  // fetchDataAsyncManual con mensaje para refetch manual
-  const fetchDataAsyncManual = useAsyncRequest({
-    successMessage: "Datos cargados correctamente",
+  // Extraer funciones execute y opciones de las promises
+  const getPromiseExecute =
+    typeof getPromise === "function" ? getPromise : getPromise.execute;
+  const getPromiseSuccessMessage =
+    typeof getPromise === "function" ? undefined : getPromise.successMessage;
+  const getPromiseErrorMessage =
+    typeof getPromise === "function" ? undefined : getPromise.errorMessage;
+
+  const postPromiseExecute = postPromise
+    ? typeof postPromise === "function"
+      ? postPromise
+      : postPromise.execute
+    : undefined;
+  const postPromiseSuccessMessage =
+    postPromise && typeof postPromise === "object"
+      ? postPromise.successMessage
+      : undefined;
+  const postPromiseErrorMessage =
+    postPromise && typeof postPromise === "object"
+      ? postPromise.errorMessage
+      : undefined;
+
+  const putPromiseExecute = putPromise
+    ? typeof putPromise === "function"
+      ? putPromise
+      : putPromise.execute
+    : undefined;
+  const putPromiseSuccessMessage =
+    putPromise && typeof putPromise === "object"
+      ? putPromise.successMessage
+      : undefined;
+  const putPromiseErrorMessage =
+    putPromise && typeof putPromise === "object"
+      ? putPromise.errorMessage
+      : undefined;
+
+  const deletePromiseExecute = deletePromise
+    ? typeof deletePromise === "function"
+      ? deletePromise
+      : deletePromise.execute
+    : undefined;
+  const deletePromiseSuccessMessage =
+    deletePromise && typeof deletePromise === "object"
+      ? deletePromise.successMessage
+      : undefined;
+  const deletePromiseErrorMessage =
+    deletePromise && typeof deletePromise === "object"
+      ? deletePromise.errorMessage
+      : undefined;
+
+  const getPromiseRef = useRef(getPromiseExecute);
+
+  // Hooks para manejar las peticiones asíncronas con mensajes opcionales
+  const fetchDataAsync = useAsyncRequest({
+    successMessage: getPromiseSuccessMessage,
+    errorMessage: getPromiseErrorMessage,
   });
-  const createItemAsync = useAsyncRequest();
+  const createItemAsync = useAsyncRequest({
+    successMessage: postPromiseSuccessMessage,
+    errorMessage: postPromiseErrorMessage,
+  });
+  const updateItemAsync = useAsyncRequest({
+    successMessage: putPromiseSuccessMessage,
+    errorMessage: putPromiseErrorMessage,
+  });
   const deleteItemAsync = useAsyncRequest({
-    successMessage: "Item eliminado correctamente",
+    successMessage: deletePromiseSuccessMessage,
+    errorMessage: deletePromiseErrorMessage,
   });
 
-  // El isLoading del contexto combina ambos hooks de fetchData
-  const isLoading = fetchDataAsync.isLoading || fetchDataAsyncManual.isLoading;
+  // El isLoading del contexto usa el hook de fetchData
+  const isLoading = fetchDataAsync.isLoading;
 
   // Actualizar la referencia cuando cambie getPromise
   useEffect(() => {
-    getPromiseRef.current = getPromise;
-  }, [getPromise]);
+    getPromiseRef.current = getPromiseExecute;
+  }, [getPromiseExecute]);
 
   // Función para obtener los parámetros de la URL
   const getUrlParams = useCallback(() => {
@@ -112,28 +201,16 @@ export function ListCrudProvider<T>({
 
   // Función para obtener los datos
   const fetchData = useCallback(
-    async (params?: Record<string, any>, showSuccessMessage = false) => {
-      const asyncRequest = showSuccessMessage
-        ? fetchDataAsyncManual
-        : fetchDataAsync;
-
+    async (params?: Record<string, any>) => {
       // Obtener los parámetros que se van a usar
       const requestParams = params || getUrlParams();
 
       // Crear una clave única para estos parámetros
-      const paramsKey = JSON.stringify({
-        ...requestParams,
-        showSuccessMessage,
-      });
-
-      // Evitar ejecuciones duplicadas con los mismos parámetros
-      if (!showSuccessMessage && lastFetchParamsRef.current === paramsKey) {
-        return;
-      }
+      const paramsKey = JSON.stringify(requestParams);
 
       lastFetchParamsRef.current = paramsKey;
 
-      const result = await asyncRequest.execute(async () => {
+      const result = await fetchDataAsync.execute(async () => {
         return await getPromiseRef.current(requestParams);
       });
 
@@ -161,7 +238,7 @@ export function ListCrudProvider<T>({
         }
       }
     },
-    [getUrlParams, limit, fetchDataAsync, fetchDataAsyncManual]
+    [getUrlParams, limit, fetchDataAsync]
   );
 
   // Ref para almacenar los valores anteriores de urlParams
@@ -187,41 +264,56 @@ export function ListCrudProvider<T>({
   );
 
   // Función para recargar los datos
-  const refetch = useCallback(
+  const fetchItemsExecute = useCallback(
     async (params?: Record<string, any>) => {
-      await fetchData(params, true); // Mostrar mensaje de éxito en refetch manual
+      await fetchData(params);
     },
     [fetchData]
   );
 
   // Función para crear un item
-  const createItem = useCallback(
-    async (item: T): Promise<T | undefined> => {
-      if (!postPromise) {
+  const createItemExecute = useCallback(
+    async (item: T): Promise<T | undefined | null> => {
+      if (!postPromiseExecute) {
         throw new Error(
           "postPromise is not defined. Please provide postPromise to ListCrudProvider."
         );
       }
       return await createItemAsync.execute(async () => {
-        return await postPromise(item);
+        return await postPromiseExecute(item);
       });
     },
-    [postPromise, createItemAsync]
+    [postPromiseExecute, createItemAsync]
+  );
+
+  // Función para actualizar un item
+  const updateItemExecute = useCallback(
+    async (item: T): Promise<T | undefined | null> => {
+      if (!putPromiseExecute) {
+        throw new Error(
+          "putPromise is not defined. Please provide putPromise to ListCrudProvider."
+        );
+      }
+      return await updateItemAsync.execute(async () => {
+        return await putPromiseExecute(item);
+      });
+    },
+    [putPromiseExecute, updateItemAsync]
   );
 
   // Función para eliminar un item
-  const deleteItem = useCallback(
+  const deleteItemExecute = useCallback(
     async (item: T): Promise<void> => {
-      if (!deletePromise) {
+      if (!deletePromiseExecute) {
         throw new Error(
           "deletePromise is not defined. Please provide deletePromise to ListCrudProvider."
         );
       }
       await deleteItemAsync.execute(async () => {
-        await deletePromise(item);
+        await deletePromiseExecute(item);
       });
     },
-    [deletePromise, deleteItemAsync]
+    [deletePromiseExecute, deleteItemAsync]
   );
 
   // useEffect para resetear pageParam a 1 cuando cambien los urlParams
@@ -264,7 +356,7 @@ export function ListCrudProvider<T>({
 
     return () => clearTimeout(timeoutId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getPromise, searchParams, pageParam, urlParamsKey]);
+  }, [getPromiseExecute, searchParams, pageParam, urlParamsKey]);
 
   const value: ListCrudContextType<T> = {
     list,
@@ -274,9 +366,22 @@ export function ListCrudProvider<T>({
     limit,
     isLoading,
     params: currentParams,
-    refetch,
-    createItem,
-    deleteItem,
+    fetchItems: {
+      execute: fetchItemsExecute,
+      isLoading: fetchDataAsync.isLoading,
+    },
+    createItem: {
+      execute: createItemExecute,
+      isLoading: createItemAsync.isLoading,
+    },
+    updateItem: {
+      execute: updateItemExecute,
+      isLoading: updateItemAsync.isLoading,
+    },
+    deleteItem: {
+      execute: deleteItemExecute,
+      isLoading: deleteItemAsync.isLoading,
+    },
     pagination: (
       <Pagination
         page={page}

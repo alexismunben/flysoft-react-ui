@@ -8,18 +8,11 @@ import {
 } from "../docMockServices";
 import { ListCrudDocsContentPersonas } from "./ListCrudDocsContentPersonas";
 import { Collection } from "../../components";
+import type { Persona } from "../docMockServices";
+import { ListCrudDocsContentEmpresas } from "./ListCrudDocsContentEmpresas";
 
-/**
- * Componente de Documentación del ListCrudContext
- *
- * Este componente muestra cómo usar el ListCrudContext con un servicio mock
- * para propósitos de documentación y desarrollo.
- *
- * El servicio mock simula la operación principal:
- * - getPromise: Obtiene una lista de items (Array o PaginationInterface)
- */
 export const ListCrudDocs = () => {
-  const { listarPaginados, eliminar } = personaService;
+  const { listarPaginados, eliminar, editar, agregar } = personaService;
   const { listarPaginados: listarPaginadosEmpresa } = empresaService;
 
   const { setNavBarLeftNode } = useAppLayout();
@@ -28,13 +21,28 @@ export const ListCrudDocs = () => {
     setNavBarLeftNode(
       <h3 className="text-2xl font-semibold">ListCrudContext</h3>
     );
+    return () => {
+      setNavBarLeftNode(<></>);
+    };
   }, [setNavBarLeftNode]);
 
   return (
     <Collection>
       <ListCrudProvider
         getPromise={listarPaginados}
-        deletePromise={eliminar}
+        postPromise={{
+          execute: (persona: Persona) => agregar(persona),
+          successMessage: "Persona agregada correctamente",
+        }}
+        putPromise={{
+          execute: (persona: Persona) =>
+            editar(persona.id, persona as Partial<Persona>),
+          successMessage: "Cambios guardados",
+        }}
+        deletePromise={{
+          execute: eliminar,
+          successMessage: "Persona eliminada correctamente",
+        }}
         urlParams={["filtro", "idEmpresa"]}
       >
         <ListCrudDocsContentPersonas />
@@ -44,7 +52,7 @@ export const ListCrudDocs = () => {
         getPromise={listarPaginadosEmpresa}
         urlParams={["filtroEmpresa", "idEmpresaEmpresa"]}
       >
-        Empresas
+        <ListCrudDocsContentEmpresas />
       </ListCrudProvider>
     </Collection>
   );

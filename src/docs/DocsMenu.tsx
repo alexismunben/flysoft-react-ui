@@ -2,7 +2,7 @@ import { Accordion, LinkButton } from "../index";
 
 export const DocsMenu = () => {
   return (
-    <div className="space-y-2 px-4">
+    <div className="space-y-2 p-4 bg-gray-100 h-full">
       <Accordion title="Form Controls" icon="fa-edit" defaultOpen>
         <div className="space-y-2">
           <LinkButton
@@ -141,6 +141,7 @@ export const DocsMenu = () => {
             variant="ghost"
             size="sm"
             className="w-full justify-start"
+            color="secondary"
           >
             Accordion
           </LinkButton>

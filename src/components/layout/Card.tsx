@@ -1,22 +1,21 @@
 import React from "react";
-import { DropdownMenu } from "../utils/DropdownMenu";
-
-interface ActionItem {
-  id: string | number;
-  content: React.ReactNode;
-}
 
 export interface CardProps {
   title?: string | React.ReactNode;
   subtitle?: string | React.ReactNode;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
   /**
-   * Acciones para el header de la tarjeta. Retorna un array de ReactNode que se mostrarán en un DropdownMenu.
+   * Acciones para el header de la tarjeta. Se muestra directamente el ReactNode proporcionado.
    */
-  headerActions?: () => Array<React.ReactNode>;
+  headerActions?: React.ReactNode;
   footer?: React.ReactNode;
   variant?: "default" | "elevated" | "outlined";
+  /**
+   * Si es true, las headerActions siempre se muestran. Si es false, solo se muestran al hacer hover (en pantallas grandes).
+   * En resoluciones md e inferiores, siempre se muestran sin importar este valor.
+   */
+  alwaysDisplayHeaderActions?: boolean;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -27,6 +26,7 @@ export const Card: React.FC<CardProps> = ({
   headerActions,
   footer,
   variant = "default",
+  alwaysDisplayHeaderActions = false,
 }) => {
   // Separar clases de background del className
   const classArray = className.trim().split(/\s+/).filter(Boolean);
@@ -60,32 +60,12 @@ export const Card: React.FC<CardProps> = ({
     variantClasses[variant]
   } ${otherClasses.join(" ")}`;
 
-  // Convertir array de ReactNode a array de ActionItem para DropdownMenu
-  const convertActionsToOptions = (
-    actions: Array<React.ReactNode>
-  ): ActionItem[] => {
-    return actions.map((action, index) => ({
-      id: index,
-      content: (
-        <div
-          onClick={(e) => {
-            // Detener la propagación para que el onClick del DropdownMenu no interfiera
-            e.stopPropagation();
-          }}
-        >
-          {action}
-        </div>
-      ),
-    }));
-  };
-
-  const headerActionsArray = headerActions?.();
-  const hasHeaderActions = headerActionsArray && headerActionsArray.length > 0;
   const [isHovered, setIsHovered] = React.useState(false);
   const [isLargeScreen, setIsLargeScreen] = React.useState(false);
 
   React.useEffect(() => {
     const checkScreenSize = () => {
+      // md breakpoint en Tailwind es 768px, así que lg es 1024px
       setIsLargeScreen(window.innerWidth >= 1024);
     };
 
@@ -97,13 +77,24 @@ export const Card: React.FC<CardProps> = ({
     };
   }, []);
 
+  // Determinar la opacidad de las headerActions
+  const getHeaderActionsOpacity = () => {
+    if (!headerActions) return 0;
+    // En pantallas pequeñas (md e inferiores) siempre se muestran
+    if (!isLargeScreen) return 1;
+    // Si alwaysDisplayHeaderActions es true, siempre se muestran
+    if (alwaysDisplayHeaderActions) return 1;
+    // Si es false y pantalla grande, solo al hacer hover
+    return isHovered ? 1 : 0;
+  };
+
   return (
     <div
       className={`${classes} relative`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {(title || subtitle || hasHeaderActions) && (
+      {(title || subtitle || headerActions) && (
         <div className="px-6 pt-4">
           <div className="flex items-center justify-between">
             <div>
@@ -118,28 +109,21 @@ export const Card: React.FC<CardProps> = ({
                 </div>
               )}
             </div>
+            {headerActions && (
+              <div
+                className="flex items-center transition-opacity"
+                style={{
+                  opacity: getHeaderActionsOpacity(),
+                }}
+              >
+                {headerActions}
+              </div>
+            )}
           </div>
         </div>
       )}
-      {hasHeaderActions && (
-        <div
-          className="absolute top-2 right-2 transition-opacity"
-          style={{
-            opacity: isLargeScreen ? (isHovered ? 1 : 0) : 1,
-          }}
-        >
-          <DropdownMenu<ActionItem>
-            options={convertActionsToOptions(headerActionsArray)}
-            onOptionSelected={() => {
-              // Las acciones ya manejan sus propios eventos
-            }}
-            renderOption={(item) => item.content}
-            replaceOnSingleOption={true}
-          />
-        </div>
-      )}
 
-      <div className="px-6 py-4">{children}</div>
+      {children && <div className="px-6 py-4">{children}</div>}
 
       {footer && <div className="px-6 pb-4">{footer}</div>}
     </div>

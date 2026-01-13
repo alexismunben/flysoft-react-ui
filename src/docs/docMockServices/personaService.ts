@@ -183,9 +183,10 @@ export const personaService = {
     const personas = _obtenerTodas();
     const nuevoId =
       personas.length > 0 ? Math.max(...personas.map((p) => p.id)) + 1 : 1;
+    // Crear nueva persona: el id generado siempre sobrescribe cualquier id que venga
     const nuevaPersona: Persona = {
-      id: nuevoId,
       ...persona,
+      id: nuevoId, // El id siempre se asigna después para sobrescribir cualquier id existente
     };
     personas.push(nuevaPersona);
     // Guardar convirtiendo fechaNacimiento a string ISO
@@ -203,11 +204,11 @@ export const personaService = {
   async editar(
     id: number,
     datos: Partial<Omit<Persona, "id">>
-  ): Promise<Persona | null> {
+  ): Promise<Persona | undefined> {
     await simulateNetworkDelay();
     const personas = _obtenerTodas();
     const index = personas.findIndex((per) => per.id === id);
-    if (index === -1) return null;
+    if (index === -1) return undefined;
 
     personas[index] = { ...personas[index], ...datos };
     // Guardar convirtiendo fechaNacimiento a string ISO

@@ -102,9 +102,10 @@ export const empresaService = {
     const empresas = _obtenerTodas();
     const nuevoId =
       empresas.length > 0 ? Math.max(...empresas.map((e) => e.id)) + 1 : 1;
+    // Crear nueva empresa: el id generado siempre sobrescribe cualquier id que venga
     const nuevaEmpresa: Empresa = {
-      id: nuevoId,
       ...empresa,
+      id: nuevoId, // El id siempre se asigna después para sobrescribir cualquier id existente
     };
     empresas.push(nuevaEmpresa);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(empresas));

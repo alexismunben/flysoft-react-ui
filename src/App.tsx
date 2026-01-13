@@ -16,16 +16,12 @@ function HomeContent() {
           title="FALCONE WALTER ALDO"
           subtitle="3558-03 - Titular"
           footer={<Button>Ver</Button>}
-          headerActions={() => [
-            <Badge variant="secondary">OSOCNA</Badge>,
-            <Badge variant="secondary">BÁSICO</Badge>,
-          ]}
-          // headerActions={
-          //   <>
-          //     <Badge variant="secondary">OSOCNA</Badge>
-          //     <Badge variant="secondary">BÁSICO</Badge>
-          //   </>
-          // }
+          headerActions={
+            <>
+              <Badge variant="secondary">OSOCNA</Badge>
+              <Badge variant="secondary">BÁSICO</Badge>
+            </>
+          }
         >
           <Collection direction="row" gap="1rem" wrap>
             <DataField label="Cuil" value="20179902711" />
@@ -44,7 +40,7 @@ function HomeContent() {
 
 function LeftDrawerHeader() {
   return (
-    <div className="h-[64px] flex flex-col  justify-center px-4">
+    <div className="h-[64px] flex flex-col  justify-center px-4 bg-gray-300">
       <h2>
         <Link to="/">Flysoft React UI</Link>
       </h2>
@@ -54,7 +50,7 @@ function LeftDrawerHeader() {
 
 function LeftDrawerFooter() {
   return (
-    <div className="px-4">
+    <div className="px-4 bg-gray-300">
       <span>v {packageJson.version}</span>
     </div>
   );
@@ -66,7 +62,9 @@ function App() {
       initialTheme={"light"}
       forceInitialTheme={false}
       initialNavbar={{
+        navBarLeftNode: <></>,
         fullWidthNavbar: false,
+        className: "bg-gray-300 pl-0 lg:pl-8",
       }}
       initialLeftDrawer={{
         headerNode: <LeftDrawerHeader />,

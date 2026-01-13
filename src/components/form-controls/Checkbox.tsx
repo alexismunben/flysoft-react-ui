@@ -1,10 +1,7 @@
 import React from "react";
 
 export interface CheckboxProps
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "type" | "size"
-  > {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "size"> {
   label?: string;
   labelPosition?: "left" | "right";
   error?: string;
@@ -61,8 +58,8 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       }
       ${className}
     `;
-    
-    const checkboxStyle = error 
+
+    const checkboxStyle = error
       ? { accentColor: "var(--color-danger)" }
       : { accentColor: "var(--color-primary)" };
 
@@ -70,7 +67,11 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       ${labelSizeClasses[size]}
       font-[var(--font-default)] cursor-pointer select-none
       ${props.disabled ? "opacity-50 cursor-not-allowed" : ""}
-      ${error ? "text-[var(--color-danger)]" : "text-[var(--color-text-primary)]"}
+      ${
+        error
+          ? "text-[var(--color-danger)]"
+          : "text-[var(--color-text-primary)]"
+      }
     `;
 
     const containerClasses = `
@@ -153,4 +154,3 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
 );
 
 Checkbox.displayName = "Checkbox";
-

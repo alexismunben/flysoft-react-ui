@@ -19,7 +19,7 @@ export const Loader: React.FC<LoaderProps> = ({
   overlayClassName,
 }) => {
   const { theme } = useTheme();
-  const displayText = text || "Cargando...";
+  const displayText = text;
 
   // Clases por defecto del overlay (negro semitransparente con blur)
   const defaultOverlayClasses = "bg-black/50 backdrop-blur-sm";
