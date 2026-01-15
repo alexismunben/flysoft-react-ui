@@ -45,7 +45,8 @@
   "files": [
     "dist",
     "styles.d.ts",
-    "README.md"
+    "README.md",
+    "AI_CONTEXT.md"
   ],
   "scripts": {
     "dev": "vite --port 5189 --strictPort",
