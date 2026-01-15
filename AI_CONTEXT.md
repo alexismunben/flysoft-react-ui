@@ -14,53 +14,81 @@ This document serves as the source of truth for AI models (Gemini, Claude, GPT, 
 
 ## Component Categorization
 
-### 1. Layouts (Priority for Page Structure)
+### 1. Layouts & Structure
 - **AppLayout**: The main wrapper for applications.
   - **Props**: `navbar` (NavbarInterface), `leftDrawer` (LeftDrawerInterface), `children`.
-  - **Usage**: Use this as the root component for your page routes.
+- **Card**: Generic container with shadow and rounded corners.
+- **Accordion**: Collapsible content sections.
+- **Collection**: Renders a list of items using a render prop or component.
+- **TabsGroup / TabPanel**: Tabbed interfaces.
+- **Menu**: Menu component.
+- **DropdownMenu / DropdownPanel**: Components for building drop-down menus.
 - **DashboardLayout**: Specialized layout for dashboard views with statistics.
 - **SidebarLayout**: Layout with a persistent sidebar.
 
 ### 2. Form Controls
 - **Button / LinkButton**: Standard buttons. Supports `variant` ('primary' | 'secondary' | 'danger' | 'ghost') and `icon`.
 - **Input**: Text inputs.
-- **AutocompleteInput**: Searchable dropdown. Critical for foreign key selection.
-- **DateInput / DatePicker**: Date handling.
-- **Checkbox / RadioButtonGroup**: Boolean and option selection.
-- **ThemeSwitcher**: Toggle between light/dark modes.
+- **AutocompleteInput**: Searchable dropdown.
+- **SearchSelectInput**: Specialized input for selecting from search results.
+- **DatePicker / DateInput**: Date picking and input.
+- **Checkbox**: Boolean selection.
+- **RadioButtonGroup**: Single selection from a group.
+- **ThemeSwitcher**: Component to toggle theme (light/dark).
+- **FormPattern**: Template pattern for building forms.
 
-### 3. Data Display & Containers
+### 3. Data Display
 - **DataTable<T>**: High-performance table.
   - **Props**: `columns` (array of definitions), `rows` (data), `isLoading`.
-- **Card**: Generic container with shadow and rounded corners.
 - **DataField**: Displays a Label + Value pair, useful for detail views.
-- **Accordion**: Collapsible content sections.
-- **Collection**: Renders a list of items using a render prop or component.
-- **TabsGroup / TabPanel**: Tabbed interfaces.
+- **Pagination**: Pagination controls.
 
 ### 4. Utilities & Feedback
 - **Dialog**: Modal windows for confirmation or complex forms.
+- **Filter / FiltersDialog**: Components for filtering lists/tables.
 - **Snackbar**: Toast notifications. Requires `SnackbarContainer` at the app root.
 - **Loader**: Visual loading indicator.
-- **Badge / Avatar**: status indicators and user images.
+- **Badge**: Status indicators.
+- **Avatar**: User profile images.
+- **RoadMap**: Progress or stage visualization.
+
+### 5. Ready-to-use Templates
+- **LoginForm**
+- **RegistrationForm**
+- **ContactForm**
 
 ## Common Patterns
 
-### Basic Page Structure
+### Basic Page Usage (Simple Card)
+Use this pattern for simple pages that do not require the full `AppLayout` wrapper or when inserting into an existing structure.
 ```tsx
-import { AppLayout, Card, Button } from 'flysoft-react-ui';
+import { Card, Button } from 'flysoft-react-ui';
+
+export default function SimplePage() {
+  return (
+    <div className="p-4">
+      <Card>
+        <h2 className="text-xl font-bold mb-4">Content Title</h2>
+        <p className="mb-4">This is the content within a basic card.</p>
+        <Button variant="primary" onClick={() => console.log('Clicked')}>
+          Action
+        </Button>
+      </Card>
+    </div>
+  );
+}
+```
+
+### Full Page Layout
+```tsx
+import { AppLayout } from 'flysoft-react-ui';
 
 export default function Page() {
   return (
     <AppLayout
       navbar={{ title: "My Page" }}
     >
-      <div className="p-4 space-y-4">
-        <Card>
-          <h2>Content</h2>
-          <Button variant="primary" onClick={() => {}}>Action</Button>
-        </Card>
-      </div>
+      {/* Children content goes here */}
     </AppLayout>
   );
 }
@@ -80,5 +108,111 @@ const columns: DataTableColumn<User>[] = [
 <DataTable columns={columns} rows={users} />
 ```
 
-## Icons
-The library is agnostic but pairs well with `lucide-react`. Pass icons as ReactNodes to props like `icon`, `startIcon`, or `endIcon`.
+## Contexts & State Management
+
+### 1. AuthContext
+Manages user authentication state.
+- **Provider**: `AuthProvider`
+- **Hook**: `useContext(AuthContext)`
+- **Key Features**: `user`, `login`, `logout`, `isAuthenticated`.
+```tsx
+import { AuthProvider, AuthContext } from 'flysoft-react-ui';
+
+// Wrap app
+<AuthProvider
+  getToken={async (user, pass) => ({ token: '...' })}
+  getUserData={async (token) => ({ id: 1, name: 'User' })}
+>
+  <App />
+</AuthProvider>
+
+// Use
+const { login, user } = useContext(AuthContext);
+```
+
+### 2. CrudContext<T>
+Powerful context for managing standard CRUD operations with pagination, filtering, and loading states.
+- **Provider**: `CrudProvider<T>`
+- **Hook**: `useCrud<T>()`
+- **Key Features**: Auto-fetching, `list`, `item`, `pagination` node, `isLoading`, CRUD actions (`createItem`, `updateItem`, `deleteItem`).
+
+**Usage:**
+```tsx
+import { CrudProvider, useCrud, DataTable } from 'flysoft-react-ui';
+
+function UserList() {
+  const { list, isLoading, pagination } = useCrud<User>();
+  return (
+    <div>
+      <DataTable rows={list} isLoading={isLoading} ... />
+      {pagination}
+    </div>
+  );
+}
+
+// Wrapper
+<CrudProvider
+  getPromise={userApi.getAll}
+  postPromise={userApi.create}
+  putPromise={userApi.update}
+  deletePromise={userApi.delete}
+>
+  <UserList />
+</CrudProvider>
+```
+
+### 3. AppLayoutContext
+Controls the global layout state (navbar, visual settings). usually handled internally by `AppLayout` but accessible if needed.
+- **Provider**: `AppLayoutProvider`
+- **Hook**: `useAppLayout()`
+
+### 4. ThemeContext
+Manages the visual theme of the application.
+- **Provider**: `ThemeProvider`
+- **Hook**: `useTheme()`
+- **Features**: Switch between `light`, `dark`, `blue`, `green` themes or custom themes.
+
+```tsx
+## Hooks & Services
+
+### 1. apiClient (Service)
+A singleton wrapper around Axios with built-in token management and simplified methods.
+- **Methods**: `get`, `post`, `put`, `del`, `getFile`, `downloadFile`, `uploadFile`.
+- **Configuration**: Use `setApiClientTokenProvider(() => token)` to handle auth globally.
+
+```tsx
+import { apiClient } from 'flysoft-react-ui';
+
+// GET request
+const users = await apiClient.get<User[]>({ url: '/api/users' });
+
+// POST request with body
+const result = await apiClient.post({ url: '/api/users', body: newUser });
+
+// Download file (handles blob and filename automatically)
+await apiClient.downloadFile({ url: '/api/report/pdf' });
+```
+
+### 2. useAsyncRequest (Hook)
+Simplifies handling async operations (loading states, success/error messages via Snackbar).
+- **Props**: `successMessage`, `errorMessage`, `onSuccess`, `onError`.
+- **Returns**: `execute(promiseFn)`, `isLoading`.
+
+```tsx
+import { useAsyncRequest, apiClient } from 'flysoft-react-ui';
+
+function UserForm() {
+  const { execute, isLoading } = useAsyncRequest({
+    successMessage: "User created successfully!",
+    errorMessage: "Failed to create user."
+  });
+
+  const handleSubmit = async (data) => {
+    await execute(async () => {
+      await apiClient.post({ url: '/api/users', body: data });
+    });
+  };
+
+  return <Button loading={isLoading} onClick={handleSubmit}>Save</Button>;
+}
+```

@@ -25,11 +25,11 @@ SIEMPRE usa los componentes de flysoft-react-ui antes de crear nuevos:
 
 ## Componentes Disponibles:
 
-- Button (variantes: primary, outline, ghost)
-- Input (con labels, iconos, validación)
-- Card (con header, footer, variantes)
-- Badge (estados: success, warning, danger, etc.)
-- ThemeSwitcher (cambio de temas)
+- Layouts: AppLayout, DashboardLayout, SidebarLayout, Card, Accordion, Menu, DropdownMenu, TabsGroup
+- Forms: Button, Input, AutocompleteInput, DatePicker, Checkbox, RadioButtonGroup, ThemeSwitcher
+- Data: DataTable, DataField, Pagination, Collection
+- Feedback: Badge, Dialog, Snackbar, Loader, Avatar, RoadMap
+- Templates: LoginForm, RegistrationForm, ContactForm, FormPattern
 
 ## Para formularios:
 

@@ -28,40 +28,151 @@ Use this library for all UI elements unless minimal HTML/CSS is strictly better.
 
 # Flysoft React UI Documentation
 
-## Import Rules
-- **ALWAYS** import from `flysoft-react-ui`.
-  - `import { Button, Card, AppLayout } from 'flysoft-react-ui';`
-- **NEVER** import from subpaths like `flysoft-react-ui/dist/...`.
+## Library Philosophy
+`flysoft-react-ui` is a React component library built with TypeScript. It emphasizes a consistent look and feel, ease of use, and "premium" aesthetics out of the box.
 
-## Preferred Components
-When the user asks for:
-- **Layouts/Pages**: Use `AppLayout` or `DashboardLayout`.
-- **Tables/Grids**: Use `DataTable`.
-- **Forms**: Use `Input`, `AutocompleteInput` (for selects), `DatePicker`, `Checkbox`.
-- **Containers**: Use `Card`.
-- **Buttons**: Use `Button` (supports `variant="primary"|"secondary"|"danger"`).
+## 🚨 Critical Rules for AI
+1. **Top-Level Imports Only**: Always import components from the root package `flysoft-react-ui`.
+   - **CORRECT**: `import { Button, Card } from 'flysoft-react-ui';`
+   - **INCORRECT**: `import { Button } from 'flysoft-react-ui/components/Button';`
+2. **TypeScript First**: Use the exported types (e.g., `ButtonProps`, `DataTableColumn`) to ensure type safety.
+3. **No Direct Style Imports**: Do not import CSS files from the library (like `flysoft-react-ui/dist/index.css`) in components. This is handled at the app root.
 
-## Usage Examples
+## Component Categorization
 
-**Page Layout:**
+### 1. Layouts & Structure
+- **AppLayout**: The main wrapper for applications.
+  - **Props**: `navbar` (NavbarInterface), `leftDrawer` (LeftDrawerInterface), `children`.
+- **Card**: Generic container with shadow and rounded corners.
+- **Accordion**: Collapsible content sections.
+- **Collection**: Renders a list of items using a render prop or component.
+- **TabsGroup / TabPanel**: Tabbed interfaces.
+- **Menu**: Menu component.
+- **DropdownMenu / DropdownPanel**: Components for building drop-down menus.
+- **DashboardLayout**: Specialized layout for dashboard views with statistics.
+- **SidebarLayout**: Layout with a persistent sidebar.
+
+### 2. Form Controls
+- **Button / LinkButton**: Standard buttons. Supports `variant` ('primary' | 'secondary' | 'danger' | 'ghost') and `icon`.
+- **Input**: Text inputs.
+- **AutocompleteInput**: Searchable dropdown.
+- **SearchSelectInput**: Specialized input for selecting from search results.
+- **DatePicker / DateInput**: Date picking and input.
+- **Checkbox**: Boolean selection.
+- **RadioButtonGroup**: Single selection from a group.
+- **ThemeSwitcher**: Component to toggle theme (light/dark).
+- **FormPattern**: Template pattern for building forms.
+
+### 3. Data Display
+- **DataTable<T>**: High-performance table.
+  - **Props**: `columns` (array of definitions), `rows` (data), `isLoading`.
+- **DataField**: Displays a Label + Value pair, useful for detail views.
+- **Pagination**: Pagination controls.
+
+### 4. Utilities & Feedback
+- **Dialog**: Modal windows for confirmation or complex forms.
+- **Filter / FiltersDialog**: Components for filtering lists/tables.
+- **Snackbar**: Toast notifications. Requires `SnackbarContainer` at the app root.
+- **Loader**: Visual loading indicator.
+- **Badge**: Status indicators.
+- **Avatar**: User profile images.
+- **RoadMap**: Progress or stage visualization.
+
+### 5. Ready-to-use Templates
+- **LoginForm**
+- **RegistrationForm**
+- **ContactForm**
+
+## Common Patterns
+
+### Basic Page Usage (Simple Card)
+Use this pattern for simple pages that do not require the full `AppLayout` wrapper or when inserting into an existing structure.
+```tsx
+import { Card, Button } from 'flysoft-react-ui';
+
+export default function SimplePage() {
+  return (
+    <div className="p-4">
+      <Card>
+        <h2 className="text-xl font-bold mb-4">Content Title</h2>
+        <p className="mb-4">This is the content within a basic card.</p>
+        <Button variant="primary" onClick={() => console.log('Clicked')}>
+          Action
+        </Button>
+      </Card>
+    </div>
+  );
+}
+```
+
+### Full Page Layout
 ```tsx
 import { AppLayout } from 'flysoft-react-ui';
 
-export default function MyPage() {
+export default function Page() {
   return (
-    <AppLayout navbar={{ title: "Page Title" }}>
-      {/* Page Content */}
+    <AppLayout
+      navbar={{ title: "My Page" }}
+    >
+      {/* Children content goes here */}
     </AppLayout>
   );
 }
 ```
 
-**Form:**
+### Data Table Usage
 ```tsx
-import { Button, Input, Card } from 'flysoft-react-ui';
+import { DataTable, DataTableColumn } from 'flysoft-react-ui';
 
-<Card className="max-w-md mx-auto p-4">
-  <Input label="Username" placeholder="Enter user" />
-  <Button variant="primary" className="mt-4">Login</Button>
-</Card>
+interface User { id: number; name: string; }
+
+const columns: DataTableColumn<User>[] = [
+  { header: 'ID', accessorKey: 'id' },
+  { header: 'Name', accessorKey: 'name' },
+];
+
+<DataTable columns={columns} rows={users} />
 ```
+
+## Icons
+The library is agnostic but pairs well with `lucide-react` or FontAwesome. Pass icons as ReactNodes to props like `icon`, `startIcon`, or `endIcon`.
+
+## Contexts & State Management
+
+### 1. AuthContext
+Manages user authentication state.
+- **Provider**: `AuthProvider`
+- **Hook**: `useContext(AuthContext)`
+- **Key Features**: `user`, `login`, `logout`, `isAuthenticated`.
+
+### 2. CrudContext<T>
+Powerful context for managing standard CRUD operations with pagination, filtering, and loading states.
+- **Provider**: `CrudProvider<T>`
+- **Hook**: `useCrud<T>()`
+- **Key Features**: Auto-fetching, `list`, `item`, `pagination` node, `isLoading`, CRUD actions (`createItem`, `updateItem`, `deleteItem`).
+
+**Usage:**
+```tsx
+import { CrudProvider, useCrud, DataTable } from 'flysoft-react-ui';
+
+function UserList() {
+  const { list, isLoading, pagination } = useCrud<User>();
+  return (
+    <div>
+      <DataTable rows={list} isLoading={isLoading} ... />
+      {pagination}
+    </div>
+  );
+}
+```
+
+### 3. AppLayoutContext
+Controls the global layout state (navbar, visual settings). usually handled internally by `AppLayout` but accessible if needed.
+- **Provider**: `AppLayoutProvider`
+- **Hook**: `useAppLayout()`
+
+### 4. ThemeContext
+Manages the visual theme of the application.
+- **Provider**: `ThemeProvider`
+- **Hook**: `useTheme()`
+- **Features**: Switch between `light`, `dark`, `blue`, `green` themes or custom themes.
