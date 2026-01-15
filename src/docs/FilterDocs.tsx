@@ -732,6 +732,90 @@ const FilterDocs: React.FC = () => {
               </div>
             </Card>
           </section>
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Search y FiltersDialog Combinados
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Una disposición común es tener una búsqueda rápida a la izquierda y
+              filtros avanzados a la derecha. Esto se logra fácilmente con un
+              contenedor flex y <code>justify-between</code>.
+            </p>
+            <Card title="Barra de herramientas combinada">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between w-full">
+                  <Collection direction="row">
+                    <Filter
+                      paramName="busquedaGlobal"
+                      label="Buscar..."
+                      filterType="search"
+                      inputWidth="300px"
+                    />
+                    <Filter
+                      paramName="filtroFecha"
+                      label="Fecha"
+                      filterType="date"
+                      inputWidth="300px"
+                      hideEmpty
+                    />
+                    <Filter
+                      paramName="filtroEstado"
+                      label="Estado"
+                      filterType="autocomplete"
+                      inputWidth="300px"
+                      hideEmpty
+                      options={[
+                        { label: "Activo", value: "active" },
+                        { label: "Inactivo", value: "inactive" },
+                      ]}
+                    />
+                  </Collection>
+                  <FiltersDialog
+                    filters={[
+                      {
+                        filterType: "date",
+                        paramName: "filtroFecha",
+                        label: "Fecha",
+                      },
+                      {
+                        filterType: "autocomplete",
+                        paramName: "filtroEstado",
+                        label: "Estado",
+                        options: [
+                          { label: "Activo", value: "active" },
+                          { label: "Inactivo", value: "inactive" },
+                        ],
+                      },
+                    ]}
+                  />
+                </div>
+                <div className="p-3 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded">
+                  <p className="text-sm">
+                    <span className="font-semibold">
+                      Query parameters actuales:
+                    </span>{" "}
+                    <span style={{ color: "var(--flysoft-text-secondary)" }}>
+                      {searchParams.toString() || "ninguno"}
+                    </span>
+                  </p>
+                  <p
+                    className="text-xs mt-2"
+                    style={{ color: "var(--flysoft-text-secondary)" }}
+                  >
+                    💡 Prueba escribir en el buscador (aplica inmediato) y luego
+                    usar los filtros avanzados (aplica al aceptar). Ambos
+                    coexisten en la URL.
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </section>
         </div>
       </Card>
     </div>

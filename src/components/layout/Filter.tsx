@@ -10,8 +10,8 @@ import type { AutocompleteOption } from "../form-controls/AutocompleteInput";
 import { SearchSelectInput } from "../form-controls/SearchSelectInput";
 import type { SearchSelectOption } from "../form-controls/SearchSelectInput";
 import type { PaginationInterface } from "../form-controls/Pagination";
-import { DataField } from "../layout/DataField";
-import { normalizeIconClass } from "./iconUtils";
+import { DataField } from "./DataField";
+import { normalizeIconClass } from "../utils/iconUtils";
 
 export interface StaticOption {
   text: string;
@@ -31,6 +31,11 @@ interface BaseFilterProps {
    * Por defecto es false.
    */
   hideEmpty?: boolean;
+  /**
+   * Si es true, el componente se muestra con opacidad y no permite interacciones.
+   * Si el panel está abierto, se cerrará automáticamente.
+   */
+  disabled?: boolean;
 }
 
 // Props específicas para cada tipo de filtro
@@ -93,7 +98,9 @@ export const Filter: React.FC<FilterProps> = (props) => {
     inputWidth,
     value: propValue,
     onChange,
+
     hideEmpty = false,
+    disabled = false,
   } = props;
   const filterType = props.filterType || "text";
 
@@ -269,6 +276,13 @@ export const Filter: React.FC<FilterProps> = (props) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
+
+  // Cerrar el panel si el componente se deshabilita
+  useEffect(() => {
+    if (disabled) {
+      setIsOpen(false);
+    }
+  }, [disabled]);
 
   const handleSetFilter = () => {
     const newValue = inputValue.trim() || undefined;
@@ -600,6 +614,8 @@ export const Filter: React.FC<FilterProps> = (props) => {
   };
 
   const handleTogglePanel = () => {
+    if (disabled) return;
+
     if (!isOpen) {
       // Calcular posición antes de abrir
       if (containerRef.current) {
@@ -681,9 +697,8 @@ export const Filter: React.FC<FilterProps> = (props) => {
           <i
             className={`${normalizeIconClass(
               "fa-chevron-down"
-            )} text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-all ${
-              isOpen ? "rotate-180" : ""
-            }`}
+            )} text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-all ${isOpen ? "rotate-180" : ""
+              }`}
           />
         </span>
 
@@ -709,7 +724,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
   // Renderizar según el tipo de filtro
   if (filterType === "autocomplete") {
     return (
-      <div ref={containerRef} className="relative inline-block">
+      <div
+        ref={containerRef}
+        className={`relative inline-block ${disabled ? "opacity-50 pointer-events-none" : ""
+          }`}
+      >
         <DataField
           label={label}
           value={badgeContainer}
@@ -737,11 +756,10 @@ export const Filter: React.FC<FilterProps> = (props) => {
                     {staticOptions.map((option) => (
                       <li
                         key={option.value}
-                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${
-                          currentValue === option.value
-                            ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
-                            : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
-                        }`}
+                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${currentValue === option.value
+                          ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
+                          : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
+                          }`}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           handleStaticOptionSelect(option);
@@ -776,6 +794,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
                         (props as AutocompleteFilterProps).noResultsText
                       }
                       onSelectOption={handleAutocompleteOptionSelect}
+                      disabled={disabled}
                     />
                   </div>
                   <Button
@@ -794,7 +813,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
 
   if (filterType === "date") {
     return (
-      <div ref={containerRef} className="relative inline-block">
+      <div
+        ref={containerRef}
+        className={`relative inline-block ${disabled ? "opacity-50 pointer-events-none" : ""
+          }`}
+      >
         <DataField
           label={label}
           value={badgeContainer}
@@ -822,11 +845,10 @@ export const Filter: React.FC<FilterProps> = (props) => {
                     {staticOptions.map((option) => (
                       <li
                         key={option.value}
-                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${
-                          currentValue === option.value
-                            ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
-                            : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
-                        }`}
+                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${currentValue === option.value
+                          ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
+                          : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
+                          }`}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           handleStaticOptionSelect(option);
@@ -869,7 +891,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
     const searchSelectProps = props as SearchSelectFilterProps;
 
     return (
-      <div ref={containerRef} className="relative inline-block">
+      <div
+        ref={containerRef}
+        className={`relative inline-block ${disabled ? "opacity-50 pointer-events-none" : ""
+          }`}
+      >
         <DataField
           label={label}
           value={badgeContainer}
@@ -897,11 +923,10 @@ export const Filter: React.FC<FilterProps> = (props) => {
                     {staticOptions.map((option) => (
                       <li
                         key={option.value}
-                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${
-                          currentValue === option.value
-                            ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
-                            : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
-                        }`}
+                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${currentValue === option.value
+                          ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
+                          : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
+                          }`}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           handleStaticOptionSelect(option);
@@ -947,7 +972,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
     const valueMatches = hasValue && searchValue.trim() === currentValue;
 
     return (
-      <div ref={containerRef} className="relative inline-block">
+      <div
+        ref={containerRef}
+        className={`relative inline-block ${disabled ? "opacity-50 pointer-events-none" : ""
+          }`}
+      >
         <DataField
           label={label}
           value={
@@ -963,6 +992,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
                 onIconClick={handleSearchIconClick}
                 placeholder="Buscar..."
                 size="sm"
+                disabled={disabled}
               />
             </div>
           }
@@ -974,7 +1004,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
 
   // Para text y number
   return (
-    <div ref={containerRef} className="relative inline-block">
+    <div
+      ref={containerRef}
+      className={`relative inline-block ${disabled ? "opacity-50 pointer-events-none" : ""
+        }`}
+    >
       <DataField
         label={label}
         value={badgeContainer}
@@ -1002,11 +1036,10 @@ export const Filter: React.FC<FilterProps> = (props) => {
                   {staticOptions.map((option) => (
                     <li
                       key={option.value}
-                      className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${
-                        urlValue === option.value
-                          ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
-                          : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
-                      }`}
+                      className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${urlValue === option.value
+                        ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
+                        : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
+                        }`}
                       onMouseDown={(e) => {
                         e.preventDefault();
                         handleStaticOptionSelect(option);

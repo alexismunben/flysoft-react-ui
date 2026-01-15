@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "../form-controls/Button";
 
 export interface DropdownMenuProps<T = { label: string }> {
@@ -215,31 +216,37 @@ export const DropdownMenu = <T = { label: string },>({
       </div>
 
       {/* Menu */}
-      {isOpen && (
-        <div
-          ref={menuRef}
-          className="absolute z-[1000] bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-lg)] py-1 min-w-[160px] font-[var(--font-default)]"
-          style={menuStyles}
-        >
-          {options.map((option, index) => {
-            const key = String(
-              (option as unknown as { id?: string | number })?.id ??
-                labelGetter(option) ??
-                index
-            );
+      {isOpen &&
+        (typeof document !== "undefined" && document.body
+          ? createPortal(
+            <div
+              ref={menuRef}
+              className="fixed z-[2000] bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-lg)] py-1 min-w-[160px] font-[var(--font-default)]"
+              style={menuStyles}
+            >
+              {options.map((option, index) => {
+                const key = String(
+                  (option as unknown as { id?: string | number })?.id ??
+                  labelGetter(option) ??
+                  index
+                );
 
-            return (
-              <div
-                key={key}
-                onClick={() => handleOptionClick(option)}
-                className="px-4 py-2 text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] cursor-pointer transition-colors flex items-center"
-              >
-                {renderOption ? renderOption(option) : labelGetter(option)}
-              </div>
-            );
-          })}
-        </div>
-      )}
+                return (
+                  <div
+                    key={key}
+                    onClick={() => handleOptionClick(option)}
+                    className="px-4 py-2 text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] cursor-pointer transition-colors flex items-center"
+                  >
+                    {renderOption
+                      ? renderOption(option)
+                      : labelGetter(option)}
+                  </div>
+                );
+              })}
+            </div>,
+            document.body
+          )
+          : null)}
     </div>
   );
 };

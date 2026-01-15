@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "../form-controls/Button";
 import { Dialog } from "./Dialog";
-import { Filter, type FilterProps } from "./Filter";
+import { Filter, type FilterProps } from "../layout/Filter";
 import { Collection } from "../layout/Collection";
 
 export interface FilterConfig {
@@ -145,16 +145,7 @@ export const FiltersDialog: React.FC<FiltersDialogProps> = ({ filters }) => {
       <Dialog
         isOpen={isOpen}
         title="Filtros"
-        dialogBody={
-          <div className="space-y-4">
-            <Collection direction="column" gap="1rem">
-              {filters.map((filter) => (
-                <Filter key={filter.paramName} {...getFilterProps(filter)} />
-              ))}
-            </Collection>
-          </div>
-        }
-        dialogActions={
+        footer={
           <>
             <Button variant="outline" onClick={handleClose}>
               Cerrar
@@ -166,7 +157,15 @@ export const FiltersDialog: React.FC<FiltersDialogProps> = ({ filters }) => {
         }
         onClose={handleClose}
         closeOnOverlayClick={false}
-      />
+      >
+        <div className="space-y-4">
+          <Collection direction="column" gap="1rem">
+            {filters.map((filter) => (
+              <Filter key={filter.paramName} {...getFilterProps(filter)} />
+            ))}
+          </Collection>
+        </div>
+      </Dialog>
     </>
   );
 };

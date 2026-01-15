@@ -8,8 +8,6 @@ export { Dialog } from "./Dialog";
 export type { DialogProps } from "./Dialog";
 export { Loader } from "./Loader";
 export type { LoaderProps } from "./Loader";
-export { Filter } from "./Filter";
-export type { FilterProps } from "./Filter";
 export { FiltersDialog } from "./FiltersDialog";
 export type { FiltersDialogProps, FilterConfig } from "./FiltersDialog";
 export { Snackbar } from "./Snackbar";

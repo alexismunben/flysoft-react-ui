@@ -8,7 +8,7 @@ import {
   Loader,
 } from "../../components";
 import type { Persona, PersonaConEmpresas } from "../docMockServices";
-import { useListCrud } from "../../contexts";
+import { useCrud } from "../../contexts";
 
 interface ListCrudDocsEditDialogProps {
   isOpen: boolean;
@@ -25,7 +25,7 @@ export const ListCrudDocsEditDialog = ({
     defaultValues: persona,
   });
 
-  const { createItem, updateItem, fetchItems } = useListCrud();
+  const { createItem, updateItem, fetchItems } = useCrud();
 
   const {
     register,
@@ -51,41 +51,7 @@ export const ListCrudDocsEditDialog = ({
         isOpen={isOpen}
         onClose={onClose}
         title="Editar Persona"
-        dialogBody={
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleSubmit(onSubmit)();
-              }
-            }}
-          >
-            <Collection>
-              <Input
-                label="Nombre"
-                {...register("nombre", { required: "Campo obligatorio" })}
-                error={errors.nombre?.message}
-              />
-              <Input
-                label="Email"
-                {...register("email", { required: "Campo obligatorio" })}
-                error={errors.email?.message}
-              />
-              <DateInput
-                label="Fecha de Nacimiento"
-                placeholder="dd/mm/yyyy"
-                icon="fa-calendar-alt"
-                {...register("fechaNacimiento", {
-                  required: "Campo obligatorio",
-                })}
-                error={errors.fechaNacimiento?.message}
-              />
-              <Loader isLoading={isLoading} />
-            </Collection>
-          </form>
-        }
-        dialogActions={
+        footer={
           <>
             <Button variant="outline" onClick={onClose}>
               Cancelar
@@ -93,7 +59,40 @@ export const ListCrudDocsEditDialog = ({
             <Button onClick={handleSubmit(onSubmit)}>Guardar</Button>
           </>
         }
-      />
+      >
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleSubmit(onSubmit)();
+            }
+          }}
+        >
+          <Collection>
+            <Input
+              label="Nombre"
+              {...register("nombre", { required: "Campo obligatorio" })}
+              error={errors.nombre?.message}
+            />
+            <Input
+              label="Email"
+              {...register("email", { required: "Campo obligatorio" })}
+              error={errors.email?.message}
+            />
+            <DateInput
+              label="Fecha de Nacimiento"
+              placeholder="dd/mm/yyyy"
+              icon="fa-calendar-alt"
+              {...register("fechaNacimiento", {
+                required: "Campo obligatorio",
+              })}
+              error={errors.fechaNacimiento?.message}
+            />
+            <Loader isLoading={isLoading} />
+          </Collection>
+        </form>
+      </Dialog>
     </FormProvider>
   );
 };

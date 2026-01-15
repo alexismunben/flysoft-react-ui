@@ -1,5 +1,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
+import { useFormContext } from "react-hook-form";
 import { Input } from "./Input";
 import type { InputProps } from "./Input";
 import { normalizeIconClass } from "../utils/iconUtils";
@@ -86,6 +87,7 @@ const AutocompleteInputInner = React.forwardRef<
     const containerRef = React.useRef<HTMLDivElement | null>(null);
     const dropdownRef = React.useRef<HTMLDivElement | null>(null);
     const inputRef = React.useRef<HTMLInputElement | null>(null);
+    const hiddenInputRef = React.useRef<HTMLInputElement | null>(null);
     const justClearedRef = React.useRef<boolean>(false);
 
     // Detectar si estamos en modo register: si viene 'name' de register, estamos en modo register
@@ -94,6 +96,19 @@ const AutocompleteInputInner = React.forwardRef<
       // Si viene 'name' en inputProps, es porque viene de register
       return "name" in inputProps && inputProps.name !== undefined;
     }, [inputProps]);
+
+    const fieldName =
+      isRegisterMode && "name" in inputProps
+        ? (inputProps.name as string)
+        : undefined;
+
+    // Obtener setValue del contexto del formulario
+    // Para usar con register, el formulario debe estar dentro de FormProvider
+    // useFormContext debe llamarse incondicionalmente (requisito de React Hooks)
+    // Si no hay FormProvider y se usa en modo register, useFormContext lanzará un error
+    // Para usar sin FormProvider, usar Controller en lugar de register
+    const formContext = useFormContext();
+    const setValue = formContext?.setValue;
 
     const inputValue = isRegisterMode
       ? displayValue
@@ -141,23 +156,27 @@ const AutocompleteInputInner = React.forwardRef<
 
     // Función helper para sincronizar displayValue con el valor del formulario
     const syncDisplayValue = React.useCallback(() => {
-      if (isRegisterMode && inputRef.current) {
-        const formValue = inputRef.current.value;
-        // Si el valor del formulario coincide con algún getOptionValue, mostrar su label
-        const matchingOption = options.find(
-          (option) => String(valueGetter(option)) === String(formValue)
-        );
-        if (matchingOption) {
-          const label = labelGetter(matchingOption);
-          setDisplayValue(label);
-          return true; // Indica que se encontró y sincronizó un valor
-        } else if (formValue) {
-          // Si hay un valor pero no coincide, mostrarlo tal cual
-          setDisplayValue(formValue);
-          return true;
-        } else {
-          setDisplayValue("");
-          return false; // No hay valor aún
+      if (isRegisterMode) {
+        // En modo register, usamos el hiddenInputRef si existe, sino el inputRef (legacy/fallback)
+        const targetInput = hiddenInputRef.current || inputRef.current;
+        if (targetInput) {
+          const formValue = targetInput.value;
+          // Si el valor del formulario coincide con algún getOptionValue, mostrar su label
+          const matchingOption = options.find(
+            (option) => String(valueGetter(option)) === String(formValue)
+          );
+          if (matchingOption) {
+            const label = labelGetter(matchingOption);
+            setDisplayValue(label);
+            return true; // Indica que se encontró y sincronizó un valor
+          } else if (formValue) {
+            // Si hay un valor pero no coincide, mostrarlo tal cual (o buscar por label si fuera el caso)
+            setDisplayValue(formValue);
+            return true;
+          } else {
+            setDisplayValue("");
+            return false; // No hay valor aún
+          }
         }
       }
       return false;
@@ -172,8 +191,9 @@ const AutocompleteInputInner = React.forwardRef<
 
         // Función que intenta sincronizar y retorna true si encontró un valor
         const trySync = (): boolean => {
-          if (inputRef.current) {
-            const formValue = inputRef.current.value;
+          const targetInput = hiddenInputRef.current || inputRef.current;
+          if (targetInput) {
+            const formValue = targetInput.value;
             if (formValue) {
               // Hay un valor, intentar sincronizar
               const matchingOption = options.find(
@@ -221,35 +241,41 @@ const AutocompleteInputInner = React.forwardRef<
       }
     }, [isRegisterMode, options, valueGetter, labelGetter]);
 
-    // También escuchar cambios en el input nativo para sincronizar cuando cambie
+    // También escuchar cambios en el input (hidden o visible) para sincronizar cuando cambie
     React.useEffect(() => {
-      if (isRegisterMode && inputRef.current) {
-        const input = inputRef.current;
+      if (isRegisterMode) {
+        // Observamos el hiddenInput si estamos en register mode y existe, o el input normal
+        const targetElement = hiddenInputRef.current || inputRef.current;
+        
+        if (targetElement) {
+          // Función para sincronizar cuando el input cambia
+          const handleInputSync = () => {
+             // Solo sincronizar si es el hidden input o si no tenemos hidden input
+             if (targetElement === hiddenInputRef.current) {
+                 syncDisplayValue();
+             }
+          };
 
-        // Función para sincronizar cuando el input cambia
-        const handleInputSync = () => {
-          syncDisplayValue();
-        };
+          // Escuchar eventos de input y change (aunque en hidden input no suelen dispararse eventos de usuario)
+          targetElement.addEventListener("input", handleInputSync);
+          targetElement.addEventListener("change", handleInputSync);
 
-        // Escuchar eventos de input y change
-        input.addEventListener("input", handleInputSync);
-        input.addEventListener("change", handleInputSync);
+          // También usar MutationObserver para detectar cambios en el atributo value (más fiable para hidden inputs cambiados por JS)
+          const observer = new MutationObserver(() => {
+            syncDisplayValue();
+          });
 
-        // También usar MutationObserver para detectar cambios en el atributo value
-        const observer = new MutationObserver(() => {
-          syncDisplayValue();
-        });
+          observer.observe(targetElement, {
+            attributes: true,
+            attributeFilter: ["value"],
+          });
 
-        observer.observe(input, {
-          attributes: true,
-          attributeFilter: ["value"],
-        });
-
-        return () => {
-          input.removeEventListener("input", handleInputSync);
-          input.removeEventListener("change", handleInputSync);
-          observer.disconnect();
-        };
+          return () => {
+            targetElement.removeEventListener("input", handleInputSync);
+            targetElement.removeEventListener("change", handleInputSync);
+            observer.disconnect();
+          };
+        }
       }
     }, [isRegisterMode, syncDisplayValue]);
 
@@ -285,63 +311,64 @@ const AutocompleteInputInner = React.forwardRef<
       const valueString = String(selectedValue ?? "");
 
       if (isRegisterMode) {
-        // En modo register:
-        // 1. Actualizar el input nativo con el valor (para que react-hook-form lo capture)
-        // 2. Actualizar displayValue con el label (para mostrarlo visualmente)
-        if (inputRef.current) {
-          const nativeInput = inputRef.current;
-
-          // Actualizar el valor del input directamente usando el setter nativo
-          // Esto evita que React sobrescriba el valor inmediatamente
-          const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-            window.HTMLInputElement.prototype,
-            "value"
-          )?.set;
-
-          if (nativeInputValueSetter) {
-            nativeInputValueSetter.call(nativeInput, valueString);
-          } else {
-            // Fallback si el setter no está disponible
-            nativeInput.value = valueString;
-          }
-
-          // IMPORTANTE: Llamar al onChange de register DESPUÉS de actualizar el input
-          // El evento debe tener el input nativo como target con el valor ya actualizado
-          if (onChange) {
-            // Crear un evento que tenga el input nativo como target
-            // react-hook-form leerá el valor desde event.target.value
-            const changeEvent = {
-              target: nativeInput,
-              currentTarget: nativeInput,
-            } as React.ChangeEvent<HTMLInputElement>;
-
-            (onChange as React.ChangeEventHandler<HTMLInputElement>)(
-              changeEvent
-            );
-          }
-
-          // También disparar eventos nativos para asegurar que todo esté sincronizado
-          // Estos eventos son importantes para la validación y el estado del formulario
-          const inputEvent = new Event("input", {
-            bubbles: true,
-            cancelable: true,
+        // En modo register, setear el valor usando setValue o actualizando el input nativo (hidden)
+        if (setValue && fieldName) {
+          setValue(fieldName, selectedValue, {
+            shouldValidate: true,
+            shouldDirty: true,
           });
-          nativeInput.dispatchEvent(inputEvent);
+          
+          // Actualizar el input hidden con el ID
+          if (hiddenInputRef.current) {
+             hiddenInputRef.current.value = valueString;
+          }
+          
+          // Actualizar displayValue con el label para mostrarlo visualmente en el input visible
+          setDisplayValue(label);
+        } else {
+           // Fallback si no hay setValue (raro en registerMode) o para inputs manuales
+           const targetInput = hiddenInputRef.current || inputRef.current;
+           if (targetInput) {
+             const nativeInput = targetInput;
+             const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+               window.HTMLInputElement.prototype,
+               "value"
+             )?.set;
 
-          const changeEventNative = new Event("change", {
-            bubbles: true,
-            cancelable: true,
-          });
-          nativeInput.dispatchEvent(changeEventNative);
+             if (nativeInputValueSetter) {
+               nativeInputValueSetter.call(nativeInput, valueString);
+             } else {
+               nativeInput.value = valueString;
+             }
+             
+             // Disparar eventos en el input que tiene el ref de register
+             if (onChange) {
+                const changeEvent = {
+                  target: nativeInput,
+                  currentTarget: nativeInput,
+                } as unknown as React.ChangeEvent<HTMLInputElement>; // Cast agresivo necesario
+                (onChange as React.ChangeEventHandler<HTMLInputElement>)(
+                  changeEvent
+                );
+             }
+
+             const inputEvent = new Event("input", {
+               bubbles: true,
+               cancelable: true,
+             });
+             nativeInput.dispatchEvent(inputEvent);
+             const changeEventNative = new Event("change", {
+                bubbles: true,
+                cancelable: true,
+             });
+             nativeInput.dispatchEvent(changeEventNative);
+           }
+           
+           // Y actualizamos visualmente
+           setDisplayValue(label);
         }
-
-        // Actualizar el displayValue para mostrar el label
-        setDisplayValue(label);
       } else {
         // Modo API personalizada - comportamiento original
-        if (value === undefined) {
-          setInternalValue(label);
-        }
         // Pasar el valor devuelto por getOptionValue, no el label
         if (onChange) {
           (onChange as (value: string) => void)(valueString);
@@ -399,7 +426,7 @@ const AutocompleteInputInner = React.forwardRef<
         const target = event.target as Node;
         const isClickInsideContainer = containerRef.current?.contains(target);
         const isClickInsideDropdown = dropdownRef.current?.contains(target);
-        
+
         if (!isClickInsideContainer && !isClickInsideDropdown) {
           setIsOpen(false);
         }
@@ -482,12 +509,16 @@ const AutocompleteInputInner = React.forwardRef<
     // Detectar si hay un valor seleccionado
     // Un valor está seleccionado si el value coincide con el getOptionValue de alguna opción
     const hasSelectedValue = React.useMemo(() => {
-      if (isRegisterMode && inputRef.current) {
-        const formValue = inputRef.current.value;
-        if (!formValue) return false;
-        return options.some(
-          (option) => String(valueGetter(option)) === String(formValue)
-        );
+      if (isRegisterMode) {
+        const targetInput = hiddenInputRef.current || inputRef.current;
+        if (targetInput) {
+            const formValue = targetInput.value;
+            if (!formValue) return false;
+            return options.some(
+              (option) => String(valueGetter(option)) === String(formValue)
+            );
+        }
+        return false;
       }
       if (value === undefined || value === null || value === "") return false;
       // Verificar si el value coincide con el getOptionValue de alguna opción
@@ -508,9 +539,11 @@ const AutocompleteInputInner = React.forwardRef<
         justClearedRef.current = true;
 
         if (isRegisterMode) {
-          // En modo register, limpiar el input nativo y disparar eventos
-          if (inputRef.current) {
-            const nativeInput = inputRef.current;
+          // En modo register, limpiar el input nativo (hidden) y disparar eventos
+          const targetInput = hiddenInputRef.current || inputRef.current;
+          
+          if (targetInput) {
+            const nativeInput = targetInput;
             const setter = Object.getOwnPropertyDescriptor(
               window.HTMLInputElement.prototype,
               "value"
@@ -522,19 +555,20 @@ const AutocompleteInputInner = React.forwardRef<
             nativeInput.dispatchEvent(inputEvent);
             const changeEvent = new Event("change", { bubbles: true });
             nativeInput.dispatchEvent(changeEvent);
+            
+             // Llamar al onChange de register
+            if (onChange) {
+                const changeEventReact = {
+                target: nativeInput,
+                currentTarget: nativeInput,
+                } as React.ChangeEvent<HTMLInputElement>;
+                (onChange as React.ChangeEventHandler<HTMLInputElement>)(
+                     changeEventReact
+                );
+            }
           }
           // Limpiar el displayValue
           setDisplayValue("");
-          // Llamar al onChange de register
-          if (onChange && inputRef.current) {
-            const changeEvent = {
-              target: inputRef.current,
-              currentTarget: inputRef.current,
-            } as React.ChangeEvent<HTMLInputElement>;
-            (onChange as React.ChangeEventHandler<HTMLInputElement>)(
-              changeEvent
-            );
-          }
         } else {
           // Modo API personalizada
           if (value === undefined) {
@@ -573,49 +607,76 @@ const AutocompleteInputInner = React.forwardRef<
       ? handleClear
       : inputProps.onIconClick;
 
-    // Combinar refs: el ref del componente y el ref interno
-    const combinedRef = React.useCallback(
+    // Refs separados: uno para el visible y otro para el hidden (registrado)
+    const setHiddenRef = React.useCallback(
       (node: HTMLInputElement | null) => {
-        inputRef.current = node;
-        if (typeof ref === "function") {
-          ref(node);
-        } else if (ref) {
-          ref.current = node;
-        }
-
-        // Cuando el ref se establece en modo register, sincronizar el displayValue
-        // Esto es importante para valores por defecto que vienen del formulario
-        if (isRegisterMode && node) {
-          // Intentar múltiples veces con diferentes delays
-          // react-hook-form puede establecer el valor en diferentes momentos
-          [0, 10, 50, 100, 200, 500].forEach((delay) => {
-            setTimeout(() => {
-              if (node && inputRef.current === node) {
-                const formValue = node.value;
-                if (formValue) {
-                  const matchingOption = options.find(
-                    (option) =>
-                      String(valueGetter(option)) === String(formValue)
-                  );
-                  if (matchingOption) {
-                    setDisplayValue(labelGetter(matchingOption));
-                  } else {
-                    setDisplayValue(formValue);
+        hiddenInputRef.current = node;
+        // Solo pasar el ref externo al hidden input en modo register
+        if (isRegisterMode) {
+            if (typeof ref === "function") {
+              ref(node);
+            } else if (ref) {
+              ref.current = node;
+            }
+            
+             // Sincronización inicial cuando el ref se monta
+            if (node) {
+               [0, 10, 50, 100, 200, 500].forEach((delay) => {
+                setTimeout(() => {
+                  if (node && hiddenInputRef.current === node) {
+                    const formValue = node.value;
+                    if (formValue) {
+                      const matchingOption = options.find(
+                        (option) =>
+                          String(valueGetter(option)) === String(formValue)
+                      );
+                      if (matchingOption) {
+                        setDisplayValue(labelGetter(matchingOption));
+                      } else {
+                        setDisplayValue(formValue);
+                      }
+                    }
                   }
-                }
-              }
-            }, delay);
-          });
+                }, delay);
+              });
+            }
         }
       },
       [ref, isRegisterMode, options, valueGetter, labelGetter]
     );
 
+    const setVisibleRef = React.useCallback(
+        (node: HTMLInputElement | null) => {
+            inputRef.current = node;
+            // En modo NO register, pasamos el ref al input visible
+            if (!isRegisterMode) {
+                if (typeof ref === "function") {
+                    ref(node);
+                } else if (ref) {
+                    ref.current = node;
+                }
+            }
+        },
+        [ref, isRegisterMode]
+    );
+
+    // Separar propiedades para input visible y hidden
+    const { name: nameProp, ...visibleInputProps } = inputProps;
+
     return (
       <div ref={containerRef} className="relative w-full">
+        {isRegisterMode && (
+             <input 
+                type="hidden" 
+                name={nameProp as string} 
+                ref={setHiddenRef} 
+                defaultValue={value}
+             />
+        )}
         <Input
-          {...inputProps}
-          ref={combinedRef}
+          {...visibleInputProps}
+          name={isRegisterMode ? undefined : (nameProp as string)} // Evitar duplicar name en el visible si estamos en register
+          ref={setVisibleRef} // Usar el ref visible
           value={inputValue}
           onChange={handleChange}
           onFocus={() => {
@@ -684,7 +745,9 @@ const AutocompleteInputInner = React.forwardRef<
                             <>
                               {anyOption.icon && (
                                 <i
-                                  className={`${normalizeIconClass(anyOption.icon)} mt-0.5 text-[var(--color-text-muted)] flex-shrink-0`}
+                                  className={`${normalizeIconClass(
+                                    anyOption.icon
+                                  )} mt-0.5 text-[var(--color-text-muted)] flex-shrink-0`}
                                 />
                               )}
                               <div className="flex flex-col min-w-0">

@@ -47,7 +47,7 @@ const _enriquecerConEmpresas = async (
   } else {
     // Si no, obtener cada empresa individualmente
     for (const idEmpresa of empresasIds) {
-      const empresa = await empresaService.buscarPorId(idEmpresa);
+      const empresa = await empresaService.buscarPorId(idEmpresa.toString());
       if (empresa) {
         empresas.push(empresa);
       }
@@ -120,10 +120,10 @@ export const personaService = {
       );
 
       const personasIdsConEmpresa = new Set(
-        relaciones.map((rel) => rel.idPersona)
+        relaciones.map((rel) => rel.idPersona.toString())
       );
       todasFiltradas = todasFiltradas.filter((per) =>
-        personasIdsConEmpresa.has(per.id)
+        personasIdsConEmpresa.has(per.id.toString())
       );
     }
 
@@ -221,14 +221,23 @@ export const personaService = {
   },
 
   /**
-   * Elimina una persona por ID
+   * Elimina una persona por ID y todas sus relaciones con empresas
    */
   async eliminar(persona: Persona): Promise<void> {
     await simulateNetworkDelay();
     const personas = _obtenerTodas();
     const index = personas.findIndex((per) => per.id === persona.id);
+    if (index === -1) return;
+
+    // Eliminar todas las relaciones de esta persona
+    await personaEmpresaService.eliminarPorPersona(persona.id);
 
     personas.splice(index, 1);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(personas));
+    // Guardar convirtiendo fechaNacimiento a string ISO
+    const personasParaGuardar = personas.map((p) => ({
+      ...p,
+      fechaNacimiento: p.fechaNacimiento.toISOString(),
+    }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(personasParaGuardar));
   },
 };

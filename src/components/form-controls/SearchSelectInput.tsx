@@ -27,8 +27,8 @@ export interface SearchSelectInputProps<T = SearchSelectOption, K = string>
    * También es compatible con react-hook-form: acepta el onChange estándar de HTML.
    */
   onChange?:
-    | ((value: T | K) => void)
-    | React.ChangeEventHandler<HTMLInputElement>;
+  | ((value: T | K) => void)
+  | React.ChangeEventHandler<HTMLInputElement>;
   /**
    * Función que realiza la búsqueda y devuelve un Promise con los resultados
    */
@@ -567,14 +567,15 @@ const SearchSelectInputInner = React.forwardRef<
         <Dialog
           isOpen={isDialogOpen}
           title={dialogTitle}
-          dialogBody={getDialogBody()}
-          dialogActions={
+          footer={
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cerrar
             </Button>
           }
           onClose={() => setIsDialogOpen(false)}
-        />
+        >
+          {getDialogBody()}
+        </Dialog>
       )}
     </>
   );

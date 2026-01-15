@@ -1,4 +1,4 @@
-import { useListCrud } from "../../contexts";
+import { useCrud } from "../../contexts";
 import {
   Button,
   Card,
@@ -16,7 +16,7 @@ import { ListCrudDocsEditDialog } from "./ListCrudDocsEditDialog";
 
 export const ListCrudDocsContentPersonas = () => {
   const { list, pagination, isLoading, fetchItems, deleteItem } =
-    useListCrud<PersonaConEmpresas>();
+    useCrud<PersonaConEmpresas>();
   const { listar } = empresaService;
 
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
@@ -129,13 +129,7 @@ export const ListCrudDocsContentPersonas = () => {
           isOpen={isOpenDeleteDialog}
           title="Eliminar Persona"
           onClose={() => setIsOpenDeleteDialog(false)}
-          dialogBody={
-            <>
-              <p>¿Estás seguro de querer eliminar esta persona?</p>
-              <Loader isLoading={deleteItem.isLoading} />
-            </>
-          }
-          dialogActions={
+          footer={
             <>
               <Button
                 variant="outline"
@@ -152,7 +146,10 @@ export const ListCrudDocsContentPersonas = () => {
               </Button>
             </>
           }
-        />
+        >
+          <p>¿Estás seguro de querer eliminar esta persona?</p>
+          <Loader isLoading={deleteItem.isLoading} />
+        </Dialog>
       )}
       {isOpenEditDialog && (
         <ListCrudDocsEditDialog

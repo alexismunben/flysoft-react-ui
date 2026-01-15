@@ -4,8 +4,8 @@ import { normalizeIconClass } from "./iconUtils";
 export interface DialogProps {
   isOpen: boolean;
   title: React.ReactNode;
-  dialogBody: React.ReactNode;
-  dialogActions: React.ReactNode;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
   onClose?: () => void;
   closeOnOverlayClick?: boolean;
 }
@@ -13,8 +13,8 @@ export interface DialogProps {
 export const Dialog: React.FC<DialogProps> = ({
   isOpen,
   title,
-  dialogBody,
-  dialogActions,
+  children,
+  footer,
   onClose,
   closeOnOverlayClick = false,
 }) => {
@@ -97,21 +97,23 @@ export const Dialog: React.FC<DialogProps> = ({
         </div>
 
         {/* Body */}
-        <div 
+        <div
           className="px-6 py-4 flex-1 text-[var(--color-text-primary)] min-w-0"
-          style={{ 
+          style={{
             overflowY: "auto",
             overflowX: "visible",
             maxHeight: "calc(90vh - 200px)"
           }}
         >
-          {dialogBody}
+          {children}
         </div>
 
-        {/* Actions */}
-        <div className="px-6 py-4 border-t border-[var(--color-border-default)] flex items-center justify-end gap-2 flex-shrink-0 flex-wrap">
-          {dialogActions}
-        </div>
+        {/* Footer */}
+        {footer && (
+          <div className="px-6 py-4 border-t border-[var(--color-border-default)] flex items-center justify-end gap-2 flex-shrink-0 flex-wrap">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );

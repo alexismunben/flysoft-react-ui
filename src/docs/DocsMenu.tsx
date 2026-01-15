@@ -145,6 +145,42 @@ export const DocsMenu = () => {
           >
             Accordion
           </LinkButton>
+          <LinkButton
+            to="/docs/menu"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            Menu
+          </LinkButton>
+          <LinkButton
+            to="/docs/dropdownmenu"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            DropdownMenu
+          </LinkButton>
+          <LinkButton
+            to="/docs/dropdownpanel"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            DropdownPanel
+          </LinkButton>
+          <LinkButton
+            to="/docs/filter"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            Filter
+          </LinkButton>
         </div>
       </Accordion>
 
@@ -196,24 +232,6 @@ export const DocsMenu = () => {
             Loader
           </LinkButton>
           <LinkButton
-            to="/docs/dropdownmenu"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            DropdownMenu
-          </LinkButton>
-          <LinkButton
-            to="/docs/filter"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Filter
-          </LinkButton>
-          <LinkButton
             to="/docs/snackbar"
             variant="ghost"
             size="sm"
@@ -252,7 +270,7 @@ export const DocsMenu = () => {
             className="w-full justify-start"
             color="secondary"
           >
-            ListCrudContext
+            CrudContext
           </LinkButton>
         </div>
       </Accordion>

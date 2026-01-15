@@ -26,9 +26,9 @@ export type {
   AuthTokenInterface,
 } from "./AuthContext";
 
-// ListCrud system exports
-export { ListCrudProvider, ListCrudContext, useListCrud } from "./ListCrudContext";
-export type { ListCrudContextType } from "./ListCrudContext";
+// Crud system exports
+export { CrudProvider, CrudContext, useCrud } from "./CrudContext";
+export type { CrudContextType } from "./CrudContext";
 
 // AppLayout system exports
 export { AppLayoutProvider, useAppLayout, useAppLayoutContext } from "./AppLayoutContext";

@@ -71,6 +71,8 @@ export type {
 } from "./components/layout/DataTable";
 export { Accordion } from "./components/layout/Accordion";
 export type { AccordionProps } from "./components/layout/Accordion";
+export { Menu } from "./components/layout/Menu";
+export type { MenuProps } from "./components/layout/Menu";
 
 export { Badge } from "./components/utils/Badge";
 export type { BadgeProps } from "./components/utils/Badge";
@@ -82,10 +84,12 @@ export { Dialog } from "./components/utils/Dialog";
 export type { DialogProps } from "./components/utils/Dialog";
 export { Loader } from "./components/utils/Loader";
 export type { LoaderProps } from "./components/utils/Loader";
-export { DropdownMenu } from "./components/utils/DropdownMenu";
-export type { DropdownMenuProps } from "./components/utils/DropdownMenu";
-export { Filter } from "./components/utils/Filter";
-export type { FilterProps } from "./components/utils/Filter";
+export { DropdownMenu } from "./components/layout/DropdownMenu";
+export type { DropdownMenuProps } from "./components/layout/DropdownMenu";
+export { DropdownPanel } from "./components/layout/DropdownPanel";
+export type { DropdownPanelProps } from "./components/layout/DropdownPanel";
+export { Filter } from "./components/layout/Filter";
+export type { FilterProps } from "./components/layout/Filter";
 export { FiltersDialog } from "./components/utils/FiltersDialog";
 export type {
   FiltersDialogProps,

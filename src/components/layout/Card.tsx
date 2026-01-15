@@ -56,9 +56,8 @@ export const Card: React.FC<CardProps> = ({
     outlined: `border-[var(--color-gray-300)]`,
   };
 
-  const classes = `${baseClasses} ${
-    variantClasses[variant]
-  } ${otherClasses.join(" ")}`;
+  const classes = `${baseClasses} ${variantClasses[variant]
+    } ${otherClasses.join(" ")}`;
 
   const [isHovered, setIsHovered] = React.useState(false);
   const [isLargeScreen, setIsLargeScreen] = React.useState(false);
@@ -124,8 +123,7 @@ export const Card: React.FC<CardProps> = ({
       )}
 
       {children && <div className="px-6 py-4">{children}</div>}
-
-      {footer && <div className="px-6 pb-4">{footer}</div>}
+      {footer && <div className="px-6 pb-4 flex items-center justify-end">{footer}</div>}
     </div>
   );
 };

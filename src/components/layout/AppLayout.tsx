@@ -88,8 +88,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     const element = contentRef.current;
     const isNearBottom = element
       ? Math.abs(
-          element.scrollHeight - element.clientHeight - element.scrollTop
-        ) < 10
+        element.scrollHeight - element.clientHeight - element.scrollTop
+      ) < 10
       : false;
 
     let shouldBeVisible: boolean;
@@ -141,30 +141,29 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   `;
 
   // Clases del navbar
-  const navbarClasses = `${
-    fullWidthNavbar
-      ? `z-[1000] fixed top-0 left-0 right-0 overflow-hidden`
-      : `relative z-[1000] overflow-hidden`
-  } ${navbarClassName}`.trim();
+  const navbarClasses = `${fullWidthNavbar
+    ? `z-[1000] fixed top-0 left-0 right-0 overflow-hidden`
+    : `relative z-[1000] overflow-hidden`
+    } ${navbarClassName}`.trim();
 
   // Estilos inline para la transformación
   // Cuando fullWidthNavbar es false, solo usamos height para ocultar (sin transform)
   // Cuando fullWidthNavbar es true, usamos transform para ocultar (manteniendo height)
   const navbarStyle = fullWidthNavbar
     ? {
-        transform: isNavbarVisible ? "translateY(0)" : "translateY(-100%)",
-        transition: "transform 300ms ease-in-out",
-        willChange: "transform",
-        height: navbarHeight, // Override any height classes in className
-      }
+      transform: isNavbarVisible ? "translateY(0)" : "translateY(-100%)",
+      transition: "transform 100ms ease-in",
+      willChange: "transform",
+      height: navbarHeight, // Override any height classes in className
+    }
     : {
-        height: isNavbarVisible ? navbarHeight : "0",
-        minHeight: isNavbarVisible ? navbarHeight : "0",
-        maxHeight: isNavbarVisible ? navbarHeight : "0",
-        transition:
-          "height 300ms ease-in-out, min-height 300ms ease-in-out, max-height 300ms ease-in-out",
-        overflow: "hidden",
-      };
+      height: isNavbarVisible ? navbarHeight : "0",
+      minHeight: isNavbarVisible ? navbarHeight : "0",
+      maxHeight: isNavbarVisible ? navbarHeight : "0",
+      transition:
+        "height 100ms ease-in, min-height 100ms ease-in, max-height 100ms ease-in",
+      overflow: "hidden",
+    };
 
   const navbarContentClasses = `flex items-center justify-between gap-2`;
 
@@ -175,7 +174,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     height: fullWidthNavbar || isNavbarVisible ? navbarHeight : "0",
     maxHeight: fullWidthNavbar || isNavbarVisible ? navbarHeight : "0",
     overflow: "hidden",
-    transition: "height 300ms ease-in-out, max-height 300ms ease-in-out",
+    transition: "height 100ms ease-in, max-height 100ms ease-in",
     opacity: isNavbarVisible || fullWidthNavbar ? 1 : 0,
   };
 
@@ -183,7 +182,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const navbarRightClasses = `flex items-center gap-2`;
 
   // Clases del contenido principal
-  const mainClasses = `flex flex-1 overflow-hidden transition-all duration-300 ease-in-out`;
+  const mainClasses = `flex flex-1 overflow-hidden transition-all duration-100 ease-in`;
 
   // Style for main content with dynamic navbar height padding
   const mainStyle =
@@ -196,9 +195,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const leftDrawerClasses = `
     ${leftDrawerWidth ? "" : "w-64"} bg-[var(--color-bg-default)]
     flex-shrink-0 flex flex-col
-    transition-all duration-300 ease-in-out
-    ${
-      fullWidthNavbar && shouldShowNavbar && isNavbarVisible ? "pt-4" : "h-full"
+    transition-all duration-100 ease-in
+    ${fullWidthNavbar && shouldShowNavbar && isNavbarVisible ? "pt-4" : "h-full"
     }
     ${leftDrawerClassName}
   `
@@ -252,7 +250,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const mobileDrawerBaseClasses = `
     fixed top-0 left-0 h-screen w-64 max-w-[80vw]
     bg-[var(--color-bg-default)] shadow-[var(--shadow-xl)]
-    transform -translate-x-full transition-transform duration-300 ease-in-out
+    transform -translate-x-full transition-transform duration-100 ease-in
     z-[1999] flex flex-col
     ${leftDrawerClassName}
   `
@@ -280,7 +278,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <div className={navbarLeftClasses}>
                   {/* Botón de menú para móvil/tablet */}
                   {shouldShowMobileDrawer && hasLeftDrawerContent && (
-                    <div className="absolute top-0 right-0 pr-4 lg:px-4 md:px-3">
+                    <div className="pr-4 lg:px-4 md:px-3">
                       <Button
                         variant="ghost"
                         icon="fa-bars"
@@ -445,9 +443,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {/* Mobile Drawer */}
       {shouldShowMobileDrawer && hasLeftDrawerContent && (
         <aside
-          className={`${mobileDrawerBaseClasses} ${
-            isMobileDrawerOpen ? mobileDrawerOpenClasses : ""
-          }`}
+          className={`${mobileDrawerBaseClasses} ${isMobileDrawerOpen ? mobileDrawerOpenClasses : ""
+            }`}
           style={mobileDrawerStyle}
         >
           {/* Header del drawer móvil - siempre mostrar para tener el botón de cerrar */}

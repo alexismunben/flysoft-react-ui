@@ -19,12 +19,14 @@ import PaginationDocs from "./PaginationDocs";
 import LoaderDocs from "./LoaderDocs";
 import DataTableDocs from "./DataTableDocs";
 import DropdownMenuDocs from "./DropdownMenuDocs";
+import DropdownPanelDocs from "./DropdownPanelDocs";
 import FilterDocs from "./FilterDocs";
 import { AuthDocs } from "./AuthDocs.tsx/AuthDocs";
 import { ListCrudDocs } from "./ListCrudDocs.tsx/ListCrudDocs";
 import ExampleFormDocs from "./ExampleFormDocs";
 import CheckboxDocs from "./CheckboxDocs";
 import RadioButtonGroupDocs from "./RadioButtonGroupDocs";
+import MenuDocs from "./MenuDocs";
 import SnackbarDocs from "./SnackbarDocs";
 import AccordionDocs from "./AccordionDocs";
 import DocAdmin from "./DocAdmin";
@@ -54,10 +56,13 @@ export const DocsRouter: React.FC = () => {
       <Route path="loader" element={<LoaderDocs />} />
       <Route path="datatable" element={<DataTableDocs />} />
       <Route path="dropdownmenu" element={<DropdownMenuDocs />} />
+      <Route path="dropdownpanel" element={<DropdownPanelDocs />} />
       <Route path="filter" element={<FilterDocs />} />
       <Route path="auth" element={<AuthDocs />} />
+      <Route path="listcrud/empresa/:id" element={<ListCrudDocs />} />
       <Route path="listcrud" element={<ListCrudDocs />} />
       <Route path="example-form" element={<ExampleFormDocs />} />
+      <Route path="menu" element={<MenuDocs />} />
       <Route path="snackbar" element={<SnackbarDocs />} />
       <Route path="accordion" element={<AccordionDocs />} />
       <Route path="admin" element={<DocAdmin />} />

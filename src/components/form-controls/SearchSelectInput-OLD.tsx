@@ -28,8 +28,8 @@ export interface SearchSelectInputProps<T = SearchSelectOption, K = string>
    * También es compatible con react-hook-form: acepta el onChange estándar de HTML.
    */
   onChange?:
-    | ((value: T | K) => void)
-    | React.ChangeEventHandler<HTMLInputElement>;
+  | ((value: T | K) => void)
+  | React.ChangeEventHandler<HTMLInputElement>;
   /**
    * Función que realiza la búsqueda y devuelve un Promise con los resultados
    */
@@ -878,11 +878,11 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
             eventPhase: 0,
             isTrusted: false,
             nativeEvent: {} as Event,
-            preventDefault: () => {},
+            preventDefault: () => { },
             isDefaultPrevented: () => false,
-            stopPropagation: () => {},
+            stopPropagation: () => { },
             isPropagationStopped: () => false,
-            persist: () => {},
+            persist: () => { },
             timeStamp: Date.now(),
           } as React.ChangeEvent<HTMLInputElement>;
 
@@ -1009,11 +1009,11 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
             eventPhase: 0,
             isTrusted: false,
             nativeEvent: {} as Event,
-            preventDefault: () => {},
+            preventDefault: () => { },
             isDefaultPrevented: () => false,
-            stopPropagation: () => {},
+            stopPropagation: () => { },
             isPropagationStopped: () => false,
-            persist: () => {},
+            persist: () => { },
             timeStamp: Date.now(),
           } as React.ChangeEvent<HTMLInputElement>;
 
@@ -1216,7 +1216,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
       <Dialog
         isOpen={isDialogOpen}
         title={dialogTitle}
-        dialogBody={
+        children={
           <div className="space-y-2">
             <Input
               value={dialogSearchText}
@@ -1287,7 +1287,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
             ) : null}
           </div>
         }
-        dialogActions={
+        footer={
           <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
             Cerrar
           </Button>

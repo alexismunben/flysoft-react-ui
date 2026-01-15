@@ -1,5 +1,5 @@
 import React from "react";
-import { DropdownMenu } from "../utils/DropdownMenu";
+import { DropdownMenu } from "./DropdownMenu";
 
 interface ActionItem {
   id: string | number;
@@ -243,83 +243,83 @@ export const DataTable = <T,>({
           <tbody>
             {isLoading
               ? Array.from({ length: loadingRows }).map((_, rowIndex) => (
-                  <tr
-                    key={`skeleton-${rowIndex}`}
-                    className="border-b border-[var(--color-border-default)]"
-                  >
-                    {columns.map((column, colIndex) => (
-                      <td
-                        key={colIndex}
-                        className={`
+                <tr
+                  key={`skeleton-${rowIndex}`}
+                  className="border-b border-[var(--color-border-default)]"
+                >
+                  {columns.map((column, colIndex) => (
+                    <td
+                      key={colIndex}
+                      className={`
                           px-4 py-3 text-sm text-[var(--color-text-primary)]
                           ${getAlignmentClass(column.align, column.type)}
                         `}
-                        style={{
-                          ...(column.width ? { width: column.width } : {}),
-                        }}
-                      >
-                        <SkeletonCell />
-                      </td>
-                    ))}
-                  </tr>
-                ))
+                      style={{
+                        ...(column.width ? { width: column.width } : {}),
+                      }}
+                    >
+                      <SkeletonCell />
+                    </td>
+                  ))}
+                </tr>
+              ))
               : rows.map((row, rowIndex) => (
-                  <tr
-                    key={rowIndex}
-                    className="group/row border-b border-[var(--color-border-default)] transition-colors hover:bg-[var(--color-bg-secondary)]"
-                  >
-                    {columns.map((column, colIndex) => {
-                      const cellValue = getCellValue(column, row);
-                      const formattedValue = formatValue(
-                        cellValue as string | number | React.ReactNode,
-                        column.type
-                      );
-                      const tooltip = column.tooltip
-                        ? column.tooltip(row)
-                        : undefined;
-                      const rowActions = column.actions?.(row);
-                      const hasRowActions = rowActions && rowActions.length > 0;
+                <tr
+                  key={rowIndex}
+                  className="group/row border-b border-[var(--color-border-default)] transition-colors hover:bg-[var(--color-bg-secondary)]"
+                >
+                  {columns.map((column, colIndex) => {
+                    const cellValue = getCellValue(column, row);
+                    const formattedValue = formatValue(
+                      cellValue as string | number | React.ReactNode,
+                      column.type
+                    );
+                    const tooltip = column.tooltip
+                      ? column.tooltip(row)
+                      : undefined;
+                    const rowActions = column.actions?.(row);
+                    const hasRowActions = rowActions && rowActions.length > 0;
 
-                      return (
-                        <td
-                          key={colIndex}
-                          className={`
+                    return (
+                      <td
+                        key={colIndex}
+                        className={`
                             px-4 py-3 text-sm text-[var(--color-text-primary)]
                             ${getAlignmentClass(column.align, column.type)}
                           `}
-                          style={{
-                            ...(column.width ? { width: column.width } : {}),
-                          }}
-                          title={
-                            tooltip
-                              ? typeof tooltip === "string"
-                                ? tooltip
-                                : undefined
+                        style={{
+                          ...(column.width ? { width: column.width } : {}),
+                        }}
+                        title={
+                          tooltip
+                            ? typeof tooltip === "string"
+                              ? tooltip
                               : undefined
-                          }
-                        >
-                          {hasRowActions ? (
-                            <div className="flex items-center justify-between gap-2">
-                              <span>{formattedValue}</span>
-                              <div className="lg:opacity-0 lg:group-hover/row:opacity-100 transition-opacity">
-                                <DropdownMenu<ActionItem>
-                                  options={convertActionsToOptions(rowActions)}
-                                  onOptionSelected={() => {
-                                    // Las acciones ya manejan sus propios eventos
-                                  }}
-                                  renderOption={(item) => item.content}
-                                  replaceOnSingleOption={true}
-                                />
-                              </div>
+                            : undefined
+                        }
+                      >
+                        {hasRowActions ? (
+                          <div className="flex items-center justify-between gap-2">
+                            <span>{formattedValue}</span>
+                            <div className="lg:opacity-0 lg:group-hover/row:opacity-100 transition-opacity">
+                              <DropdownMenu<ActionItem>
+                                options={convertActionsToOptions(rowActions)}
+                                onOptionSelected={() => {
+                                  // Las acciones ya manejan sus propios eventos
+                                }}
+                                renderOption={(item) => item.content}
+                                replaceOnSingleOption={true}
+                              />
                             </div>
-                          ) : (
-                            formattedValue
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
+                          </div>
+                        ) : (
+                          formattedValue
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
           </tbody>
           {hasFooter && (
             <tfoot className={needsScroll ? "sticky bottom-0 z-10" : ""}>

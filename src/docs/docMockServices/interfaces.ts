@@ -28,3 +28,17 @@ export interface PersonaEmpresa {
   idEmpresa: number;
   cargo: string;
 }
+
+/**
+ * Relación Persona-Empresa con la información completa de la Persona
+ */
+export interface PersonaEmpresaConPersona extends PersonaEmpresa {
+  persona: Persona;
+}
+
+/**
+ * Relación Persona-Empresa con la información completa de la Empresa
+ */
+export interface PersonaEmpresaConEmpresa extends PersonaEmpresa {
+  empresa: Empresa;
+}

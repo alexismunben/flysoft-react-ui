@@ -25,7 +25,7 @@ const DialogDocs: React.FC = () => {
             >
               El componente Dialog muestra un modal centrado con overlay. Se
               controla mediante la prop <code>isOpen</code> y se cierra con{" "}
-              <code>onClose</code>.
+              <code>onClose</code>. El contenido se pasa como <code>children</code>.
             </p>
             <div className="space-y-4">
               <Button
@@ -38,19 +38,7 @@ const DialogDocs: React.FC = () => {
               <Dialog
                 isOpen={isOpenBasic}
                 title="Dialog Básico"
-                dialogBody={
-                  <div className="space-y-3">
-                    <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                      Este es un ejemplo de dialog básico. Puedes incluir
-                      cualquier contenido en el <code>dialogBody</code>.
-                    </p>
-                    <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                      El dialog se puede cerrar haciendo clic en el overlay, en
-                      el botón de cerrar (X), o presionando la tecla Escape.
-                    </p>
-                  </div>
-                }
-                dialogActions={
+                footer={
                   <>
                     <Button
                       variant="outline"
@@ -67,7 +55,18 @@ const DialogDocs: React.FC = () => {
                   </>
                 }
                 onClose={() => setIsOpenBasic(false)}
-              />
+              >
+                <div className="space-y-3">
+                  <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                    Este es un ejemplo de dialog básico. Puedes incluir
+                    cualquier contenido como <code>children</code>.
+                  </p>
+                  <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                    El dialog se puede cerrar haciendo clic en el overlay, en
+                    el botón de cerrar (X), o presionando la tecla Escape.
+                  </p>
+                </div>
+              </Dialog>
             </div>
           </section>
 
@@ -96,28 +95,7 @@ const DialogDocs: React.FC = () => {
               <Dialog
                 isOpen={isOpenForm}
                 title="Editar Usuario"
-                dialogBody={
-                  <div className="space-y-4">
-                    <Input
-                      label="Nombre"
-                      placeholder="Ingresa el nombre"
-                      icon="fa-user"
-                    />
-                    <Input
-                      label="Email"
-                      type="email"
-                      placeholder="usuario@ejemplo.com"
-                      icon="fa-envelope"
-                    />
-                    <Input
-                      label="Teléfono"
-                      type="tel"
-                      placeholder="+34 600 000 000"
-                      icon="fa-phone"
-                    />
-                  </div>
-                }
-                dialogActions={
+                footer={
                   <>
                     <Button
                       variant="outline"
@@ -136,7 +114,27 @@ const DialogDocs: React.FC = () => {
                   </>
                 }
                 onClose={() => setIsOpenForm(false)}
-              />
+              >
+                <div className="space-y-4">
+                  <Input
+                    label="Nombre"
+                    placeholder="Ingresa el nombre"
+                    icon="fa-user"
+                  />
+                  <Input
+                    label="Email"
+                    type="email"
+                    placeholder="usuario@ejemplo.com"
+                    icon="fa-envelope"
+                  />
+                  <Input
+                    label="Teléfono"
+                    type="tel"
+                    placeholder="+34 600 000 000"
+                    icon="fa-phone"
+                  />
+                </div>
+              </Dialog>
             </div>
           </section>
 
@@ -169,20 +167,7 @@ const DialogDocs: React.FC = () => {
                     <span>Confirmar Eliminación</span>
                   </div>
                 }
-                dialogBody={
-                  <div className="space-y-3">
-                    <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                      ¿Estás seguro de que deseas eliminar este elemento? Esta
-                      acción no se puede deshacer.
-                    </p>
-                    <div className="flex gap-2">
-                      <Badge variant="danger" icon="fa-exclamation-circle">
-                        Acción irreversible
-                      </Badge>
-                    </div>
-                  </div>
-                }
-                dialogActions={
+                footer={
                   <>
                     <Button
                       variant="outline"
@@ -201,7 +186,19 @@ const DialogDocs: React.FC = () => {
                   </>
                 }
                 onClose={() => setIsOpenConfirm(false)}
-              />
+              >
+                <div className="space-y-3">
+                  <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                    ¿Estás seguro de que deseas eliminar este elemento? Esta
+                    acción no se puede deshacer.
+                  </p>
+                  <div className="flex gap-2">
+                    <Badge variant="danger" icon="fa-exclamation-circle">
+                      Acción irreversible
+                    </Badge>
+                  </div>
+                </div>
+              </Dialog>
             </div>
           </section>
 
@@ -231,19 +228,7 @@ const DialogDocs: React.FC = () => {
               <Dialog
                 isOpen={isOpenNoOverlay}
                 title="Dialog Protegido"
-                dialogBody={
-                  <div className="space-y-3">
-                    <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                      Este dialog no se cierra al hacer clic en el overlay. Debes
-                      usar el botón de cerrar o los botones de acción.
-                    </p>
-                    <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                      Útil para formularios importantes donde no quieres que el
-                      usuario cierre accidentalmente el dialog.
-                    </p>
-                  </div>
-                }
-                dialogActions={
+                footer={
                   <>
                     <Button
                       variant="outline"
@@ -261,7 +246,18 @@ const DialogDocs: React.FC = () => {
                 }
                 onClose={() => setIsOpenNoOverlay(false)}
                 closeOnOverlayClick={false}
-              />
+              >
+                <div className="space-y-3">
+                  <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                    Este dialog no se cierra al hacer clic en el overlay. Debes
+                    usar el botón de cerrar o los botones de acción.
+                  </p>
+                  <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                    Útil para formularios importantes donde no quieres que el
+                    usuario cierre accidentalmente el dialog.
+                  </p>
+                </div>
+              </Dialog>
             </div>
           </section>
 
@@ -298,25 +294,7 @@ const DialogDocs: React.FC = () => {
                     </Badge>
                   </div>
                 }
-                dialogBody={
-                  <div className="space-y-3">
-                    <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                      Este dialog muestra cómo puedes personalizar el título
-                      usando ReactNode, incluyendo iconos y badges.
-                    </p>
-                    <div className="p-3 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded">
-                      <p
-                        className="text-sm"
-                        style={{ color: "var(--flysoft-text-secondary)" }}
-                      >
-                        <i className="fal fa-lightbulb mr-2" />
-                        Puedes usar cualquier componente React en el título,
-                        body y acciones.
-                      </p>
-                    </div>
-                  </div>
-                }
-                dialogActions={
+                footer={
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
@@ -335,7 +313,24 @@ const DialogDocs: React.FC = () => {
                   </div>
                 }
                 onClose={() => setIsOpenCustom(false)}
-              />
+              >
+                <div className="space-y-3">
+                  <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                    Este dialog muestra cómo puedes personalizar el título
+                    usando ReactNode, incluyendo iconos y badges.
+                  </p>
+                  <div className="p-3 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded">
+                    <p
+                      className="text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      <i className="fal fa-lightbulb mr-2" />
+                      Puedes usar cualquier componente React en el título,
+                      children y acciones.
+                    </p>
+                  </div>
+                </div>
+              </Dialog>
             </div>
           </section>
 

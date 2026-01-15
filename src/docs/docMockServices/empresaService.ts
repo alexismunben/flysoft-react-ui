@@ -1,5 +1,6 @@
 import type { Empresa } from "./interfaces";
 import type { PaginationInterface } from "../../components/form-controls/Pagination";
+import { personaEmpresaService } from "./personaEmpresaService";
 
 const STORAGE_KEY = "docMockServices_empresas";
 
@@ -41,19 +42,21 @@ export const empresaService = {
    * Obtiene empresas paginadas opcionalmente filtradas por nombre
    */
   async listarPaginados(params?: {
-    filtro?: string;
-    pagina?: number;
+    filtroEmpresa?: string;
+    paginaEmpresa?: number;
     limit?: number;
   }): Promise<PaginationInterface<Empresa>> {
+    console.log("Lista empresas paginadas", params);
+
     await simulateNetworkDelay();
-    const pagina = params?.pagina ?? 1;
+    const pagina = params?.paginaEmpresa ?? 1;
     const limit = params?.limit ?? 20;
     const todas = _obtenerTodas();
     let todasFiltradas = todas;
 
-    if (params?.filtro) {
-      const filtroLower = params.filtro.toLowerCase();
-      todasFiltradas = todas.filter((emp) =>
+    if (params?.filtroEmpresa) {
+      const filtroLower = params.filtroEmpresa.toLowerCase();
+      todasFiltradas = todasFiltradas.filter((emp) =>
         emp.nombre.toLowerCase().includes(filtroLower)
       );
     }
@@ -88,10 +91,15 @@ export const empresaService = {
   /**
    * Busca una empresa por ID
    */
-  async buscarPorId(id: number): Promise<Empresa | undefined> {
+  async buscarPorId(id: string): Promise<Empresa> {
+    console.log("Busca empresa por id", id);
     await simulateNetworkDelay();
     const empresas = _obtenerTodas();
-    return empresas.find((emp) => emp.id === id);
+    const empresa = empresas.find((emp) => emp.id.toString() === id.toString());
+    if (!empresa) {
+      throw new Error("Empresa no encontrada");
+    }
+    return empresa;
   },
 
   /**
@@ -130,16 +138,18 @@ export const empresaService = {
   },
 
   /**
-   * Elimina una empresa por ID
+   * Elimina una empresa por ID y todas sus relaciones con personas
    */
-  async eliminar(id: number): Promise<boolean> {
+  async eliminar(empresa: Empresa): Promise<void> {
     await simulateNetworkDelay();
     const empresas = _obtenerTodas();
-    const index = empresas.findIndex((emp) => emp.id === id);
-    if (index === -1) return false;
+    const index = empresas.findIndex((emp) => emp.id === empresa.id);
+    if (index === -1) return;
+
+    // Eliminar todas las relaciones de esta empresa
+    await personaEmpresaService.eliminarPorEmpresa(empresa.id);
 
     empresas.splice(index, 1);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(empresas));
-    return true;
   },
 };

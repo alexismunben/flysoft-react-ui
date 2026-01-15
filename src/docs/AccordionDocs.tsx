@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Accordion, Card, Button, Badge, Input } from "../index";
+import { Accordion, Card, Badge, Input } from "../index";
 
 const AccordionDocs: React.FC = () => {
   const [openAccordions, setOpenAccordions] = useState<Set<string>>(new Set());
@@ -69,9 +69,10 @@ const AccordionDocs: React.FC = () => {
             <div className="space-y-3">
               <Accordion title="Información General">
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                  Este es un accordion básico sin icono ni elementos adicionales.
-                  El contenido se muestra cuando el accordion está abierto y se
-                  oculta con una animación suave cuando está cerrado.
+                  Este es un accordion básico sin icono ni elementos
+                  adicionales. El contenido se muestra cuando el accordion está
+                  abierto y se oculta con una animación suave cuando está
+                  cerrado.
                 </p>
               </Accordion>
               <Accordion title="Detalles del Producto" defaultOpen>
@@ -107,8 +108,8 @@ const AccordionDocs: React.FC = () => {
               className="mb-4 text-sm"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              Puedes agregar un icono FontAwesome 5 del lado izquierdo del título
-              usando la propiedad <code>icon</code>.
+              Puedes agregar un icono FontAwesome 5 del lado izquierdo del
+              título usando la propiedad <code>icon</code>.
             </p>
             <div className="space-y-3">
               <Accordion title="Configuración" icon="fa-cog">
@@ -118,13 +119,17 @@ const AccordionDocs: React.FC = () => {
                     izquierdo.
                   </p>
                   <Input label="Nombre" placeholder="Ingresa un nombre" />
-                  <Input label="Email" type="email" placeholder="correo@ejemplo.com" />
+                  <Input
+                    label="Email"
+                    type="email"
+                    placeholder="correo@ejemplo.com"
+                  />
                 </div>
               </Accordion>
               <Accordion title="Información de Usuario" icon="fa-user">
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                  Accordion con icono de usuario. Los iconos ayudan a identificar
-                  visualmente el tipo de contenido.
+                  Accordion con icono de usuario. Los iconos ayudan a
+                  identificar visualmente el tipo de contenido.
                 </p>
               </Accordion>
               <Accordion title="Notificaciones" icon="fa-bell">
@@ -148,8 +153,8 @@ const AccordionDocs: React.FC = () => {
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
               La propiedad <code>rightNode</code> permite agregar contenido
-              personalizado del lado derecho, antes del chevron. Útil para badges,
-              botones pequeños, contadores, etc.
+              personalizado del lado derecho, antes del chevron. Útil para
+              badges, botones pequeños, contadores, etc.
             </p>
             <div className="space-y-3">
               <Accordion
@@ -279,11 +284,7 @@ const AccordionDocs: React.FC = () => {
               >
                 <div className="space-y-3">
                   <Input label="Nombre" placeholder="Juan" icon="fa-user" />
-                  <Input
-                    label="Apellido"
-                    placeholder="Pérez"
-                    icon="fa-user"
-                  />
+                  <Input label="Apellido" placeholder="Pérez" icon="fa-user" />
                   <Input
                     label="Fecha de Nacimiento"
                     type="date"
@@ -355,7 +356,8 @@ const AccordionDocs: React.FC = () => {
                 className="bg-blue-50"
               >
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                  Accordion con background personalizado usando clases de Tailwind.
+                  Accordion con background personalizado usando clases de
+                  Tailwind.
                 </p>
               </Accordion>
               <Accordion
@@ -443,8 +445,8 @@ const AccordionDocs: React.FC = () => {
                     contrae con una animación CSS de 300ms.
                   </li>
                   <li>
-                    <strong>Icono opcional:</strong> Soporta iconos FontAwesome 5
-                    del lado izquierdo del título.
+                    <strong>Icono opcional:</strong> Soporta iconos FontAwesome
+                    5 del lado izquierdo del título.
                   </li>
                   <li>
                     <strong>RightNode:</strong> Permite agregar contenido
@@ -452,12 +454,13 @@ const AccordionDocs: React.FC = () => {
                     del chevron.
                   </li>
                   <li>
-                    <strong>Estado controlado:</strong> Soporta estado controlado
-                    mediante <code>defaultOpen</code> y <code>onToggle</code>.
+                    <strong>Estado controlado:</strong> Soporta estado
+                    controlado mediante <code>defaultOpen</code> y{" "}
+                    <code>onToggle</code>.
                   </li>
                   <li>
-                    <strong>Title flexible:</strong> El título puede ser un string
-                    o un ReactNode, permitiendo contenido personalizado.
+                    <strong>Title flexible:</strong> El título puede ser un
+                    string o un ReactNode, permitiendo contenido personalizado.
                   </li>
                   <li>
                     <strong>Accesibilidad:</strong> Incluye atributos ARIA para
@@ -473,8 +476,8 @@ const AccordionDocs: React.FC = () => {
                   </li>
                   <li>
                     <strong>Background personalizado:</strong> El componente
-                    detecta automáticamente las clases de background (bg-*) y las
-                    aplica correctamente.
+                    detecta automáticamente las clases de background (bg-*) y
+                    las aplica correctamente.
                   </li>
                 </ul>
               </div>
@@ -676,9 +679,9 @@ const AccordionDocs: React.FC = () => {
                       className="px-4 py-2 text-sm"
                       style={{ color: "var(--flysoft-text-secondary)" }}
                     >
-                      Callback que se ejecuta cuando el accordion se abre o cierra.
-                      Recibe un boolean indicando si está abierto (true) o cerrado
-                      (false).
+                      Callback que se ejecuta cuando el accordion se abre o
+                      cierra. Recibe un boolean indicando si está abierto (true)
+                      o cerrado (false).
                     </td>
                   </tr>
                   <tr className="border-b border-[var(--color-border-default)]">
@@ -745,4 +748,3 @@ const AccordionDocs: React.FC = () => {
 };
 
 export default AccordionDocs;
-
