@@ -260,9 +260,6 @@ export function CrudProvider<T>({
       // Obtener los parámetros que se van a usar
       const requestParams = params || getUrlParams();
 
-      // Crear una clave única para estos parámetros
-      const paramsKey = JSON.stringify(requestParams);
-
       const result = await fetchDataAsync.execute(async () => {
         return await getPromiseRef.current!(requestParams);
       });

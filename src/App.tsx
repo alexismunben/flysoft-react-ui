@@ -1,6 +1,6 @@
-import { AutocompleteInput, Badge, Button, Card, Collection, DataField, DropdownPanel } from "./components";
+import { Badge, Button, Card, Collection, DataField } from "./components";
 import { Routes, Route, Link } from "react-router-dom";
-import { AppLayoutProvider, DropdownMenu } from "./index";
+import { AppLayoutProvider } from "./index";
 import "./index.css";
 import { DocsMenu } from "./docs/DocsMenu";
 import DocsRouter from "./docs/DocsRouter";

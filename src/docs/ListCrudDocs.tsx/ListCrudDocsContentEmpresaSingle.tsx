@@ -2,7 +2,7 @@ import { personaEmpresaService, type Empresa } from "../docMockServices";
 import { CrudProvider, useCrud } from "../../contexts";
 import { Button, Card, Collection, Dialog, Input, Loader } from "../../components";
 import { useNavigate } from "react-router-dom";
-import type { PersonaEmpresa, PersonaEmpresaConPersona } from "../docMockServices";
+import type { PersonaEmpresaConPersona } from "../docMockServices";
 import { ListCrudDocsContentEmpresaPersonas } from "./ListCrudDocsContentEmpresaPersonas";
 import { useEffect, useState, useCallback } from "react";
 import { DropdownMenu } from "../../components/layout/DropdownMenu";
