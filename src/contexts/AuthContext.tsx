@@ -24,8 +24,8 @@ export interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
-  login: async () => {},
-  logout: async () => {},
+  login: async () => { },
+  logout: async () => { },
   isAuthenticated: false,
   isLoading: false,
 });
@@ -168,9 +168,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         setIsAuthenticated(false);
       }
     } catch (error) {
-      console.error("Error durante el login:", error);
       setUser(null);
       setIsAuthenticated(false);
+      throw error;
     } finally {
       setIsLoading(false);
     }
