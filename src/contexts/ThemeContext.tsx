@@ -42,7 +42,7 @@ const buildThemeResetStyles = (theme: Theme): CSSProperties => {
 
   return {
     color: theme.fonts.colorDefault ?? theme.colors.textPrimary,
-    backgroundColor: theme.colors.bgDefault,
+    //backgroundColor: theme.colors.bgDefault,
     fontFamily: theme.fonts.default,
     fontSize: theme.fonts.sizeDefault,
     lineHeight: "1.5",
@@ -146,7 +146,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     // Apply background and text colors to body for better integration
     const body = document.body;
     if (body) {
-      body.style.backgroundColor = theme.colors.bgDefault;
+      //body.style.backgroundColor = theme.colors.bgDefault;
       body.style.color = theme.colors.textPrimary;
       body.style.fontFamily = theme.fonts.default;
     }

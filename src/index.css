@@ -195,8 +195,14 @@
   /* Green theme overrides can be added here if needed */
 }
 
+
+html {
+  background-color: var(--flysoft-gray-50);
+}
+
 /* Custom component styles */
 @layer components {
+
   /* Button focus states */
   .btn:focus {
     @apply outline-none ring-2 ring-offset-2;
@@ -251,9 +257,11 @@
   0% {
     background-position: -150% 0, -150% 0;
   }
+
   66% {
     background-position: 250% 0, -150% 0;
   }
+
   100% {
     background-position: 250% 0, 250% 0;
   }
