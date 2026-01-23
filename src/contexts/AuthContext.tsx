@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 
 export interface AuthContextUserInterface {
-  id?: number;
+  id?: number | string;
   name?: string;
   aditionalData?: any;
   token?: AuthTokenInterface;
@@ -12,6 +12,7 @@ export interface AuthTokenInterface {
   expires?: string;
   tokenType?: string;
   refreshToken?: string;
+  aditionalData?: any;
 }
 
 export interface AuthContextType {
@@ -82,6 +83,7 @@ const isTokenExpired = (expires?: string): boolean => {
  * @returns true si el usuario tiene un token válido y vigente, false en caso contrario
  */
 const isUserTokenValid = (user: AuthContextUserInterface | null): boolean => {
+
   if (!user || !user.id) {
     return false;
   }
@@ -95,32 +97,52 @@ const isUserTokenValid = (user: AuthContextUserInterface | null): boolean => {
 
 interface AuthProviderProps {
   children: React.ReactNode;
-  getToken: (username: string, password: string) => Promise<AuthTokenInterface>;
-  getUserData: (token: string) => Promise<AuthContextUserInterface>;
-  removeToken?: (token: string) => Promise<void>;
+  getToken: (username: string, password: string) => Promise<AuthTokenInterface>;  
+  getUserData: (auth: AuthTokenInterface) => Promise<AuthContextUserInterface>;  
+  refreshToken?: (auth: AuthTokenInterface) => Promise<AuthTokenInterface>;
+  removeToken?: (auth: AuthTokenInterface) => Promise<void>;
+  showLog?: boolean;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({
   children,
-  getToken,
+  getToken,  
   getUserData,
+  refreshToken,
   removeToken,
+  showLog = false,
 }) => {
   const [user, setUser] = useState<AuthContextUserInterface | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const log = (action: string, data?: any, isError: boolean = false) => {
+    if (isError) {
+      console.error(`[AuthContext] ${action}: `, data);
+    } else if (showLog) {
+      console.log(`[AuthContext] ${action}: `, data);
+    }
+  };
+
   useEffect(() => {
     const auth = initAuth();
+    log("Init Auth - Retrieved from storage", auth);
 
     // Verificar que el usuario tenga un token válido y vigente
-    if (isUserTokenValid(auth)) {
+    const isValid = isUserTokenValid(auth);
+    log("Init Auth - Token valid check", { isValid, auth });
+
+    if (isValid) {
       setUser(auth);
       setIsAuthenticated(true);
+      log("Init Auth - User authenticated restored", auth);
     } else {
       // Si el token está expirado o es inválido, limpiar el almacenamiento
       if (auth.id && isTokenExpired(auth.token?.expires)) {
+        log("Init Auth - Token expired or invalid, cleaning storage", auth);
         removeStoredAuth();
+      } else {
+        log("Init Auth - No valid session found", auth);
       }
       setUser(null);
       setIsAuthenticated(false);
@@ -129,14 +151,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
   const login = async (username: string, password: string) => {
     setIsLoading(true);
+    log("Login - Start", { username });
 
     try {
       const token = await getToken(username, password);
+      log("Login - Token received", token);
 
       if (token.accessToken) {
-        // Verificar que el token recibido no esté expirado antes de continuar
-        if (isTokenExpired(token.expires)) {
-          console.warn("El token recibido ya está expirado");
+        // Verificar que el token recibido no esté expirado antes de continuar      
+        const expired = isTokenExpired(token.expires);
+        log("Login - Token expiration check", { expires: token.expires, expired });
+
+        if (expired) {
+          log("Login - Token expired upon receipt", token, true);
           setUser(null);
           setIsAuthenticated(false);
           setIsLoading(false);
@@ -144,8 +171,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         }
 
         const { id, name, aditionalData } = await getUserData(
-          token.accessToken
+          token
         );
+        log("Login - User data received", { id, name, aditionalData });
 
         const userData: AuthContextUserInterface = {
           id,
@@ -155,21 +183,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         };
 
         // Validar nuevamente antes de establecer el estado
-        if (isUserTokenValid(userData)) {
+        const isValid = isUserTokenValid(userData);
+        log("Login - Final validation", { isValid, userData });
+
+        if (isValid) {
           setUser(userData);
           storeAuth(userData);
           setIsAuthenticated(true);
+          log("Login - Success", userData);
         } else {
           setUser(null);
           setIsAuthenticated(false);
+          log("Login - Validation failed", userData, true);
         }
       } else {
         setUser(null);
         setIsAuthenticated(false);
+        log("Login - No access token in response", token, true);
       }
     } catch (error) {
       setUser(null);
       setIsAuthenticated(false);
+      log("Login - Error", error, true);
       throw error;
     } finally {
       setIsLoading(false);
@@ -177,24 +212,67 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   };
 
   const logout = async () => {
+    log("Logout - Start", { user });
     removeStoredAuth();
     setUser(null);
-    if (removeToken && user?.token?.accessToken) {
-      await removeToken(user.token.accessToken);
+    if (removeToken && user?.token) {
+      try {
+        await removeToken(user.token);
+        log("Logout - Token removed from server");
+      } catch (e) {
+        log("Logout - Error removing token", e, true);
+      }
     }
     setIsAuthenticated(false);
+    log("Logout - Completed");
   };
 
   // Validar el token periódicamente o cuando cambia el usuario
   // Esto asegura que si el token expira durante la sesión, se actualice el estado
   useEffect(() => {
     if (user && user.token?.expires) {
-      const checkTokenExpiration = () => {
-        if (isTokenExpired(user.token?.expires)) {
-          // Token expirado, cerrar sesión
-          removeStoredAuth();
-          setUser(null);
-          setIsAuthenticated(false);
+      const checkTokenExpiration = async () => {
+        const expired = isTokenExpired(user.token?.expires);
+        log("Token Check - Checking expiration", { expires: user.token?.expires, expired });
+
+        if (expired) {
+          let refreshed = false;
+
+          // Si existe la función de refresco, intentar renovar el token antes de cerrar sesión
+          if (refreshToken && user.token) {
+            try {
+
+              log("Token Check - Attempting refresh", { oldToken: user.token });
+
+              const newToken = await refreshToken(user.token);
+              log("Token Check - Refresh response", newToken);
+              
+              // Verificar que el nuevo token sea válido y no esté expirado
+              if (newToken && newToken.accessToken && !isTokenExpired(newToken.expires)) {
+                const newUser = { ...user, token: newToken };
+                setUser(newUser);
+                storeAuth(newUser);
+                refreshed = true;
+
+                log("Token Check - Refresh success", newUser);
+              } else {
+                 log("Token Check - Refreshed token invalid or expired", newToken, true);
+              }
+            } catch (error) {
+              console.error("Error al intentar refrescar el token:", error);
+              log("Token Check - Refresh error", error, true);
+            }
+          } else {
+             log("Token Check - No refresh logic available or token missing", { refreshToken: !!refreshToken, token: !!user.token });
+          }
+
+          if (!refreshed) {
+            // Token expirado y no se pudo renovar, cerrar sesión
+            log("Token Check - Session expired, logging out");
+            removeStoredAuth();
+            setUser(null);
+            setIsAuthenticated(false);
+          }
         }
       };
 
@@ -206,7 +284,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
       return () => clearInterval(interval);
     }
-  }, [user]);
+  }, [user, refreshToken]);
 
   return (
     <AuthContext.Provider

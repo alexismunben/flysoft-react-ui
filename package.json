@@ -49,7 +49,7 @@
     "AI_CONTEXT.md"
   ],
   "scripts": {
-    "dev": "vite --port 5189 --strictPort",
+    "dev": "vite --port 3112 --strictPort",
     "build": "vite build && tsc -p tsconfig.lib.json",
     "build:types": "tsc -p tsconfig.lib.json --emitDeclarationOnly",
     "preview": "vite preview",

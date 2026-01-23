@@ -57,11 +57,11 @@ export const mockGetToken = async (
  * @returns Promise con los datos del usuario
  */
 export const mockGetUserData = async (
-  token: string
+  auth: AuthTokenInterface
 ): Promise<AuthContextUserInterface> => {
   await simulateNetworkDelay();
 
-  if (!token) {
+  if (!auth.accessToken) {
     throw new Error("Token es requerido");
   }
 
@@ -86,15 +86,15 @@ export const mockGetUserData = async (
  * @param token - Token a revocar
  * @returns Promise que se resuelve cuando el token es revocado
  */
-export const mockRemoveToken = async (token: string): Promise<void> => {
+export const mockRemoveToken = async (auth: AuthTokenInterface): Promise<void> => {
   await simulateNetworkDelay();
 
-  if (!token) {
+  if (!auth.accessToken) {
     throw new Error("Token es requerido");
   }
 
   // Simular revocación del token
   // En una implementación real, aquí se haría una llamada al servidor
   // para invalidar el token
-  console.log(`Token revocado: ${token.substring(0, 20)}...`);
+  console.log(`Token revocado: ${auth.accessToken.substring(0, 20)}...`);
 };

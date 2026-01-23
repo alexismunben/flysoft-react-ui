@@ -312,8 +312,8 @@ export const AuthDocsContent = () => {
                 Cerrar Sesión
               </Button>
             </div>
-          </div>
-        </Card>
+          </div>          
+        </Card>        
       </div>
     );
   }
@@ -353,7 +353,7 @@ export const AuthDocsContent = () => {
               Iniciar Sesión
             </Button>
           </div>
-        </div>
+        </div>        
       </Card>
     </div>
   );
