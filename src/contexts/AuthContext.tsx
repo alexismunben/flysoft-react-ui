@@ -114,7 +114,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 }) => {
   const [user, setUser] = useState<AuthContextUserInterface | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const log = (action: string, data?: any, isError: boolean = false) => {
     if (isError) {
@@ -147,7 +147,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       setUser(null);
       setIsAuthenticated(false);
     }
-  }, []);
+  setIsLoading(false);
+}, []);
 
   const login = async (username: string, password: string) => {
     setIsLoading(true);
