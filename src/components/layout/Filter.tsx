@@ -9,7 +9,7 @@ import { AutocompleteInput } from "../form-controls/AutocompleteInput";
 import type { AutocompleteOption } from "../form-controls/AutocompleteInput";
 import { SearchSelectInput } from "../form-controls/SearchSelectInput";
 import type { SearchSelectOption } from "../form-controls/SearchSelectInput";
-import type { PaginationInterface } from "../form-controls/Pagination";
+import type { PaginationInterface } from "../../interfaces";
 import { DataField } from "./DataField";
 import { normalizeIconClass } from "../utils/iconUtils";
 
@@ -53,8 +53,10 @@ export interface DateFilterProps extends BaseFilterProps {
   filterType: "date";
 }
 
-export interface AutocompleteFilterProps<T = AutocompleteOption, K = string>
-  extends BaseFilterProps {
+export interface AutocompleteFilterProps<
+  T = AutocompleteOption,
+  K = string,
+> extends BaseFilterProps {
   filterType: "autocomplete";
   options: T[];
   getOptionLabel?: (item: T) => string;
@@ -67,11 +69,13 @@ export interface SearchFilterProps extends BaseFilterProps {
   filterType: "search";
 }
 
-export interface SearchSelectFilterProps<T = SearchSelectOption, K = string>
-  extends BaseFilterProps {
+export interface SearchSelectFilterProps<
+  T = SearchSelectOption,
+  K = string,
+> extends BaseFilterProps {
   filterType: "searchSelect";
   onSearchPromiseFn: (
-    text: string
+    text: string,
   ) => Promise<Array<T> | PaginationInterface<T>>;
   onSingleSearchPromiseFn: (value: K) => Promise<T | undefined>;
   getOptionLabel?: (item: T) => string;
@@ -119,10 +123,10 @@ export const Filter: React.FC<FilterProps> = (props) => {
   const [searchValue, setSearchValue] = useState<string>(currentValue || "");
   const [dateValue, setDateValue] = useState<Dayjs | null>(null);
   const [autocompleteValue, setAutocompleteValue] = useState<string>(
-    currentValue || ""
+    currentValue || "",
   );
   const [searchSelectValue, setSearchSelectValue] = useState<any>(
-    currentValue || undefined
+    currentValue || undefined,
   );
   const [searchSelectLabel, setSearchSelectLabel] = useState<string>("");
   const [isUserTyping, setIsUserTyping] = useState(false);
@@ -384,7 +388,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
       // Buscar opción por label
       const matchingOption = autocompleteProps.options.find(
         (opt) =>
-          getOptionLabel(opt).toLowerCase() === currentInputValue.toLowerCase()
+          getOptionLabel(opt).toLowerCase() === currentInputValue.toLowerCase(),
       );
 
       let newValue: string | undefined;
@@ -567,7 +571,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
         const getOptionValue =
           autocompleteProps.getOptionValue || ((item: any) => item.value || "");
         const option = autocompleteProps.options.find(
-          (opt) => String(getOptionValue(opt)) === String(currentValue)
+          (opt) => String(getOptionValue(opt)) === String(currentValue),
         );
         if (option) {
           return getOptionLabel(option);
@@ -696,9 +700,10 @@ export const Filter: React.FC<FilterProps> = (props) => {
         <span className="p-0.5 hover:bg-[var(--color-bg-secondary)] rounded transition-colors flex items-center justify-center">
           <i
             className={`${normalizeIconClass(
-              "fa-chevron-down"
-            )} text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-all ${isOpen ? "rotate-180" : ""
-              }`}
+              "fa-chevron-down",
+            )} text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-all ${
+              isOpen ? "rotate-180" : ""
+            }`}
           />
         </span>
 
@@ -712,7 +717,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
           >
             <i
               className={`${normalizeIconClass(
-                "fa-times"
+                "fa-times",
               )} text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors`}
             />
           </button>
@@ -726,8 +731,9 @@ export const Filter: React.FC<FilterProps> = (props) => {
     return (
       <div
         ref={containerRef}
-        className={`relative inline-block ${disabled ? "opacity-50 pointer-events-none" : ""
-          }`}
+        className={`relative inline-block ${
+          disabled ? "opacity-50 pointer-events-none" : ""
+        }`}
       >
         <DataField
           label={label}
@@ -756,10 +762,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
                     {staticOptions.map((option) => (
                       <li
                         key={option.value}
-                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${currentValue === option.value
-                          ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
-                          : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
-                          }`}
+                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${
+                          currentValue === option.value
+                            ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
+                            : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
+                        }`}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           handleStaticOptionSelect(option);
@@ -805,7 +812,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
                 </div>
               </div>
             </div>,
-            document.body
+            document.body,
           )}
       </div>
     );
@@ -815,8 +822,9 @@ export const Filter: React.FC<FilterProps> = (props) => {
     return (
       <div
         ref={containerRef}
-        className={`relative inline-block ${disabled ? "opacity-50 pointer-events-none" : ""
-          }`}
+        className={`relative inline-block ${
+          disabled ? "opacity-50 pointer-events-none" : ""
+        }`}
       >
         <DataField
           label={label}
@@ -845,10 +853,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
                     {staticOptions.map((option) => (
                       <li
                         key={option.value}
-                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${currentValue === option.value
-                          ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
-                          : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
-                          }`}
+                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${
+                          currentValue === option.value
+                            ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
+                            : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
+                        }`}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           handleStaticOptionSelect(option);
@@ -880,7 +889,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
                 </div>
               </div>
             </div>,
-            document.body
+            document.body,
           )}
       </div>
     );
@@ -893,8 +902,9 @@ export const Filter: React.FC<FilterProps> = (props) => {
     return (
       <div
         ref={containerRef}
-        className={`relative inline-block ${disabled ? "opacity-50 pointer-events-none" : ""
-          }`}
+        className={`relative inline-block ${
+          disabled ? "opacity-50 pointer-events-none" : ""
+        }`}
       >
         <DataField
           label={label}
@@ -923,10 +933,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
                     {staticOptions.map((option) => (
                       <li
                         key={option.value}
-                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${currentValue === option.value
-                          ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
-                          : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
-                          }`}
+                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${
+                          currentValue === option.value
+                            ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
+                            : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
+                        }`}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           handleStaticOptionSelect(option);
@@ -959,7 +970,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
                 </div>
               </div>
             </div>,
-            document.body
+            document.body,
           )}
       </div>
     );
@@ -974,8 +985,9 @@ export const Filter: React.FC<FilterProps> = (props) => {
     return (
       <div
         ref={containerRef}
-        className={`relative inline-block ${disabled ? "opacity-50 pointer-events-none" : ""
-          }`}
+        className={`relative inline-block ${
+          disabled ? "opacity-50 pointer-events-none" : ""
+        }`}
       >
         <DataField
           label={label}
@@ -1006,8 +1018,9 @@ export const Filter: React.FC<FilterProps> = (props) => {
   return (
     <div
       ref={containerRef}
-      className={`relative inline-block ${disabled ? "opacity-50 pointer-events-none" : ""
-        }`}
+      className={`relative inline-block ${
+        disabled ? "opacity-50 pointer-events-none" : ""
+      }`}
     >
       <DataField
         label={label}
@@ -1036,10 +1049,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
                   {staticOptions.map((option) => (
                     <li
                       key={option.value}
-                      className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${urlValue === option.value
-                        ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
-                        : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
-                        }`}
+                      className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${
+                        urlValue === option.value
+                          ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
+                          : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
+                      }`}
                       onMouseDown={(e) => {
                         e.preventDefault();
                         handleStaticOptionSelect(option);
@@ -1087,7 +1101,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
               </div>
             </div>
           </div>,
-          document.body
+          document.body,
         )}
     </div>
   );

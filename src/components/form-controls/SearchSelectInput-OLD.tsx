@@ -4,7 +4,7 @@ import { Input } from "./Input";
 import type { InputProps } from "./Input";
 import { Button } from "./Button";
 import { Dialog } from "../utils/Dialog";
-import type { PaginationInterface } from "./Pagination";
+import type { PaginationInterface } from "../../interfaces";
 import { normalizeIconClass } from "../utils/iconUtils";
 
 // Interfaz por defecto para mantener compatibilidad
@@ -15,8 +15,10 @@ export interface SearchSelectOption {
   icon?: string;
 }
 
-export interface SearchSelectInputProps<T = SearchSelectOption, K = string>
-  extends Omit<InputProps, "onChange" | "value" | "ref"> {
+export interface SearchSelectInputProps<
+  T = SearchSelectOption,
+  K = string,
+> extends Omit<InputProps, "onChange" | "value" | "ref"> {
   /**
    * Valor del input (controlado).
    * Puede ser la opción completa (T), el valor extraído (K si hay getOptionValue), o un string (para compatibilidad con react-hook-form).
@@ -28,13 +30,13 @@ export interface SearchSelectInputProps<T = SearchSelectOption, K = string>
    * También es compatible con react-hook-form: acepta el onChange estándar de HTML.
    */
   onChange?:
-  | ((value: T | K) => void)
-  | React.ChangeEventHandler<HTMLInputElement>;
+    | ((value: T | K) => void)
+    | React.ChangeEventHandler<HTMLInputElement>;
   /**
    * Función que realiza la búsqueda y devuelve un Promise con los resultados
    */
   onSearchPromiseFn: (
-    text: string
+    text: string,
   ) => Promise<Array<T> | PaginationInterface<T>>;
   /**
    * Función que busca un elemento individual usando su valor (K).
@@ -94,7 +96,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
     size = "md",
     ...inputProps
   }: SearchSelectInputProps<T, K>,
-  ref: React.ForwardedRef<HTMLInputElement>
+  ref: React.ForwardedRef<HTMLInputElement>,
 ) {
   // Extraer onBlur de inputProps para manejarlo por separado
   const { onBlur: registerOnBlur, ...restInputProps } = inputProps;
@@ -141,7 +143,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   // Guardar la última opción seleccionada para poder mostrar su label después
   const [lastSelectedOption, setLastSelectedOption] = React.useState<T | null>(
-    null
+    null,
   );
   // Ref para evitar múltiples búsquedas simultáneas del mismo valor
   const searchingValueRef = React.useRef<K | null>(null);
@@ -153,7 +155,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
   const lastSyncedFormValueRef = React.useRef<any>(undefined);
   // Ref para mantener una referencia estable a syncDisplayValue
   const syncDisplayValueRef = React.useRef<(() => boolean) | undefined>(
-    undefined
+    undefined,
   );
   // Ref para leer options sin incluirlo en dependencias
   const optionsRef = React.useRef<T[]>([]);
@@ -166,7 +168,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
       const anyItem = item as unknown as { label?: string };
       return (anyItem.label ?? "").toString();
     },
-    [getOptionLabel]
+    [getOptionLabel],
   );
 
   const valueGetter = React.useCallback(
@@ -175,7 +177,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
       const anyItem = item as unknown as { value?: K };
       return (anyItem.value as K) ?? (undefined as unknown as K);
     },
-    [getOptionValue]
+    [getOptionValue],
   );
 
   const descriptionGetter = React.useCallback(
@@ -184,7 +186,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
       const anyItem = item as unknown as { description?: string | number };
       return anyItem.description;
     },
-    [getOptionDescription]
+    [getOptionDescription],
   );
 
   // Función helper para sincronizar displayValue con el valor del formulario en modo register
@@ -221,7 +223,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
 
           // Buscar en las opciones ya cargadas (usar ref para evitar dependencias)
           const matchingOption = optionsRef.current.find(
-            (opt) => valueGetter(opt) === formValue
+            (opt) => valueGetter(opt) === formValue,
           );
           if (matchingOption) {
             setDisplayValue(labelGetter(matchingOption));
@@ -265,7 +267,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
                 // Ya tenemos la opción correcta, asegurarnos de que esté en options y preservar displayValue
                 if (
                   !optionsRef.current.find(
-                    (opt) => valueGetter(opt) === formValue
+                    (opt) => valueGetter(opt) === formValue,
                   )
                 ) {
                   setOptions((prev) => [...prev, lastSelectedOption]);
@@ -294,7 +296,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
                         if (
                           !prev.find(
                             (opt) =>
-                              valueGetter(opt) === valueGetter(foundOption)
+                              valueGetter(opt) === valueGetter(foundOption),
                           )
                         ) {
                           return [...prev, foundOption];
@@ -345,7 +347,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
         if (formValue) {
           // Buscar en las opciones para mostrar el label (usar ref para evitar dependencias)
           const matchingOption = optionsRef.current.find(
-            (opt) => String(valueGetter(opt)) === String(formValue)
+            (opt) => String(valueGetter(opt)) === String(formValue),
           );
           if (matchingOption) {
             setDisplayValue(labelGetter(matchingOption));
@@ -410,7 +412,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
           // Si no encontramos en lastSelectedOption, buscar en las opciones ya cargadas
           if (!displayValueSet) {
             const matchingOption = optionsRef.current.find(
-              (opt) => String(valueGetter(opt)) === value
+              (opt) => String(valueGetter(opt)) === value,
             );
             if (matchingOption) {
               const label = getLabelFromOption(matchingOption);
@@ -441,7 +443,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
                         if (
                           !prev.find(
                             (opt) =>
-                              valueGetter(opt) === valueGetter(foundOption)
+                              valueGetter(opt) === valueGetter(foundOption),
                           )
                         ) {
                           return [...prev, foundOption];
@@ -490,7 +492,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
             } catch {
               // Si falla, value es probablemente K, buscar en las opciones (usar ref para evitar dependencias)
               const matchingOption = optionsRef.current.find(
-                (opt) => valueGetter(opt) === value
+                (opt) => valueGetter(opt) === value,
               );
               if (matchingOption) {
                 setInternalDisplayValue(labelGetter(matchingOption));
@@ -509,7 +511,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
             } else {
               // Si no tiene label, puede ser K, buscar en las opciones (usar ref para evitar dependencias)
               const matchingOption = optionsRef.current.find(
-                (opt) => valueGetter(opt) === value
+                (opt) => valueGetter(opt) === value,
               );
               if (matchingOption) {
                 setInternalDisplayValue(labelGetter(matchingOption));
@@ -565,7 +567,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
         // Solo buscar si el value cambió o si las options aumentaron
         if (valueChanged || optionsChanged) {
           const matchingOption = options.find(
-            (opt) => valueGetter(opt) === value
+            (opt) => valueGetter(opt) === value,
           );
 
           if (matchingOption) {
@@ -695,7 +697,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
   }, [dialogSearchText, onSearchPromiseFn]);
 
   const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (
-    event
+    event,
   ) => {
     // El input principal ahora es readonly, así que esto no debería llamarse
     // Pero lo mantenemos por compatibilidad
@@ -746,11 +748,11 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
         setIsLoading(false);
       }
     },
-    [onSearchPromiseFn]
+    [onSearchPromiseFn],
   );
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (
-    event
+    event,
   ) => {
     // Cuando se presiona Enter, abrir el dialog
     if (event.key === "Enter") {
@@ -807,7 +809,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
 
           const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
             window.HTMLInputElement.prototype,
-            "value"
+            "value",
           )?.set;
 
           if (nativeInputValueSetter) {
@@ -823,7 +825,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
             } as React.ChangeEvent<HTMLInputElement>;
 
             (onChange as React.ChangeEventHandler<HTMLInputElement>)(
-              changeEvent
+              changeEvent,
             );
           }
 
@@ -878,11 +880,11 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
             eventPhase: 0,
             isTrusted: false,
             nativeEvent: {} as Event,
-            preventDefault: () => { },
+            preventDefault: () => {},
             isDefaultPrevented: () => false,
-            stopPropagation: () => { },
+            stopPropagation: () => {},
             isPropagationStopped: () => false,
-            persist: () => { },
+            persist: () => {},
             timeStamp: Date.now(),
           } as React.ChangeEvent<HTMLInputElement>;
 
@@ -925,8 +927,8 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
       ? displayValue
       : internalDisplayValue;
     const displayValueStr = isRegisterMode
-      ? displayValue ?? ""
-      : internalDisplayValue ?? "";
+      ? (displayValue ?? "")
+      : (internalDisplayValue ?? "");
     return (
       (isRegisterMode
         ? displayValueStr.trim() !== ""
@@ -958,7 +960,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
             const nativeInput = inputRef.current;
             const setter = Object.getOwnPropertyDescriptor(
               window.HTMLInputElement.prototype,
-              "value"
+              "value",
             )?.set;
             setter?.call(nativeInput, "");
 
@@ -974,7 +976,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
               currentTarget: inputRef.current,
             } as React.ChangeEvent<HTMLInputElement>;
             (onChange as React.ChangeEventHandler<HTMLInputElement>)(
-              changeEvent
+              changeEvent,
             );
           }
         }
@@ -1009,11 +1011,11 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
             eventPhase: 0,
             isTrusted: false,
             nativeEvent: {} as Event,
-            preventDefault: () => { },
+            preventDefault: () => {},
             isDefaultPrevented: () => false,
-            stopPropagation: () => { },
+            stopPropagation: () => {},
             isPropagationStopped: () => false,
-            persist: () => { },
+            persist: () => {},
             timeStamp: Date.now(),
           } as React.ChangeEvent<HTMLInputElement>;
 
@@ -1023,7 +1025,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
         }
       }
     },
-    [onChange, isRegisterMode, setValue, fieldName, inputProps.name]
+    [onChange, isRegisterMode, setValue, fieldName, inputProps.name],
   );
 
   // Determinar qué ícono mostrar: si hay valor seleccionado, mostrar "X", sino mostrar el ícono de búsqueda
@@ -1078,7 +1080,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
                         if (
                           !prev.find(
                             (opt) =>
-                              valueGetter(opt) === valueGetter(foundOption)
+                              valueGetter(opt) === valueGetter(foundOption),
                           )
                         ) {
                           return [...prev, foundOption];
@@ -1093,7 +1095,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
               .catch((error) => {
                 console.error(
                   "Error buscando elemento individual al cerrar dialog:",
-                  error
+                  error,
                 );
                 searchingValueRef.current = null;
               });
@@ -1136,7 +1138,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
         });
       }
     },
-    [ref, isRegisterMode] // Removido syncDisplayValue de las dependencias
+    [ref, isRegisterMode], // Removido syncDisplayValue de las dependencias
   );
 
   // Valor que se muestra en el input principal - completamente desacoplado del dialog
@@ -1156,7 +1158,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
           } catch {
             // Si falla, puede ser K, buscar en las opciones
             const matchingOption = options.find(
-              (opt) => valueGetter(opt) === value
+              (opt) => valueGetter(opt) === value,
             );
             if (matchingOption) {
               return labelGetter(matchingOption);
@@ -1166,7 +1168,7 @@ function SearchSelectInputInner<T = SearchSelectOption, K = string>(
 
         // Si el valor es K (el valor extraído), buscar en las opciones
         const matchingOption = options.find(
-          (opt) => valueGetter(opt) === value
+          (opt) => valueGetter(opt) === value,
         );
         if (matchingOption) {
           return labelGetter(matchingOption);
@@ -1305,9 +1307,9 @@ SearchSelectInputForwarded.displayName = "SearchSelectInput";
 
 export const SearchSelectInput = SearchSelectInputForwarded as <
   T = SearchSelectOption,
-  K = string
+  K = string,
 >(
   props: SearchSelectInputProps<T, K> & {
     ref?: React.ForwardedRef<HTMLInputElement>;
-  }
+  },
 ) => React.ReactElement;

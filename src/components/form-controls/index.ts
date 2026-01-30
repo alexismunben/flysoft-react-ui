@@ -21,6 +21,6 @@ export type {
 } from "./SearchSelectInput-OLD";
 export type { DatePickerProps } from "./DatePicker";
 export type { DateInputProps, DateInputFormat } from "./DateInput";
-export type { PaginationProps, PaginationInterface } from "./Pagination";
+export type { PaginationProps } from "./Pagination";
 export type { CheckboxProps } from "./Checkbox";
 export type { RadioButtonGroupProps, RadioOption } from "./RadioButtonGroup";

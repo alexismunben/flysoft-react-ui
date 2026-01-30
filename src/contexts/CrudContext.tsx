@@ -11,10 +11,8 @@ import {
   type SetStateAction,
 } from "react";
 import { useSearchParams } from "react-router-dom";
-import {
-  Pagination,
-  type PaginationInterface,
-} from "../components/form-controls/Pagination";
+import { Pagination } from "../components/form-controls/Pagination";
+import type { PaginationInterface } from "../interfaces";
 import { useAsyncRequest } from "../hooks/useAsyncRequest";
 
 export interface CrudContextType<T> {
@@ -35,7 +33,7 @@ export interface CrudContextType<T> {
   };
   fetchItem: {
     execute: (
-      params?: Record<string, any> | string | number
+      params?: Record<string, any> | string | number,
     ) => Promise<T | undefined>;
     isLoading: boolean;
   };
@@ -70,30 +68,30 @@ export interface PromiseWithOptions<TResult, TParams extends any[] = []> {
 interface CrudProviderProps<T> {
   children: ReactNode;
   getPromise?:
-  | ((
-    params?: Record<string, any>
-  ) => Promise<Array<T> | PaginationInterface<T> | undefined>)
-  | PromiseWithOptions<
-    Array<T> | PaginationInterface<T> | undefined,
-    [params?: Record<string, any>]
-  >;
+    | ((
+        params?: Record<string, any>,
+      ) => Promise<Array<T> | PaginationInterface<T> | undefined>)
+    | PromiseWithOptions<
+        Array<T> | PaginationInterface<T> | undefined,
+        [params?: Record<string, any>]
+      >;
   getItemPromise?:
-  | ((
-    params?: Record<string, any> | string | number
-  ) => Promise<T | undefined>)
-  | PromiseWithOptions<
-    T | undefined,
-    [params?: Record<string, any> | string | number]
-  >;
+    | ((
+        params?: Record<string, any> | string | number,
+      ) => Promise<T | undefined>)
+    | PromiseWithOptions<
+        T | undefined,
+        [params?: Record<string, any> | string | number]
+      >;
   postPromise?:
-  | ((item: T) => Promise<T | undefined | null>)
-  | PromiseWithOptions<T | undefined | null, [item: T]>;
+    | ((item: T) => Promise<T | undefined | null>)
+    | PromiseWithOptions<T | undefined | null, [item: T]>;
   putPromise?:
-  | ((item: T) => Promise<T | undefined | null>)
-  | PromiseWithOptions<T | undefined | null, [item: T]>;
+    | ((item: T) => Promise<T | undefined | null>)
+    | PromiseWithOptions<T | undefined | null, [item: T]>;
   deletePromise?:
-  | ((item: T) => Promise<void>)
-  | PromiseWithOptions<void, [item: T]>;
+    | ((item: T) => Promise<void>)
+    | PromiseWithOptions<void, [item: T]>;
   urlParams?: Array<string>;
   limit?: number;
   pageParam?: string;
@@ -115,7 +113,7 @@ export function CrudProvider<T>({
   extraData: extraDataProp,
 }: CrudProviderProps<T>) {
   const [extraData, setExtraData] = useState<Record<string, any> | undefined>(
-    extraDataProp
+    extraDataProp,
   );
   const [list, setList] = useState<Array<T> | undefined>(undefined);
   const [item, setItem] = useState<T | undefined>(undefined);
@@ -288,7 +286,7 @@ export function CrudProvider<T>({
         }
       }
     },
-    [getUrlParams, limit, fetchDataAsync, getPromiseExecute]
+    [getUrlParams, limit, fetchDataAsync, getPromiseExecute],
   );
 
   // Ref para almacenar los valores anteriores de urlParams
@@ -332,7 +330,7 @@ export function CrudProvider<T>({
   const currentParams = useMemo(
     () => getUrlParams(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [searchParams, pageParam, urlParamsKey, limit, urlParams]
+    [searchParams, pageParam, urlParamsKey, limit, urlParams],
   );
 
   // Función para recargar los datos
@@ -340,24 +338,24 @@ export function CrudProvider<T>({
     async (params?: Record<string, any>) => {
       await fetchData(params);
     },
-    [fetchData]
+    [fetchData],
   );
 
   // Función para obtener un item individual
   const fetchItemExecute = useCallback(
     async (
-      params?: Record<string, any> | string | number
+      params?: Record<string, any> | string | number,
     ): Promise<T | undefined> => {
       if (!getItemPromiseExecute) {
         throw new Error(
-          "getItemPromise is not defined. Please provide getItemPromise to CrudProvider."
+          "getItemPromise is not defined. Please provide getItemPromise to CrudProvider.",
         );
       }
       // Si no se pasan parámetros, usar singleItemId si está disponible
       const finalParams = params !== undefined ? params : singleItemId;
       if (finalParams === undefined) {
         throw new Error(
-          "No parameters provided and singleItemId is not defined. Please provide parameters or set singleItemId in CrudProvider."
+          "No parameters provided and singleItemId is not defined. Please provide parameters or set singleItemId in CrudProvider.",
         );
       }
       const result = await fetchItemAsync.execute(async () => {
@@ -368,7 +366,7 @@ export function CrudProvider<T>({
       }
       return result;
     },
-    [getItemPromiseExecute, fetchItemAsync, singleItemId]
+    [getItemPromiseExecute, fetchItemAsync, singleItemId],
   );
 
   // Función para crear un item
@@ -376,14 +374,14 @@ export function CrudProvider<T>({
     async (item: T): Promise<T | undefined | null> => {
       if (!postPromiseExecute) {
         throw new Error(
-          "postPromise is not defined. Please provide postPromise to CrudProvider."
+          "postPromise is not defined. Please provide postPromise to CrudProvider.",
         );
       }
       return await createItemAsync.execute(async () => {
         return await postPromiseExecute(item);
       });
     },
-    [postPromiseExecute, createItemAsync]
+    [postPromiseExecute, createItemAsync],
   );
 
   // Función para actualizar un item
@@ -391,14 +389,14 @@ export function CrudProvider<T>({
     async (item: T): Promise<T | undefined | null> => {
       if (!putPromiseExecute) {
         throw new Error(
-          "putPromise is not defined. Please provide putPromise to CrudProvider."
+          "putPromise is not defined. Please provide putPromise to CrudProvider.",
         );
       }
       return await updateItemAsync.execute(async () => {
         return await putPromiseExecute(item);
       });
     },
-    [putPromiseExecute, updateItemAsync]
+    [putPromiseExecute, updateItemAsync],
   );
 
   // Función para eliminar un item
@@ -406,14 +404,14 @@ export function CrudProvider<T>({
     async (item: T): Promise<void> => {
       if (!deletePromiseExecute) {
         throw new Error(
-          "deletePromise is not defined. Please provide deletePromise to CrudProvider."
+          "deletePromise is not defined. Please provide deletePromise to CrudProvider.",
         );
       }
       await deleteItemAsync.execute(async () => {
         await deletePromiseExecute(item);
       });
     },
-    [deletePromiseExecute, deleteItemAsync]
+    [deletePromiseExecute, deleteItemAsync],
   );
 
   // useEffect para resetear pageParam a 1 cuando cambien los urlParams
@@ -427,7 +425,7 @@ export function CrudProvider<T>({
     // Comparar valores actuales con los anteriores
     const prevValues = prevUrlParamsValuesRef.current;
     const hasChanged = urlParams.some(
-      (paramName) => prevValues[paramName] !== urlParamsValues[paramName]
+      (paramName) => prevValues[paramName] !== urlParamsValues[paramName],
     );
 
     // Si los urlParams cambiaron, resetear pageParam a 1

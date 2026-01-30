@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { useFormContext } from "react-hook-form";
 import { Input, type InputProps } from "./Input";
-import type { PaginationInterface } from "./Pagination";
+import type { PaginationInterface } from "../../interfaces";
 import { Button } from "./Button";
 import { Dialog, Loader } from "../utils";
 import { normalizeIconClass } from "../utils/iconUtils";
@@ -18,8 +18,10 @@ export interface SearchSelectOption {
   description?: string | number;
   icon?: string;
 }
-export interface SearchSelectInputProps<T = SearchSelectOption, K = string>
-  extends Omit<InputProps, "onChange" | "value" | "ref"> {
+export interface SearchSelectInputProps<
+  T = SearchSelectOption,
+  K = string,
+> extends Omit<InputProps, "onChange" | "value" | "ref"> {
   value?: T | K | string;
   /**
    * Callback cuando cambia el valor del input.
@@ -27,13 +29,13 @@ export interface SearchSelectInputProps<T = SearchSelectOption, K = string>
    * También es compatible con react-hook-form: acepta el onChange estándar de HTML.
    */
   onChange?:
-  | ((value: T | K) => void)
-  | React.ChangeEventHandler<HTMLInputElement>;
+    | ((value: T | K) => void)
+    | React.ChangeEventHandler<HTMLInputElement>;
   /**
    * Función que realiza la búsqueda y devuelve un Promise con los resultados
    */
   onSearchPromiseFn: (
-    text: string
+    text: string,
   ) => Promise<Array<T> | PaginationInterface<T>>;
   /**
    * Función que busca un elemento individual usando su valor (K).
@@ -103,7 +105,7 @@ const SearchSelectInputInner = React.forwardRef<
     readOnly = false,
     ...inputProps
   },
-  ref
+  ref,
 ) {
   const [inputText, setInputText] = useState("");
   const [dialogInputText, setDialogInputText] = useState("");
@@ -143,7 +145,7 @@ const SearchSelectInputInner = React.forwardRef<
         ref.current = node;
       }
     },
-    [ref]
+    [ref],
   );
 
   const valueGetter = useCallback(
@@ -151,7 +153,7 @@ const SearchSelectInputInner = React.forwardRef<
       if (getOptionValue) return getOptionValue(item);
       return item["value"];
     },
-    [getOptionValue]
+    [getOptionValue],
   );
 
   const labelGetter = useCallback(
@@ -159,7 +161,7 @@ const SearchSelectInputInner = React.forwardRef<
       if (getOptionLabel) return getOptionLabel(item);
       return item["label"];
     },
-    [getOptionLabel]
+    [getOptionLabel],
   );
 
   const descriptionGetter = useCallback(
@@ -167,7 +169,7 @@ const SearchSelectInputInner = React.forwardRef<
       if (getOptionDescription) return getOptionDescription(item);
       return item["description"];
     },
-    [getOptionDescription]
+    [getOptionDescription],
   );
 
   const handleSearch = async (text: string) => {
@@ -197,7 +199,7 @@ const SearchSelectInputInner = React.forwardRef<
         const nativeInput = inputRef.current;
         const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
           window.HTMLInputElement.prototype,
-          "value"
+          "value",
         )?.set;
 
         if (nativeInputValueSetter) {
@@ -290,7 +292,7 @@ const SearchSelectInputInner = React.forwardRef<
       const matchingOption = options.find(
         (opt) =>
           valueGetter(opt) === valueToSearch ||
-          valueGetter(opt) === currentValue
+          valueGetter(opt) === currentValue,
       );
 
       if (matchingOption) {
@@ -312,7 +314,7 @@ const SearchSelectInputInner = React.forwardRef<
               setOptions((prev) => {
                 if (
                   !prev.find(
-                    (opt) => valueGetter(opt) === valueGetter(foundOption)
+                    (opt) => valueGetter(opt) === valueGetter(foundOption),
                   )
                 ) {
                   return [...prev, foundOption];
@@ -340,7 +342,7 @@ const SearchSelectInputInner = React.forwardRef<
       onSingleSearchPromiseFn,
       valueGetter,
       labelGetter,
-    ]
+    ],
   );
 
   // Sincronizar inputText cuando cambia el value (modo controlado)
@@ -427,7 +429,7 @@ const SearchSelectInputInner = React.forwardRef<
                             {anyOption.icon && (
                               <i
                                 className={`${normalizeIconClass(
-                                  anyOption.icon
+                                  anyOption.icon,
                                 )} mt-0.5 text-[var(--color-text-muted)]`}
                               />
                             )}
@@ -487,7 +489,7 @@ const SearchSelectInputInner = React.forwardRef<
             const nativeInput = inputRef.current;
             const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
               window.HTMLInputElement.prototype,
-              "value"
+              "value",
             )?.set;
 
             if (nativeInputValueSetter) {
@@ -502,7 +504,7 @@ const SearchSelectInputInner = React.forwardRef<
                 currentTarget: nativeInput,
               } as React.ChangeEvent<HTMLInputElement>;
               (onChange as React.ChangeEventHandler<HTMLInputElement>)(
-                changeEvent
+                changeEvent,
               );
             }
 
@@ -532,7 +534,7 @@ const SearchSelectInputInner = React.forwardRef<
         setIsDialogOpen(true);
       }
     },
-    [hasValue, isRegisterMode, setValue, fieldName, onChange, readOnly]
+    [hasValue, isRegisterMode, setValue, fieldName, onChange, readOnly],
   );
 
   // Determinar qué ícono mostrar: si hay valor, mostrar "fa-times", sino el ícono original
@@ -586,9 +588,9 @@ SearchSelectInputInner.displayName = "SearchSelectInput";
 // Exportar con el cast genérico para permitir uso como <SearchSelectInput<T, K>>
 export const SearchSelectInput = SearchSelectInputInner as <
   T = SearchSelectOption,
-  K = string
+  K = string,
 >(
   props: SearchSelectInputProps<T, K> & {
     ref?: React.ForwardedRef<HTMLInputElement>;
-  }
+  },
 ) => React.ReactElement;

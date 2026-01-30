@@ -2,14 +2,6 @@ import React from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "./Button";
 
-export interface PaginationInterface<T> {
-  list: Array<T>;
-  limit: number;
-  page: number;
-  pages: number;
-  total: number;
-}
-
 export interface PaginationProps {
   fieldName?: string;
   page?: number;

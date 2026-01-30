@@ -1,5 +1,5 @@
 import type { Empresa } from "./interfaces";
-import type { PaginationInterface } from "../../components/form-controls/Pagination";
+import type { PaginationInterface } from "../../interfaces";
 import { personaEmpresaService } from "./personaEmpresaService";
 
 const STORAGE_KEY = "docMockServices_empresas";

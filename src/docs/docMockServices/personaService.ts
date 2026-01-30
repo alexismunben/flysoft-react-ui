@@ -1,5 +1,5 @@
 import type { Persona, PersonaConEmpresas, Empresa } from "./interfaces";
-import type { PaginationInterface } from "../../components/form-controls/Pagination";
+import type { PaginationInterface } from "../../interfaces";
 import dayjs from "dayjs";
 import { personaEmpresaService } from "./personaEmpresaService";
 import { empresaService } from "./empresaService";

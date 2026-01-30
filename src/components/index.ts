@@ -6,3 +6,6 @@ export * from "./layout";
 
 // Utility Components
 export * from "./utils";
+
+export { ThemeSwitcher } from "./ThemeSwitcher";
+

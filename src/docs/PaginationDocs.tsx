@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Card, Pagination } from "../index";
-import type { PaginationInterface } from "../components/form-controls/Pagination";
+import type { PaginationInterface } from "../interfaces";
 
 const PaginationDocs: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -47,9 +47,9 @@ const PaginationDocs: React.FC = () => {
               className="mb-4 text-sm"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              El componente Pagination permite navegar entre páginas de resultados.
-              Modifica automáticamente el query parameter en la URL para mantener
-              el estado de navegación.
+              El componente Pagination permite navegar entre páginas de
+              resultados. Modifica automáticamente el query parameter en la URL
+              para mantener el estado de navegación.
             </p>
             <div className="flex justify-center py-8 border border-[var(--color-border-default)] rounded-sm">
               <Pagination
@@ -95,8 +95,8 @@ const PaginationDocs: React.FC = () => {
               className="mb-4 text-sm"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              Los botones de navegación anterior y primera página se deshabilitan
-              automáticamente cuando estás en la primera página.
+              Los botones de navegación anterior y primera página se
+              deshabilitan automáticamente cuando estás en la primera página.
             </p>
             <div className="flex justify-center py-8 border border-[var(--color-border-default)] rounded-sm">
               <Pagination page={1} pages={5} total={50} />
@@ -114,8 +114,8 @@ const PaginationDocs: React.FC = () => {
               className="mb-4 text-sm"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              Los botones de navegación siguiente y última página se deshabilitan
-              automáticamente cuando estás en la última página.
+              Los botones de navegación siguiente y última página se
+              deshabilitan automáticamente cuando estás en la última página.
             </p>
             <div className="flex justify-center py-8 border border-[var(--color-border-default)] rounded-sm">
               <Pagination page={5} pages={5} total={50} />
@@ -245,4 +245,3 @@ const PaginationDocs: React.FC = () => {
 };
 
 export default PaginationDocs;
-
