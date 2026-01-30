@@ -490,6 +490,32 @@ const DataTableDocs: React.FC = () => {
               className="text-lg font-semibold mb-4"
               style={{ color: "var(--flysoft-text-primary)" }}
             >
+              Tabla con estilos condicionales (rowClassName)
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Usando la prop <code>rowClassName</code> puedes aplicar clases CSS
+              a filas específicas basándote en sus datos. En este ejemplo, los
+              productos sin stock se resaltan con un fondo rojo suave.
+            </p>
+            <Card>
+              <DataTable
+                columns={basicColumns}
+                rows={products}
+                rowClassName={(row) =>
+                  row.stock === 0 ? "bg-red-50 dark:bg-red-900/20" : ""
+                }
+              />
+            </Card>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
               Características
             </h3>
             <div className="space-y-3">
@@ -544,6 +570,11 @@ const DataTableDocs: React.FC = () => {
                     <strong>Scroll limitado:</strong> Con maxRows puedes limitar
                     el número de filas visibles, manteniendo el header fijo y
                     permitiendo scroll solo en las filas
+                  </li>
+                  <li>
+                    <strong>Estilos condicionales:</strong> Usa{" "}
+                    <code>rowClassName</code> para aplicar clases CSS a filas
+                    específicas según sus datos
                   </li>
                 </ul>
               </div>
@@ -663,8 +694,21 @@ const DataTableDocs: React.FC = () => {
                     <td className="p-3 text-sm">number</td>
                     <td className="p-3 text-sm">
                       Número de filas skeleton a mostrar cuando{" "}
-                      <code>isLoading</code> es <code>true</code>. Por defecto es{" "}
-                      <code>5</code>
+                      <code>isLoading</code> es <code>true</code>. Por defecto
+                      es <code>isLoading</code> es <code>true</code>. Por
+                      defecto es <code>5</code>
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td className="p-3">
+                      <code className="text-sm text-[var(--color-primary)]">
+                        rowClassName
+                      </code>
+                    </td>
+                    <td className="p-3 text-sm">(row: T) =&gt; string</td>
+                    <td className="p-3 text-sm">
+                      Función opcional para aplicar clases CSS a una fila
+                      específica basada en sus datos
                     </td>
                   </tr>
                 </tbody>
