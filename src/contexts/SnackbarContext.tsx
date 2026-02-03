@@ -103,12 +103,10 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
   );
 };
 
-export const useSnackbarActions = (): SnackbarActionsType => {
+export const useSnackbar = (): SnackbarActionsType => {
   const context = useContext(SnackbarActionsContext);
   if (context === undefined) {
-    throw new Error(
-      "useSnackbarActions must be used within a SnackbarProvider",
-    );
+    throw new Error("useSnackbar must be used within a SnackbarProvider");
   }
   return context;
 };
@@ -119,22 +117,4 @@ export const useSnackbarState = (): SnackbarMessage[] => {
     throw new Error("useSnackbarState must be used within a SnackbarProvider");
   }
   return context;
-};
-
-/**
- * Hook para acceder a todo el contexto de snackbars.
- * NOTA: El uso de este hook causará re-renders cada vez que la lista de snackbars cambie.
- * Si solo necesitas disparar snackbars, usa `useSnackbarActions`.
- */
-export const useSnackbar = () => {
-  const state = useSnackbarState();
-  const actions = useSnackbarActions();
-
-  return useMemo(
-    () => ({
-      ...actions,
-      snackbars: state,
-    }),
-    [actions, state],
-  );
 };

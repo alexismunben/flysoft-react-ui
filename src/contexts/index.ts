@@ -42,7 +42,6 @@ export type {
 export {
   SnackbarProvider,
   useSnackbar,
-  useSnackbarActions,
   useSnackbarState,
 } from "./SnackbarContext";
 export type {

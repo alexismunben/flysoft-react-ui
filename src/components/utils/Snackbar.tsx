@@ -19,6 +19,7 @@ export const Snackbar: React.FC<SnackbarProps> = React.memo(
     const intervalRef = useRef<number | null>(null);
     const startTimeRef = useRef<number>(Date.now());
     const remainingTimeRef = useRef<number>(duration);
+    const closingRef = useRef(false);
 
     // Mapeo de variantes a colores y clases
     const variantConfig = {
@@ -64,21 +65,30 @@ export const Snackbar: React.FC<SnackbarProps> = React.memo(
 
     // Función para cerrar el snackbar
     const handleClose = useCallback(() => {
+      if (closingRef.current) return;
+      closingRef.current = true;
+
       setIsClosing(true);
-      // Esperar a que termine la animación antes de remover
+
+      // Limpiar intervalo inmediatamente
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+
+      // Esperar a que termine la animación antes de remover del estado global
       setTimeout(() => {
         onClose(id);
-      }, 300); // Duración de la animación de salida
+      }, 300);
     }, [id, onClose]);
 
     // Efecto para la barra de progreso
     useEffect(() => {
-      if (duration <= 0) {
-        // Si duration es 0 o negativo, no se cierra automáticamente
-        return;
-      }
+      if (duration <= 0) return;
 
       const updateProgress = () => {
+        if (closingRef.current) return;
+
         const elapsed = Date.now() - startTimeRef.current;
         const newProgress = Math.max(0, 100 - (elapsed / duration) * 100);
         setProgress(newProgress);
@@ -88,18 +98,19 @@ export const Snackbar: React.FC<SnackbarProps> = React.memo(
         }
       };
 
-      // Actualizar cada 50ms para una animación suave
-      intervalRef.current = setInterval(updateProgress, 50);
+      intervalRef.current = window.setInterval(updateProgress, 50);
 
       return () => {
         if (intervalRef.current) {
-          clearInterval(intervalRef.current);
+          window.clearInterval(intervalRef.current);
         }
       };
     }, [duration, handleClose]);
 
     // Pausar el progreso cuando el mouse está sobre el snackbar
     const handleMouseEnter = () => {
+      if (closingRef.current) return;
+
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -110,9 +121,13 @@ export const Snackbar: React.FC<SnackbarProps> = React.memo(
 
     // Reanudar el progreso cuando el mouse sale del snackbar
     const handleMouseLeave = () => {
+      if (closingRef.current) return;
+
       if (remainingTimeRef.current > 0) {
         startTimeRef.current = Date.now();
         const updateProgress = () => {
+          if (closingRef.current) return;
+
           const elapsed = Date.now() - startTimeRef.current;
           const newProgress = Math.max(
             0,
@@ -125,7 +140,7 @@ export const Snackbar: React.FC<SnackbarProps> = React.memo(
           }
         };
 
-        intervalRef.current = setInterval(updateProgress, 50);
+        intervalRef.current = window.setInterval(updateProgress, 50);
       }
     };
 

@@ -1,5 +1,11 @@
 import React from "react";
-import { Card, Button, SnackbarProvider, SnackbarContainer, useSnackbar } from "../index";
+import {
+  Card,
+  Button,
+  SnackbarProvider,
+  SnackbarContainer,
+  useSnackbar,
+} from "../index";
 
 // Componente wrapper para usar el hook dentro del provider
 const SnackbarExamples: React.FC = () => {
@@ -33,9 +39,7 @@ const SnackbarExamples: React.FC = () => {
           </Button>
           <Button
             variant="outline"
-            onClick={() =>
-              showSnackbar("Mensaje secundario", "secondary")
-            }
+            onClick={() => showSnackbar("Mensaje secundario", "secondary")}
           >
             Secondary
           </Button>
@@ -185,7 +189,7 @@ const SnackbarExamples: React.FC = () => {
                 "success",
                 {
                   duration: 0,
-                }
+                },
               )
             }
           >
@@ -215,7 +219,7 @@ const SnackbarExamples: React.FC = () => {
             onClick={() =>
               showSnackbar(
                 "Este es un mensaje muy largo que debería ocupar varios renglones en el snackbar sin estirarlo, manteniendo el ancho fijo de 18rem.",
-                "info"
+                "info",
               )
             }
           >
@@ -229,7 +233,7 @@ const SnackbarExamples: React.FC = () => {
                 "warning",
                 {
                   icon: "fa-exclamation-triangle",
-                }
+                },
               )
             }
           >
@@ -259,7 +263,10 @@ const SnackbarExamples: React.FC = () => {
             onClick={() => {
               showSnackbar("Primer snackbar", "success");
               setTimeout(() => showSnackbar("Segundo snackbar", "info"), 500);
-              setTimeout(() => showSnackbar("Tercer snackbar", "warning"), 1000);
+              setTimeout(
+                () => showSnackbar("Tercer snackbar", "warning"),
+                1000,
+              );
             }}
           >
             Mostrar 3 snackbars
@@ -273,7 +280,7 @@ const SnackbarExamples: React.FC = () => {
                     showSnackbar(`Snackbar número ${i}`, "primary", {
                       duration: 3000,
                     }),
-                  i * 300
+                  i * 300,
                 );
               }
             }}
@@ -302,9 +309,13 @@ const SnackbarExamples: React.FC = () => {
               variant="primary"
               icon="fa-check"
               onClick={() =>
-                showSnackbar("Los cambios se guardaron correctamente", "success", {
-                  icon: "fa-check-circle",
-                })
+                showSnackbar(
+                  "Los cambios se guardaron correctamente",
+                  "success",
+                  {
+                    icon: "fa-check-circle",
+                  },
+                )
               }
             >
               Guardar cambios
@@ -328,7 +339,7 @@ const SnackbarExamples: React.FC = () => {
                   {
                     icon: "fa-times-circle",
                     duration: 6000,
-                  }
+                  },
                 )
               }
             >
@@ -353,7 +364,7 @@ const SnackbarExamples: React.FC = () => {
                   {
                     icon: "fa-clock",
                     duration: 8000,
-                  }
+                  },
                 )
               }
             >
@@ -457,9 +468,79 @@ const SnackbarExamples: React.FC = () => {
           </li>
         </ul>
       </section>
+      <section>
+        <h3
+          className="text-lg font-semibold mb-4"
+          style={{ color: "var(--flysoft-text-primary)" }}
+        >
+          Mejor Práctica: Rendimiento
+        </h3>
+        <p
+          className="mb-4 text-sm"
+          style={{ color: "var(--flysoft-text-secondary)" }}
+        >
+          Para un rendimiento óptimo, utiliza el hook{" "}
+          <code>useSnackbarActions</code>. Este hook solo proporciona las
+          funciones para disparar notificaciones, evitando que tu componente se
+          re-renderice innecesariamente cuando la lista de snackbars cambie o se
+          actualice su progreso.
+        </p>
+
+        <div className="max-w-md mx-auto">
+          <Card className="p-4 border-dashed">
+            <h4 className="font-medium mb-2 text-green-600">
+              Componente Optimizado
+            </h4>
+            <p className="text-xs mb-3 text-gray-500">
+              Este componente utiliza <code>useSnackbarActions</code>. Observa
+              cómo el contador no aumenta mientras el snackbar está en pantalla.
+            </p>
+            <OptimizedComponent />
+          </Card>
+        </div>
+      </section>
     </div>
   );
 };
+
+// --- Componentes de Prueba de Rendimiento ---
+
+const OptimizedComponent: React.FC = React.memo(() => {
+  const { showSnackbar } = useSnackbar();
+
+  // Para detectar renders
+  const renderRef = React.useRef(0);
+  renderRef.current++;
+
+  // Log para consola
+  React.useEffect(() => {
+    console.log(
+      "%c[Optimized] Renderizado #" + renderRef.current,
+      "color: green",
+    );
+  });
+
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-between items-center bg-gray-50 p-2 rounded">
+        <span className="text-sm">Contador de Renders:</span>
+        <span className="font-bold text-green-600 px-2 py-0.5 bg-green-50 rounded">
+          {renderRef.current}
+        </span>
+      </div>
+      <Button
+        variant="primary"
+        className="w-full"
+        onClick={() => showSnackbar("Este componente es eficiente", "success")}
+      >
+        Disparar Snackbar
+      </Button>
+      <p className="text-[10px] text-gray-400 italic text-center">
+        El contador NO aumenta con los cambios de estado de otros snackbars.
+      </p>
+    </div>
+  );
+});
 
 const SnackbarDocs: React.FC = () => {
   return (
@@ -475,4 +556,3 @@ const SnackbarDocs: React.FC = () => {
 };
 
 export default SnackbarDocs;
-
