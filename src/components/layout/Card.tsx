@@ -1,4 +1,5 @@
 import React from "react";
+import { twMerge } from "tailwind-merge";
 
 export interface CardProps {
   title?: string | React.ReactNode;
@@ -28,36 +29,35 @@ export const Card: React.FC<CardProps> = ({
   variant = "default",
   alwaysDisplayHeaderActions = false,
 }) => {
-  // Separar clases de background del className
-  const classArray = className.trim().split(/\s+/).filter(Boolean);
-  const bgClasses: string[] = [];
-  const otherClasses: string[] = [];
-
-  classArray.forEach((cls) => {
-    // Detectar clases de background (bg-*, bg-gradient-*, bg-[...])
-    if (cls.startsWith("bg-") || cls.startsWith("bg-gradient-")) {
-      bgClasses.push(cls);
-    } else {
-      otherClasses.push(cls);
-    }
-  });
-
-  const backgroundClass =
-    bgClasses.length > 0 ? bgClasses.join(" ") : "bg-[var(--color-bg-default)]";
-
-  const baseClasses = `
-    ${backgroundClass} rounded-lg border
-    font-[var(--font-default)]
-  `;
-
   const variantClasses = {
-    default: `border-[var(--color-border-default)]`,
-    elevated: `border-[var(--color-border-default)] shadow-[var(--shadow-lg)]`,
-    outlined: `border-[var(--color-gray-300)]`,
+    default: "border-[var(--color-border-default)]",
+    elevated: "border-[var(--color-border-default)] shadow-[var(--shadow-lg)]",
+    outlined: "border-[var(--color-gray-300)]",
   };
 
-  const classes = `${baseClasses} ${variantClasses[variant]
-    } ${otherClasses.join(" ")}`;
+  // Unimos las clases usando twMerge para consistencia
+  const mergedClasses = twMerge(
+    "bg-[var(--color-bg-default)] rounded-lg border font-[var(--font-default)]",
+    variantClasses[variant],
+    className,
+  );
+
+  // Verificamos si existe alguna clase de ancho (w-*) que no sea w-auto.
+  // Es importante distinguir entre w-* (ancho) y max-w-*/min-w-* (límites),
+  // ya que un max-w-* sin un w-full puede hacer que la card colapse a su contenido.
+  const hasExplicitWidth = mergedClasses.split(/\s+/).some((cls) => {
+    const mainClass = cls.split(":").pop() || "";
+    return (
+      mainClass.startsWith("w-") &&
+      mainClass !== "w-auto" &&
+      !mainClass.startsWith("max-w-") &&
+      !mainClass.startsWith("min-w-")
+    );
+  });
+
+  // Si no hay un ancho explícito, forzamos w-full para que ocupe todo el espacio disponible
+  // (incluyendo el espacio limitado por un posible max-w- en la misma card o en su padre).
+  const classes = hasExplicitWidth ? mergedClasses : `${mergedClasses} w-full`;
 
   const [isHovered, setIsHovered] = React.useState(false);
   const [isLargeScreen, setIsLargeScreen] = React.useState(false);
@@ -123,7 +123,9 @@ export const Card: React.FC<CardProps> = ({
       )}
 
       {children && <div className="px-6 py-4">{children}</div>}
-      {footer && <div className="px-6 pb-4 flex items-center justify-end">{footer}</div>}
+      {footer && (
+        <div className="px-6 pb-4 flex items-center justify-end">{footer}</div>
+      )}
     </div>
   );
 };
