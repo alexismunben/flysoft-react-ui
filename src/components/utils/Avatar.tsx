@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { getInitialLetters } from "../../helpers";
 
 /**
  * Helper function to convert color names to CSS values
@@ -31,26 +32,6 @@ const getColorValue = (color?: string): string | undefined => {
   };
 
   return colorMap[color.toLowerCase()] || color;
-};
-
-/**
- * Helper function to extract initials from text
- * Returns first letter of first word and first letter of last word (if multiple words)
- */
-const getInitials = (text: string): string => {
-  if (!text || text.trim().length === 0) return "";
-
-  const words = text.trim().split(/\s+/);
-  if (words.length === 0) return "";
-
-  const firstLetter = words[0].charAt(0).toUpperCase();
-
-  if (words.length === 1) {
-    return firstLetter;
-  }
-
-  const lastLetter = words[words.length - 1].charAt(0).toUpperCase();
-  return `${firstLetter}${lastLetter}`;
 };
 
 export interface AvatarProps {
@@ -109,7 +90,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   className = "",
 }) => {
   const [imageError, setImageError] = useState(false);
-  const initials = getInitials(text);
+  const initials = getInitialLetters(text);
   const showImage = image && !imageError;
 
   const sizeClasses = {

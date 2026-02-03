@@ -39,9 +39,15 @@ export type {
 } from "./AppLayoutContext";
 
 // Snackbar system exports
-export { SnackbarProvider, useSnackbar } from "./SnackbarContext";
+export {
+  SnackbarProvider,
+  useSnackbar,
+  useSnackbarActions,
+  useSnackbarState,
+} from "./SnackbarContext";
 export type {
   SnackbarContextType,
+  SnackbarActionsType,
   SnackbarMessage,
   SnackbarVariant,
 } from "./SnackbarContext";

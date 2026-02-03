@@ -1,9 +1,18 @@
 import React from "react";
-import { useSnackbar } from "../../contexts/SnackbarContext";
+import {
+  useSnackbarState,
+  useSnackbarActions,
+} from "../../contexts/SnackbarContext";
 import { Snackbar } from "./Snackbar";
 
 export interface SnackbarContainerProps {
-  position?: "top-right" | "top-left" | "bottom-right" | "bottom-left" | "top-center" | "bottom-center";
+  position?:
+    | "top-right"
+    | "top-left"
+    | "bottom-right"
+    | "bottom-left"
+    | "top-center"
+    | "bottom-center";
   maxSnackbars?: number; // Máximo número de snackbars visibles
 }
 
@@ -11,7 +20,8 @@ export const SnackbarContainer: React.FC<SnackbarContainerProps> = ({
   position = "top-right",
   maxSnackbars = 5,
 }) => {
-  const { snackbars, removeSnackbar } = useSnackbar();
+  const snackbars = useSnackbarState();
+  const { removeSnackbar } = useSnackbarActions();
 
   // Limitar el número de snackbars visibles
   const visibleSnackbars = snackbars.slice(-maxSnackbars);
@@ -56,4 +66,3 @@ export const SnackbarContainer: React.FC<SnackbarContainerProps> = ({
     </div>
   );
 };
-

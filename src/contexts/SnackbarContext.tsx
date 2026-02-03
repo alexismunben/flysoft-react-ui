@@ -3,10 +3,17 @@ import React, {
   useContext,
   useState,
   useCallback,
+  useMemo,
   type ReactNode,
 } from "react";
 
-export type SnackbarVariant = "primary" | "secondary" | "success" | "warning" | "danger" | "info";
+export type SnackbarVariant =
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "danger"
+  | "info";
 
 export interface SnackbarMessage {
   id: string;
@@ -17,17 +24,29 @@ export interface SnackbarMessage {
   iconLabel?: string; // aria-label para el ícono
 }
 
-export interface SnackbarContextType {
-  showSnackbar: (message: string, variant?: SnackbarVariant, options?: {
-    duration?: number;
-    icon?: string;
-    iconLabel?: string;
-  }) => void;
+export interface SnackbarActionsType {
+  showSnackbar: (
+    message: string,
+    variant?: SnackbarVariant,
+    options?: {
+      duration?: number;
+      icon?: string;
+      iconLabel?: string;
+    },
+  ) => void;
   removeSnackbar: (id: string) => void;
+}
+
+export interface SnackbarContextType extends SnackbarActionsType {
   snackbars: SnackbarMessage[];
 }
 
-const SnackbarContext = createContext<SnackbarContextType | undefined>(undefined);
+const SnackbarStateContext = createContext<SnackbarMessage[] | undefined>(
+  undefined,
+);
+const SnackbarActionsContext = createContext<SnackbarActionsType | undefined>(
+  undefined,
+);
 
 interface SnackbarProviderProps {
   children: ReactNode;
@@ -38,50 +57,84 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
 }) => {
   const [snackbars, setSnackbars] = useState<SnackbarMessage[]>([]);
 
-  const showSnackbar = useCallback((
-    message: string,
-    variant: SnackbarVariant = "info",
-    options?: {
-      duration?: number;
-      icon?: string;
-      iconLabel?: string;
-    }
-  ) => {
-    const id = `snackbar-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-    const newSnackbar: SnackbarMessage = {
-      id,
-      message,
-      variant,
-      duration: options?.duration ?? 3000,
-      icon: options?.icon,
-      iconLabel: options?.iconLabel,
-    };
+  const showSnackbar = useCallback(
+    (
+      message: string,
+      variant: SnackbarVariant = "info",
+      options?: {
+        duration?: number;
+        icon?: string;
+        iconLabel?: string;
+      },
+    ) => {
+      const id = `snackbar-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+      const newSnackbar: SnackbarMessage = {
+        id,
+        message,
+        variant,
+        duration: options?.duration ?? 3000,
+        icon: options?.icon,
+        iconLabel: options?.iconLabel,
+      };
 
-    setSnackbars((prev) => [...prev, newSnackbar]);
-  }, []);
+      setSnackbars((prev) => [...prev, newSnackbar]);
+    },
+    [],
+  );
 
   const removeSnackbar = useCallback((id: string) => {
     setSnackbars((prev) => prev.filter((snackbar) => snackbar.id !== id));
   }, []);
 
-  const value: SnackbarContextType = {
-    showSnackbar,
-    removeSnackbar,
-    snackbars,
-  };
+  const actions = useMemo(
+    () => ({
+      showSnackbar,
+      removeSnackbar,
+    }),
+    [showSnackbar, removeSnackbar],
+  );
 
   return (
-    <SnackbarContext.Provider value={value}>
-      {children}
-    </SnackbarContext.Provider>
+    <SnackbarActionsContext.Provider value={actions}>
+      <SnackbarStateContext.Provider value={snackbars}>
+        {children}
+      </SnackbarStateContext.Provider>
+    </SnackbarActionsContext.Provider>
   );
 };
 
-export const useSnackbar = (): SnackbarContextType => {
-  const context = useContext(SnackbarContext);
+export const useSnackbarActions = (): SnackbarActionsType => {
+  const context = useContext(SnackbarActionsContext);
   if (context === undefined) {
-    throw new Error("useSnackbar must be used within a SnackbarProvider");
+    throw new Error(
+      "useSnackbarActions must be used within a SnackbarProvider",
+    );
   }
   return context;
 };
 
+export const useSnackbarState = (): SnackbarMessage[] => {
+  const context = useContext(SnackbarStateContext);
+  if (context === undefined) {
+    throw new Error("useSnackbarState must be used within a SnackbarProvider");
+  }
+  return context;
+};
+
+/**
+ * Hook para acceder a todo el contexto de snackbars.
+ * NOTA: El uso de este hook causará re-renders cada vez que la lista de snackbars cambie.
+ * Si solo necesitas disparar snackbars, usa `useSnackbarActions`.
+ */
+export const useSnackbar = () => {
+  const state = useSnackbarState();
+  const actions = useSnackbarActions();
+
+  return useMemo(
+    () => ({
+      ...actions,
+      snackbars: state,
+    }),
+    [actions, state],
+  );
+};
