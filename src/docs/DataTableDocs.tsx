@@ -516,6 +516,61 @@ const DataTableDocs: React.FC = () => {
               className="text-lg font-semibold mb-4"
               style={{ color: "var(--flysoft-text-primary)" }}
             >
+              Tabla con estilos de Header y Footer
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Usando las props <code>headerClassName</code> y{" "}
+              <code>footerClassName</code> puedes aplicar clases CSS
+              directamente a las filas del header y footer. En este ejemplo, se
+              aplica un fondo azul suave al header y un borde superior más
+              grueso al footer.
+            </p>
+            <Card>
+              <DataTable
+                columns={fullColumns}
+                rows={products}
+                headerClassName="bg-red-50/50 border-b-2 border-primary"
+                footerClassName="border-t-2 border-primary bg-green-500"
+              />
+            </Card>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Tabla con estilos de Celdas (Cell ClassNames)
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Además de las filas, puedes aplicar clases específicamente a las
+              celdas del header, footer y body. El <code>cellClassName</code>{" "}
+              del body puede ser un string o una función que recibe la fila y la
+              columna para un control total.
+            </p>
+            <Card>
+              <DataTable
+                columns={basicColumns}
+                rows={products}
+                headerCellClassName="text-primary italic uppercase tracking-wider"
+                cellClassName={(_row, column) =>
+                  column.value === "name" ? "font-bold text-blue-600" : ""
+                }
+              />
+            </Card>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
               Características
             </h3>
             <div className="space-y-3">
@@ -709,6 +764,66 @@ const DataTableDocs: React.FC = () => {
                     <td className="p-3 text-sm">
                       Función opcional para aplicar clases CSS a una fila
                       específica basada en sus datos
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td className="p-3">
+                      <code className="text-sm text-[var(--color-primary)]">
+                        headerClassName
+                      </code>
+                    </td>
+                    <td className="p-3 text-sm">string</td>
+                    <td className="p-3 text-sm">
+                      Clases CSS adicionales para la fila del header (tr)
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td className="p-3">
+                      <code className="text-sm text-[var(--color-primary)]">
+                        footerClassName
+                      </code>
+                    </td>
+                    <td className="p-3 text-sm">string</td>
+                    <td className="p-3 text-sm">
+                      Clases CSS adicionales para la fila del footer (tr)
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td className="p-3">
+                      <code className="text-sm text-[var(--color-primary)]">
+                        headerCellClassName
+                      </code>
+                    </td>
+                    <td className="p-3 text-sm">string</td>
+                    <td className="p-3 text-sm">
+                      Clases CSS adicionales para todas las celdas del header
+                      (th)
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td className="p-3">
+                      <code className="text-sm text-[var(--color-primary)]">
+                        footerCellClassName
+                      </code>
+                    </td>
+                    <td className="p-3 text-sm">string</td>
+                    <td className="p-3 text-sm">
+                      Clases CSS adicionales para todas las celdas del footer
+                      (td)
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td className="p-3">
+                      <code className="text-sm text-[var(--color-primary)]">
+                        cellClassName
+                      </code>
+                    </td>
+                    <td className="p-3 text-sm">
+                      string | ((row: T, col: Col) =&gt; string)
+                    </td>
+                    <td className="p-3 text-sm">
+                      Clases CSS para celdas del body. Puede ser una función
+                      para lógica condicional por celda
                     </td>
                   </tr>
                 </tbody>

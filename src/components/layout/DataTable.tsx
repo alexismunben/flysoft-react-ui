@@ -1,4 +1,5 @@
 import React from "react";
+import { twMerge } from "tailwind-merge";
 import { DropdownMenu } from "./DropdownMenu";
 
 interface ActionItem {
@@ -36,6 +37,11 @@ export interface DataTableProps<T> {
    * Función opcional para aplicar clases CSS a una fila específica basada en sus datos.
    */
   rowClassName?: (row: T) => string;
+  headerClassName?: string;
+  footerClassName?: string;
+  headerCellClassName?: string;
+  footerCellClassName?: string;
+  cellClassName?: string | ((row: T, column: DataTableColumn<T>) => string);
 }
 
 export const DataTable = <T,>({
@@ -47,6 +53,11 @@ export const DataTable = <T,>({
   isLoading = false,
   loadingRows = 5,
   rowClassName,
+  headerClassName = "",
+  footerClassName = "",
+  headerCellClassName = "",
+  footerCellClassName = "",
+  cellClassName = "",
 }: DataTableProps<T>) => {
   // Calcular si necesitamos scroll
   const displayRows = isLoading ? loadingRows : rows.length;
@@ -204,21 +215,32 @@ export const DataTable = <T,>({
       >
         <table className="w-full border-collapse font-[var(--font-default)]">
           <thead className={needsScroll ? "sticky top-0 z-10" : ""}>
-            <tr className="border-b border-[var(--color-border-default)]">
+            <tr
+              className={twMerge(
+                "border-b border-[var(--color-border-default)]",
+                headerClassName,
+              )}
+            >
               {columns.map((column, index) => {
                 const headerActions = column.headerActions?.();
                 const hasHeaderActions =
                   headerActions && headerActions.length > 0;
 
+                const headerBgClasses = headerClassName
+                  .split(/\s+/)
+                  .filter((cls) => cls.split(":").pop()?.startsWith("bg-"))
+                  .join(" ");
+
                 return (
                   <th
                     key={index}
-                    className={`
-                      px-4 py-3 text-sm font-semibold text-[var(--color-text-primary)]
-                      bg-[var(--color-bg-secondary)]
-                      ${getAlignmentClass(column.align, column.type)}
-                      ${hasHeaderActions ? "relative" : ""}
-                    `}
+                    className={twMerge(
+                      "px-4 py-3 text-sm font-semibold text-[var(--color-text-primary)]",
+                      headerBgClasses || "bg-[var(--color-bg-secondary)]",
+                      getAlignmentClass(column.align, column.type),
+                      hasHeaderActions ? "relative" : "",
+                      headerCellClassName,
+                    )}
                     style={{
                       ...(column.width ? { width: column.width } : {}),
                     }}
@@ -290,10 +312,13 @@ export const DataTable = <T,>({
                       return (
                         <td
                           key={colIndex}
-                          className={`
-                            px-4 py-3 text-sm text-[var(--color-text-primary)]
-                            ${getAlignmentClass(column.align, column.type)}
-                          `}
+                          className={twMerge(
+                            "px-4 py-3 text-sm text-[var(--color-text-primary)]",
+                            getAlignmentClass(column.align, column.type),
+                            typeof cellClassName === "function"
+                              ? cellClassName(row, column)
+                              : cellClassName,
+                          )}
                           style={{
                             ...(column.width ? { width: column.width } : {}),
                           }}
@@ -330,22 +355,35 @@ export const DataTable = <T,>({
           </tbody>
           {hasFooter && (
             <tfoot className={needsScroll ? "sticky bottom-0 z-10" : ""}>
-              <tr className="border-t border-[var(--color-border-default)]">
-                {columns.map((column, index) => (
-                  <td
-                    key={index}
-                    className={`
-                      px-4 py-3 text-sm font-semibold text-[var(--color-text-primary)]
-                      bg-[var(--color-bg-secondary)]
-                      ${getAlignmentClass(column.align, column.type)}
-                    `}
-                    style={{
-                      ...(column.width ? { width: column.width } : {}),
-                    }}
-                  >
-                    {isLoading ? <SkeletonCell /> : column.footer || ""}
-                  </td>
-                ))}
+              <tr
+                className={twMerge(
+                  "border-t border-[var(--color-border-default)]",
+                  footerClassName,
+                )}
+              >
+                {columns.map((column, index) => {
+                  const footerBgClasses = footerClassName
+                    .split(/\s+/)
+                    .filter((cls) => cls.split(":").pop()?.startsWith("bg-"))
+                    .join(" ");
+
+                  return (
+                    <td
+                      key={index}
+                      className={twMerge(
+                        "px-4 py-3 text-sm font-semibold text-[var(--color-text-primary)]",
+                        footerBgClasses || "bg-[var(--color-bg-secondary)]",
+                        getAlignmentClass(column.align, column.type),
+                        footerCellClassName,
+                      )}
+                      style={{
+                        ...(column.width ? { width: column.width } : {}),
+                      }}
+                    >
+                      {isLoading ? <SkeletonCell /> : column.footer || ""}
+                    </td>
+                  );
+                })}
               </tr>
             </tfoot>
           )}
