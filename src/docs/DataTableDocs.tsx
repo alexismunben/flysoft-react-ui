@@ -571,6 +571,31 @@ const DataTableDocs: React.FC = () => {
               className="text-lg font-semibold mb-4"
               style={{ color: "var(--flysoft-text-primary)" }}
             >
+              Tabla Compacta
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Usando la prop <code>compact</code> puedes reducir
+              significativamente el espacio que ocupa la tabla. Este modo
+              elimina los paddings superiores y reduce los horizontales, ideal
+              para mostrar grandes cantidades de datos en espacios reducidos.
+            </p>
+            <Card>
+              <DataTable
+                columns={basicColumns}
+                rows={products}
+                compact={true}
+              />
+            </Card>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
               Características
             </h3>
             <div className="space-y-3">
@@ -824,6 +849,18 @@ const DataTableDocs: React.FC = () => {
                     <td className="p-3 text-sm">
                       Clases CSS para celdas del body. Puede ser una función
                       para lógica condicional por celda
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td className="p-3">
+                      <code className="text-sm text-[var(--color-primary)]">
+                        compact
+                      </code>
+                    </td>
+                    <td className="p-3 text-sm">boolean</td>
+                    <td className="p-3 text-sm">
+                      Si es true, reduce el padding de todas las celdas para una
+                      visualización más densa. Por defecto es false.
                     </td>
                   </tr>
                 </tbody>

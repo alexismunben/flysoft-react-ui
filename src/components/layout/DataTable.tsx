@@ -42,6 +42,7 @@ export interface DataTableProps<T> {
   headerCellClassName?: string;
   footerCellClassName?: string;
   cellClassName?: string | ((row: T, column: DataTableColumn<T>) => string);
+  compact?: boolean;
 }
 
 export const DataTable = <T,>({
@@ -58,14 +59,17 @@ export const DataTable = <T,>({
   headerCellClassName = "",
   footerCellClassName = "",
   cellClassName = "",
+  compact = false,
 }: DataTableProps<T>) => {
   // Calcular si necesitamos scroll
   const displayRows = isLoading ? loadingRows : rows.length;
   const needsScroll = maxRows !== undefined && displayRows > maxRows;
 
-  // Altura aproximada de una fila (px-4 py-3 = ~48px por fila)
-  const rowHeight = 48;
+  // Altura aproximada de una fila (px-4 py-3 = ~48px por fila, compact es menos)
+  const rowHeight = compact ? 32 : 48;
   const maxHeight = maxRows ? `${maxRows * rowHeight}px` : undefined;
+
+  const cellPadding = compact ? "px-2 py-1" : "px-4 py-3";
 
   // Verificar si alguna columna tiene footer
   const hasFooter = columns.some((column) => column.footer !== undefined);
@@ -235,7 +239,8 @@ export const DataTable = <T,>({
                   <th
                     key={index}
                     className={twMerge(
-                      "px-4 py-3 text-sm font-semibold text-[var(--color-text-primary)]",
+                      cellPadding,
+                      "text-sm font-semibold text-[var(--color-text-primary)]",
                       headerBgClasses || "bg-[var(--color-bg-secondary)]",
                       getAlignmentClass(column.align, column.type),
                       hasHeaderActions ? "relative" : "",
@@ -277,10 +282,11 @@ export const DataTable = <T,>({
                     {columns.map((column, colIndex) => (
                       <td
                         key={colIndex}
-                        className={`
-                          px-4 py-3 text-sm text-[var(--color-text-primary)]
-                          ${getAlignmentClass(column.align, column.type)}
-                        `}
+                        className={twMerge(
+                          cellPadding,
+                          "text-sm text-[var(--color-text-primary)]",
+                          getAlignmentClass(column.align, column.type),
+                        )}
                         style={{
                           ...(column.width ? { width: column.width } : {}),
                         }}
@@ -313,7 +319,8 @@ export const DataTable = <T,>({
                         <td
                           key={colIndex}
                           className={twMerge(
-                            "px-4 py-3 text-sm text-[var(--color-text-primary)]",
+                            cellPadding,
+                            "text-sm text-[var(--color-text-primary)]",
                             getAlignmentClass(column.align, column.type),
                             typeof cellClassName === "function"
                               ? cellClassName(row, column)
@@ -371,7 +378,8 @@ export const DataTable = <T,>({
                     <td
                       key={index}
                       className={twMerge(
-                        "px-4 py-3 text-sm font-semibold text-[var(--color-text-primary)]",
+                        cellPadding,
+                        "text-sm font-semibold text-[var(--color-text-primary)]",
                         footerBgClasses || "bg-[var(--color-bg-secondary)]",
                         getAlignmentClass(column.align, column.type),
                         footerCellClassName,
