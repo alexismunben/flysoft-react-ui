@@ -1,7 +1,7 @@
 {
   "name": "flysoft-react-ui",
   "private": false,
-  "version": "1.0.8",
+  "version": "1.0.9",
   "type": "module",
   "description": "A modern React UI component library with Tailwind CSS, TypeScript, and FontAwesome 5. Includes forms, layouts, themes, and templates for rapid development.",
   "keywords": [
