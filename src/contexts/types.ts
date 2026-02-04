@@ -25,6 +25,10 @@ export interface Theme {
     infoContrast: string;
     infoDark: string;
     infoLight: string;
+    accent: string;
+    accentContrast: string;
+    accentDark: string;
+    accentLight: string;
     gray50: string;
     gray100: string;
     gray200: string;

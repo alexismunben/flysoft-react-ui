@@ -38,8 +38,8 @@
       "types": "./dist/index.d.ts"
     },
     "./styles": {
-      "import": "./dist/index.css",
-      "types": "./styles.d.ts"
+      "types": "./styles.d.ts",
+      "default": "./dist/index.css"
     }
   },
   "files": [
