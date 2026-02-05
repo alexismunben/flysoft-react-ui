@@ -40,7 +40,8 @@
     "./styles": {
       "types": "./styles.d.ts",
       "default": "./dist/index.css"
-    }
+    },
+    "./dist/*": "./dist/*"
   },
   "files": [
     "dist",

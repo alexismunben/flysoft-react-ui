@@ -51,32 +51,32 @@
   --flysoft-accent-light: #a78bfa;
 
   /* Neutral colors */
-  --flysoft-gray-50: #f9fafb;
-  --flysoft-gray-100: #f3f4f6;
-  --flysoft-gray-200: #e5e7eb;
-  --flysoft-gray-300: #d1d5db;
-  --flysoft-gray-400: #9ca3af;
-  --flysoft-gray-500: #6b7280;
-  --flysoft-gray-600: #4b5563;
-  --flysoft-gray-700: #374151;
-  --flysoft-gray-800: #1f2937;
-  --flysoft-gray-900: #111827;
+  --flysoft-gray50: #f9fafb;
+  --flysoft-gray100: #f3f4f6;
+  --flysoft-gray200: #e5e7eb;
+  --flysoft-gray300: #d1d5db;
+  --flysoft-gray400: #9ca3af;
+  --flysoft-gray500: #6b7280;
+  --flysoft-gray600: #4b5563;
+  --flysoft-gray700: #374151;
+  --flysoft-gray800: #1f2937;
+  --flysoft-gray900: #111827;
 
   /* Border colors */
-  --flysoft-border-default: var(--flysoft-gray-200);
+  --flysoft-border-default: var(--flysoft-gray200);
   --flysoft-border-focus: var(--flysoft-primary);
   --flysoft-border-error: var(--flysoft-danger);
 
   /* Background colors */
   --flysoft-bg-default: #ffffff;
-  --flysoft-bg-secondary: var(--flysoft-gray-50);
-  --flysoft-bg-disabled: var(--flysoft-gray-100);
+  --flysoft-bg-secondary: var(--flysoft-gray50);
+  --flysoft-bg-disabled: var(--flysoft-gray100);
 
   /* Text colors */
-  --flysoft-text-primary: var(--flysoft-gray-900);
-  --flysoft-text-secondary: var(--flysoft-gray-700);
-  --flysoft-text-muted: var(--flysoft-gray-500);
-  --flysoft-text-disabled: var(--flysoft-gray-400);
+  --flysoft-text-primary: var(--flysoft-gray900);
+  --flysoft-text-secondary: var(--flysoft-gray700);
+  --flysoft-text-muted: var(--flysoft-gray500);
+  --flysoft-text-disabled: var(--flysoft-gray400);
 
   /* Shadow */
   --flysoft-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -148,16 +148,16 @@
   --color-accent-light: var(--flysoft-accent-light);
 
   /* Neutral colors */
-  --color-gray-50: var(--flysoft-gray-50);
-  --color-gray-100: var(--flysoft-gray-100);
-  --color-gray-200: var(--flysoft-gray-200);
-  --color-gray-300: var(--flysoft-gray-300);
-  --color-gray-400: var(--flysoft-gray-400);
-  --color-gray-500: var(--flysoft-gray-500);
-  --color-gray-600: var(--flysoft-gray-600);
-  --color-gray-700: var(--flysoft-gray-700);
-  --color-gray-800: var(--flysoft-gray-800);
-  --color-gray-900: var(--flysoft-gray-900);
+  --color-gray-50: var(--flysoft-gray50);
+  --color-gray-100: var(--flysoft-gray100);
+  --color-gray-200: var(--flysoft-gray200);
+  --color-gray-300: var(--flysoft-gray300);
+  --color-gray-400: var(--flysoft-gray400);
+  --color-gray-500: var(--flysoft-gray500);
+  --color-gray-600: var(--flysoft-gray600);
+  --color-gray-700: var(--flysoft-gray700);
+  --color-gray-800: var(--flysoft-gray800);
+  --color-gray-900: var(--flysoft-gray900);
 
   /* Border colors */
   --color-border-default: var(--flysoft-border-default);

@@ -41,7 +41,7 @@ function HomeContent() {
 function LeftDrawerHeader() {
   return (
     <div className="h-[64px] flex flex-col  justify-center px-4 bg-gray-300">
-      <h2>
+      <h2 className="text-lg font-bold text-accent">
         <Link to="/">Flysoft React UI</Link>
       </h2>
     </div>
