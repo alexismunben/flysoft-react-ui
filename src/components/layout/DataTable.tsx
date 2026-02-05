@@ -221,7 +221,7 @@ export const DataTable = <T,>({
           <thead className={needsScroll ? "sticky top-0 z-10" : ""}>
             <tr
               className={twMerge(
-                "border-b border-[var(--color-border-default)]",
+                "border-b border-[var(--color-border-default)] text-[var(--color-text-primary)]",
                 headerClassName,
               )}
             >
@@ -240,7 +240,7 @@ export const DataTable = <T,>({
                     key={index}
                     className={twMerge(
                       cellPadding,
-                      "text-sm font-semibold text-[var(--color-text-primary)]",
+                      "text-sm font-semibold",
                       headerBgClasses || "bg-[var(--color-bg-secondary)]",
                       getAlignmentClass(column.align, column.type),
                       hasHeaderActions ? "relative" : "",
@@ -277,14 +277,14 @@ export const DataTable = <T,>({
               ? Array.from({ length: loadingRows }).map((_, rowIndex) => (
                   <tr
                     key={`skeleton-${rowIndex}`}
-                    className="border-b border-[var(--color-border-default)]"
+                    className="border-b border-[var(--color-border-default)] text-[var(--color-text-primary)]"
                   >
                     {columns.map((column, colIndex) => (
                       <td
                         key={colIndex}
                         className={twMerge(
                           cellPadding,
-                          "text-sm text-[var(--color-text-primary)]",
+                          "text-sm",
                           getAlignmentClass(column.align, column.type),
                         )}
                         style={{
@@ -299,9 +299,10 @@ export const DataTable = <T,>({
               : rows.map((row, rowIndex) => (
                   <tr
                     key={rowIndex}
-                    className={`group/row border-b border-[var(--color-border-default)] transition-colors hover:bg-[var(--color-bg-secondary)] ${
-                      rowClassName ? rowClassName(row) : ""
-                    }`}
+                    className={twMerge(
+                      "group/row border-b border-[var(--color-border-default)] transition-colors hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]",
+                      rowClassName?.(row),
+                    )}
                   >
                     {columns.map((column, colIndex) => {
                       const cellValue = getCellValue(column, row);
@@ -320,7 +321,7 @@ export const DataTable = <T,>({
                           key={colIndex}
                           className={twMerge(
                             cellPadding,
-                            "text-sm text-[var(--color-text-primary)]",
+                            "text-sm",
                             getAlignmentClass(column.align, column.type),
                             typeof cellClassName === "function"
                               ? cellClassName(row, column)
@@ -364,7 +365,7 @@ export const DataTable = <T,>({
             <tfoot className={needsScroll ? "sticky bottom-0 z-10" : ""}>
               <tr
                 className={twMerge(
-                  "border-t border-[var(--color-border-default)]",
+                  "border-t border-[var(--color-border-default)] text-[var(--color-text-primary)]",
                   footerClassName,
                 )}
               >
@@ -379,7 +380,7 @@ export const DataTable = <T,>({
                       key={index}
                       className={twMerge(
                         cellPadding,
-                        "text-sm font-semibold text-[var(--color-text-primary)]",
+                        "text-sm font-semibold",
                         footerBgClasses || "bg-[var(--color-bg-secondary)]",
                         getAlignmentClass(column.align, column.type),
                         footerCellClassName,
