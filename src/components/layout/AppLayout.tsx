@@ -135,7 +135,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   // Clases base del layout
   const layoutClasses = `
-    flex flex-col w-full
+    flex flex-col w-full h-screen overflow-hidden
     font-[var(--font-default)]
     ${className}
   `;
@@ -186,7 +186,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const mainClasses = `flex flex-1 overflow-hidden transition-all duration-100 ease-in`;
 
   // Style for main content with dynamic navbar height padding
-  const mainStyle =
+  // No padding here anymore, it's handled by individual elements
+  const mainStyle = {};
+
+  // Style for the main content area (actual scrollable area)
+  // When fullWidthNavbar is true, we need top padding to avoid being covered by fixed navbar
+  const contentStyle =
     fullWidthNavbar && shouldShowNavbar && isNavbarVisible
       ? { paddingTop: navbarHeight }
       : {};
@@ -197,16 +202,30 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     ${leftDrawerWidth ? "" : "w-64"} bg-[var(--color-bg-default)]
     flex-shrink-0 flex flex-col
     transition-all duration-100 ease-in
-    ${
-      fullWidthNavbar && shouldShowNavbar && isNavbarVisible ? "pt-4" : "h-full"
-    }
     ${leftDrawerClassName}
   `
     .trim()
     .replace(/\s+/g, " ");
 
-  // Style for left drawer with dynamic width
-  const leftDrawerStyle = leftDrawerWidth ? { width: leftDrawerWidth } : {};
+  // Style for left drawer with dynamic height and positioning
+  const leftDrawerStyle: React.CSSProperties = {
+    ...(leftDrawerWidth ? { width: leftDrawerWidth } : {}),
+    height: "100%", // Siempre 100% para evitar huecos en la parte superior
+  };
+
+  if (fullWidthNavbar) {
+    // Si el navbar es fullwidth, el drawer mide 100% y usamos padding para que el contenido
+    // no quede debajo del navbar fixed.
+    leftDrawerStyle.paddingTop =
+      shouldShowNavbar && isNavbarVisible ? navbarHeight : "0px";
+    leftDrawerStyle.transition = "padding-top 100ms ease-in";
+  } else {
+    // Si no es fullwidth, el drawer está al lado del navbar.
+    // No necesitamos marginTop ni height dinámico porque ya está en un flex-row
+    // y queremos que ocupe siempre todo el alto desde el borde superior.
+    leftDrawerStyle.marginTop = "0px";
+    leftDrawerStyle.transition = "padding-top 100ms ease-in";
+  }
 
   // Clases del contenedor que incluye drawer y contenido (cuando fullWidthNavbar es false)
   const contentWrapperClasses = fullWidthNavbar
@@ -343,7 +362,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             )}
 
             {/* Contenido principal */}
-            <main ref={contentRef} className={contentClasses}>
+            <main
+              ref={contentRef}
+              className={contentClasses}
+              style={contentStyle}
+            >
               {children}
             </main>
           </div>
@@ -429,7 +452,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               )}
 
               {/* Contenido principal */}
-              <main ref={contentRef} className={contentClasses}>
+              <main
+                ref={contentRef}
+                className={contentClasses}
+                style={contentStyle}
+              >
                 {children}
               </main>
             </div>

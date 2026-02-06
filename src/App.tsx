@@ -62,7 +62,7 @@ function App() {
       initialTheme={"light"}
       forceInitialTheme={false}
       initialNavbar={{
-        navBarLeftNode: <></>,
+        navBarLeftNode: <>LEFT NODE</>,
         fullWidthNavbar: false,
         className: "bg-gray-300 pl-0 lg:pl-8",
       }}
