@@ -194,7 +194,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
   const themeResetStyles = useMemo(
     () => buildThemeResetStyles(currentTheme),
-    [currentTheme]
+    [currentTheme],
   );
 
   const value: ThemeContextType = {

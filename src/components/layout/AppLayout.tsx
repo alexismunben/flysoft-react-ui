@@ -135,7 +135,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   // Clases base del layout
   const layoutClasses = `
-    flex flex-col w-full h-screen overflow-hidden
+    flex flex-col w-full ${navbar || leftDrawer ? "h-screen overflow-hidden" : "h-auto"}
     font-[var(--font-default)]
     ${className}
   `;
