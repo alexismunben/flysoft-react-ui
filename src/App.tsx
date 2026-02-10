@@ -61,16 +61,16 @@ function App() {
     <AppLayoutProvider
       initialTheme={"light"}
       forceInitialTheme={false}
-      initialNavbar={{
+      /*initialNavbar={{
         navBarLeftNode: <>LEFT NODE</>,
         fullWidthNavbar: false,
         className: "bg-gray-300 pl-0 lg:pl-8",
-      }}
-      initialLeftDrawer={{
+      }}*/
+      /*initialLeftDrawer={{
         headerNode: <LeftDrawerHeader />,
         contentNode: <DocsMenu />,
         footerNode: <LeftDrawerFooter />,
-      }}
+      }}*/
     >
       <Routes>
         <Route path="/" element={<HomeContent />} />

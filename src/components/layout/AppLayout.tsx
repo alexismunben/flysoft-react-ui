@@ -40,6 +40,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const isTransitioningRef = useRef(false);
   const lastScrollYRef = useRef(0);
 
+  console.log("navbar", navbar);
+  console.log("leftDrawer", leftDrawer);
   // Determinar si hay algún contenido en el drawer izquierdo
   const hasLeftDrawerContent =
     leftDrawerHeader || leftDrawerContent || leftDrawerFooter;
@@ -135,7 +137,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   // Clases base del layout
   const layoutClasses = `
-    flex flex-col w-full ${navbar || leftDrawer ? "h-screen overflow-hidden" : "h-auto"}
+    flex flex-col w-full ${navbar?.navBarLeftNode || navbar?.navBarRightNode || leftDrawer?.contentNode || leftDrawer?.headerNode || leftDrawer?.footerNode ? "h-screen overflow-hidden" : "h-auto"}
     font-[var(--font-default)]
     ${className}
   `;
