@@ -104,7 +104,7 @@ export const Card: React.FC<CardProps> = ({
       {(title || subtitle || headerActions) && (
         <div
           className={twMerge(
-            compact ? "px-4 py-2" : "px-6 pt-4",
+            compact ? "px-4 pt-2" : "px-6 pt-4",
             headerClassName,
           )}
         >
@@ -148,7 +148,7 @@ export const Card: React.FC<CardProps> = ({
       {footer && (
         <div
           className={twMerge(
-            compact ? "px-4 py-2" : "px-6 pb-4",
+            compact ? "px-4 pb-2" : "px-6 pb-4",
             "flex items-center justify-end",
             footerClassName,
           )}

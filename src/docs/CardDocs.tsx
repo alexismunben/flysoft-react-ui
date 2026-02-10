@@ -226,8 +226,8 @@ const CardDocs: React.FC = () => {
                   className="text-sm"
                   style={{ color: "var(--flysoft-text-secondary)" }}
                 >
-                  Esta tarjeta tiene paddings reducidos (px-4 py-2 en
-                  header/footer, px-4 py-4 en contenido).
+                  Esta tarjeta tiene paddings reducidos (px-4 pt-2 en header,
+                  px-4 pb-2 en footer y px-4 py-4 en contenido).
                 </p>
               </Card>
               <Card
