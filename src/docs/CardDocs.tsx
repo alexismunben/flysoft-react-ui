@@ -200,6 +200,60 @@ const CardDocs: React.FC = () => {
               className="text-lg font-semibold mb-4"
               style={{ color: "var(--flysoft-text-primary)" }}
             >
+              Modo Compacto y Clases Personalizadas
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Usa la prop <code>compact</code> para reducir los paddings de la
+              tarjeta. Además, puedes usar las props{" "}
+              <code>headerClassName</code>, <code>contentClassName</code> y{" "}
+              <code>footerClassName</code> para personalizar cada sección.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card
+                title="Card Compacta"
+                subtitle="Diseño denso"
+                compact
+                footer={
+                  <Button size="sm" variant="primary">
+                    Acción
+                  </Button>
+                }
+              >
+                <p
+                  className="text-sm"
+                  style={{ color: "var(--flysoft-text-secondary)" }}
+                >
+                  Esta tarjeta tiene paddings reducidos (px-4 py-2 en
+                  header/footer, px-4 py-4 en contenido).
+                </p>
+              </Card>
+              <Card
+                title="Estilos Personalizados"
+                headerClassName="bg-gray-100 border-b"
+                contentClassName="bg-blue-50/30"
+                footerClassName="bg-gray-50 border-t"
+                footer={
+                  <span className="text-xs text-gray-500">
+                    Footer personalizado
+                  </span>
+                }
+              >
+                <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                  Ejemplo usando clases personalizadas para cada sección de la
+                  tarjeta.
+                </p>
+              </Card>
+            </div>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
               Características
             </h3>
             <div className="space-y-3">
@@ -458,6 +512,111 @@ const CardDocs: React.FC = () => {
                     >
                       Clases CSS adicionales. Las clases de background (bg-*) se
                       aplican automáticamente al background de la card.
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td
+                      className="px-4 py-2 text-sm font-mono"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      headerClassName
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      string
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      No
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Clases CSS adicionales para la sección del header.
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td
+                      className="px-4 py-2 text-sm font-mono"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      contentClassName
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      string
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      No
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Clases CSS adicionales para la sección del contenido.
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td
+                      className="px-4 py-2 text-sm font-mono"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      footerClassName
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      string
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      No
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Clases CSS adicionales para la sección del footer.
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td
+                      className="px-4 py-2 text-sm font-mono"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      compact
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      boolean
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      No
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Si es true, reduce los paddings internos de la tarjeta.
+                      Por defecto es false.
                     </td>
                   </tr>
                 </tbody>

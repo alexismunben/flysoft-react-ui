@@ -17,6 +17,10 @@ export interface CardProps {
    * En resoluciones md e inferiores, siempre se muestran sin importar este valor.
    */
   alwaysDisplayHeaderActions?: boolean;
+  headerClassName?: string;
+  contentClassName?: string;
+  footerClassName?: string;
+  compact?: boolean;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -28,6 +32,10 @@ export const Card: React.FC<CardProps> = ({
   footer,
   variant = "default",
   alwaysDisplayHeaderActions = false,
+  headerClassName = "",
+  contentClassName = "",
+  footerClassName = "",
+  compact = false,
 }) => {
   const variantClasses = {
     default: "border-[var(--color-border-default)]",
@@ -94,7 +102,12 @@ export const Card: React.FC<CardProps> = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       {(title || subtitle || headerActions) && (
-        <div className="px-6 pt-4">
+        <div
+          className={twMerge(
+            compact ? "px-4 py-2" : "px-6 pt-4",
+            headerClassName,
+          )}
+        >
           <div className="flex items-center justify-between">
             <div>
               {title && (
@@ -122,9 +135,26 @@ export const Card: React.FC<CardProps> = ({
         </div>
       )}
 
-      {children && <div className="px-6 py-4">{children}</div>}
+      {children && (
+        <div
+          className={twMerge(
+            compact ? "px-4 py-4" : "px-6 py-4",
+            contentClassName,
+          )}
+        >
+          {children}
+        </div>
+      )}
       {footer && (
-        <div className="px-6 pb-4 flex items-center justify-end">{footer}</div>
+        <div
+          className={twMerge(
+            compact ? "px-4 py-2" : "px-6 pb-4",
+            "flex items-center justify-end",
+            footerClassName,
+          )}
+        >
+          {footer}
+        </div>
       )}
     </div>
   );
