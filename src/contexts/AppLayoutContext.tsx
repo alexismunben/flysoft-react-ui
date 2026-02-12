@@ -33,18 +33,20 @@ export interface AppLayoutContextType extends ThemeContextType {
   // Layout state
   navbar: NavbarInterface | undefined;
   leftDrawer: LeftDrawerInterface | undefined;
+  contentFooter: ReactNode | undefined;
   className: string;
 
   // Layout setters
   setNavbar: Dispatch<SetStateAction<NavbarInterface | undefined>>;
   setLeftDrawer: Dispatch<SetStateAction<LeftDrawerInterface | undefined>>;
+  setContentFooter: (node: ReactNode | undefined) => void;
   setClassName: (className: string) => void;
   setNavBarLeftNode: (node: string | ReactNode | undefined) => void;
   setNavbarRightNode: (node: string | ReactNode | undefined) => void;
 }
 
 const AppLayoutContext = createContext<AppLayoutContextType | undefined>(
-  undefined
+  undefined,
 );
 
 interface AppLayoutProviderProps {
@@ -56,6 +58,7 @@ interface AppLayoutProviderProps {
   // Layout initial props
   initialNavbar?: NavbarInterface;
   initialLeftDrawer?: LeftDrawerInterface;
+  initialContentFooter?: ReactNode;
   className?: string;
 }
 
@@ -64,8 +67,15 @@ const AppLayoutProviderInner: React.FC<{
   children: ReactNode;
   initialNavbar?: NavbarInterface;
   initialLeftDrawer?: LeftDrawerInterface;
+  initialContentFooter?: ReactNode;
   initialClassName?: string;
-}> = ({ children, initialNavbar, initialLeftDrawer, initialClassName }) => {
+}> = ({
+  children,
+  initialNavbar,
+  initialLeftDrawer,
+  initialContentFooter,
+  initialClassName,
+}) => {
   // Get theme context
   const themeContext = useTheme();
 
@@ -78,7 +88,10 @@ const AppLayoutProviderInner: React.FC<{
     return defaultNavbar;
   });
   const [leftDrawer, setLeftDrawer] = useState<LeftDrawerInterface | undefined>(
-    initialLeftDrawer || {}
+    initialLeftDrawer || {},
+  );
+  const [contentFooter, setContentFooter] = useState<ReactNode | undefined>(
+    initialContentFooter,
   );
   const [className, setClassName] = useState<string>(initialClassName || "");
 
@@ -88,11 +101,11 @@ const AppLayoutProviderInner: React.FC<{
       newNavbar:
         | NavbarInterface
         | undefined
-        | ((prev: NavbarInterface | undefined) => NavbarInterface | undefined)
+        | ((prev: NavbarInterface | undefined) => NavbarInterface | undefined),
     ) => {
       setNavbar(newNavbar);
     },
-    []
+    [],
   );
 
   const handleSetLeftDrawer = useCallback(
@@ -101,16 +114,20 @@ const AppLayoutProviderInner: React.FC<{
         | LeftDrawerInterface
         | undefined
         | ((
-            prev: LeftDrawerInterface | undefined
-          ) => LeftDrawerInterface | undefined)
+            prev: LeftDrawerInterface | undefined,
+          ) => LeftDrawerInterface | undefined),
     ) => {
       setLeftDrawer(newLeftDrawer);
     },
-    []
+    [],
   );
 
   const handleSetClassName = useCallback((newClassName: string) => {
     setClassName(newClassName);
+  }, []);
+
+  const handleSetContentFooter = useCallback((node: ReactNode | undefined) => {
+    setContentFooter(node);
   }, []);
 
   // Setters para actualizar solo los nodos del navbar
@@ -131,7 +148,7 @@ const AppLayoutProviderInner: React.FC<{
         };
       });
     },
-    []
+    [],
   );
 
   const handleSetNavbarRightNode = useCallback(
@@ -151,7 +168,7 @@ const AppLayoutProviderInner: React.FC<{
         };
       });
     },
-    []
+    [],
   );
 
   const value: AppLayoutContextType = {
@@ -160,10 +177,12 @@ const AppLayoutProviderInner: React.FC<{
     // Layout state
     navbar,
     leftDrawer,
+    contentFooter,
     className,
     // Layout setters
     setNavbar: handleSetNavbar,
     setLeftDrawer: handleSetLeftDrawer,
+    setContentFooter: handleSetContentFooter,
     setClassName: handleSetClassName,
     setNavBarLeftNode: handleSetNavBarLeftNode,
     setNavbarRightNode: handleSetNavbarRightNode,
@@ -171,7 +190,12 @@ const AppLayoutProviderInner: React.FC<{
 
   return (
     <AppLayoutContext.Provider value={value}>
-      <AppLayout navbar={navbar} leftDrawer={leftDrawer} className={className}>
+      <AppLayout
+        navbar={navbar}
+        leftDrawer={leftDrawer}
+        contentFooter={contentFooter}
+        className={className}
+      >
         {children}
       </AppLayout>
     </AppLayoutContext.Provider>
@@ -185,6 +209,7 @@ export const AppLayoutProvider: React.FC<AppLayoutProviderProps> = ({
   forceInitialTheme = false,
   initialNavbar,
   initialLeftDrawer,
+  initialContentFooter,
   className = "",
 }) => {
   return (
@@ -197,6 +222,7 @@ export const AppLayoutProvider: React.FC<AppLayoutProviderProps> = ({
         <AppLayoutProviderInner
           initialNavbar={initialNavbar}
           initialLeftDrawer={initialLeftDrawer}
+          initialContentFooter={initialContentFooter}
           initialClassName={className}
         >
           {children}

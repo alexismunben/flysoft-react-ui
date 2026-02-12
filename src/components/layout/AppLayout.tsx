@@ -10,6 +10,7 @@ import type {
 export interface AppLayoutProps {
   navbar?: NavbarInterface;
   leftDrawer?: LeftDrawerInterface;
+  contentFooter?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
 }
@@ -17,6 +18,7 @@ export interface AppLayoutProps {
 export const AppLayout: React.FC<AppLayoutProps> = ({
   navbar,
   leftDrawer,
+  contentFooter,
   children,
   className = "",
 }) => {
@@ -261,7 +263,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   `;
 
   const contentClasses = `
-    flex-1 overflow-y-auto px-2 pb-4 lg:px-6 pt-4
+    flex-1 overflow-y-auto flex flex-col
   `;
 
   // Clases del overlay móvil
@@ -369,7 +371,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               className={contentClasses}
               style={contentStyle}
             >
-              {children}
+              <div className="flex-1">{children}</div>
+              {contentFooter && <div role="contentinfo">{contentFooter}</div>}
             </main>
           </div>
         </>
@@ -459,7 +462,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 className={contentClasses}
                 style={contentStyle}
               >
-                {children}
+                <div className="flex-1">{children}</div>
+                {contentFooter && <div role="contentinfo">{contentFooter}</div>}
               </main>
             </div>
           </div>

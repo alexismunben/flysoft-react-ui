@@ -78,6 +78,7 @@ export interface Theme {
 export interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme | string) => void;
+  updateTheme: (updates: Partial<Theme> | ((prev: Theme) => Theme)) => void;
   currentThemeName: string;
   availableThemes: string[];
   resetToDefault: () => void;

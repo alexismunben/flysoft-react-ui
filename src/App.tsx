@@ -71,11 +71,16 @@ function App() {
         contentNode: <DocsMenu />,
         footerNode: <LeftDrawerFooter />,
       }}
+      initialContentFooter={
+        <div className="bg-gray-300 text-white">Footer</div>
+      }
     >
-      <Routes>
-        <Route path="/" element={<HomeContent />} />
-        <Route path="/docs/*" element={<DocsRouter />} />
-      </Routes>
+      <div className="p-4">
+        <Routes>
+          <Route path="/" element={<HomeContent />} />
+          <Route path="/docs/*" element={<DocsRouter />} />
+        </Routes>
+      </div>
     </AppLayoutProvider>
   );
 }

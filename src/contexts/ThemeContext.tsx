@@ -55,6 +55,7 @@ interface ThemeProviderProps {
   initialTheme?: string | Theme;
   storageKey?: string;
   forceInitialTheme?: boolean; // Nueva prop para forzar el tema inicial
+  onThemeChange?: (theme: Theme) => void; // Callback para persistencia externa
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
@@ -62,6 +63,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   initialTheme = "light",
   storageKey = "flysoft-theme",
   forceInitialTheme = false,
+  onThemeChange,
 }) => {
   // Almacenar el tema inicial para poder resetear a él
   const getInitialTheme = (): Theme => {
@@ -175,8 +177,39 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
       localStorage.setItem(storageKey, JSON.stringify(newTheme));
     }
 
+    // Trigger external callback
+    onThemeChange?.(newTheme);
+
     // Apply to CSS
     applyThemeToCSS(newTheme);
+  };
+
+  // Function to update theme partially
+  const updateTheme = (updates: Partial<Theme> | ((prev: Theme) => Theme)) => {
+    setCurrentTheme((prev) => {
+      const newTheme =
+        typeof updates === "function"
+          ? updates(prev)
+          : {
+              ...prev,
+              ...updates,
+              colors: { ...prev.colors, ...updates.colors },
+              shadows: { ...prev.shadows, ...updates.shadows },
+              radius: { ...prev.radius, ...updates.radius },
+              spacing: { ...prev.spacing, ...updates.spacing },
+              fonts: { ...prev.fonts, ...updates.fonts },
+            };
+
+      // Save to localStorage
+      if (typeof window !== "undefined") {
+        localStorage.setItem(storageKey, JSON.stringify(newTheme));
+      }
+
+      // Trigger external callback
+      onThemeChange?.(newTheme);
+
+      return newTheme;
+    });
   };
 
   // Function to reset to initial theme (the one passed as initialTheme prop)
@@ -200,6 +233,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   const value: ThemeContextType = {
     theme: currentTheme,
     setTheme,
+    updateTheme,
     currentThemeName,
     availableThemes: Object.keys(themes),
     resetToDefault,
