@@ -316,6 +316,53 @@ const DropdownMenuDocs: React.FC = () => {
               className="text-lg font-semibold mb-4"
               style={{ color: "var(--flysoft-text-primary)" }}
             >
+              Abrir al pasar el mouse (openOnHover)
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Con la prop <code>openOnHover</code> establecida en{" "}
+              <code>true</code>, el menú se abrirá automáticamente al pasar el
+              mouse sobre el trigger, sin necesidad de hacer clic. Incluye un
+              pequeño retraso al salir para evitar cierres accidentales al
+              moverse hacia el menú.
+            </p>
+            <div className="space-y-4">
+              <div className="flex items-center gap-8 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <DropdownMenu<BasicOption>
+                    options={basicOptions}
+                    onOptionSelected={(item) => setSelectedItem(item)}
+                    openOnHover={true}
+                  />
+                  <span className="text-sm text-[var(--flysoft-text-secondary)]">
+                    Pasa el mouse aquí
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <DropdownMenu<BasicOption>
+                    options={basicOptions}
+                    onOptionSelected={(item) => setSelectedItem(item)}
+                    openOnHover={true}
+                    renderNode={
+                      <Button variant="outline">Menú con Hover</Button>
+                    }
+                  />
+                  <span className="text-sm text-[var(--flysoft-text-secondary)]">
+                    O aquí
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
               Posicionamiento inteligente
             </h3>
             <p
@@ -413,7 +460,7 @@ const DropdownMenuDocs: React.FC = () => {
                             onOptionSelected={(item) => {
                               console.log(
                                 `Acción ${item.action} para usuario:`,
-                                user.name
+                                user.name,
                               );
                             }}
                             renderOption={(item) => (
@@ -698,6 +745,33 @@ const DropdownMenuDocs: React.FC = () => {
                       directamente la opción en lugar del trigger (botón con
                       tres puntos o renderNode). Por defecto es{" "}
                       <code>false</code>.
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td
+                      className="px-4 py-2 text-sm font-mono"
+                      style={{ color: "var(--flysoft-text-primary)" }}
+                    >
+                      openOnHover
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      boolean
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      No
+                    </td>
+                    <td
+                      className="px-4 py-2 text-sm"
+                      style={{ color: "var(--flysoft-text-secondary)" }}
+                    >
+                      Si es <code>true</code>, el menú se abre al pasar el mouse
+                      por encima del trigger. Por defecto es <code>false</code>.
                     </td>
                   </tr>
                 </tbody>

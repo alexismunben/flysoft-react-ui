@@ -14,3 +14,5 @@ export { Snackbar } from "./Snackbar";
 export type { SnackbarProps } from "./Snackbar";
 export { SnackbarContainer } from "./SnackbarContainer";
 export type { SnackbarContainerProps } from "./SnackbarContainer";
+export { Skeleton } from "./Skeleton";
+export type { SkeletonProps } from "./Skeleton";

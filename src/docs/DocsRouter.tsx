@@ -29,6 +29,7 @@ import RadioButtonGroupDocs from "./RadioButtonGroupDocs";
 import MenuDocs from "./MenuDocs";
 import SnackbarDocs from "./SnackbarDocs";
 import AccordionDocs from "./AccordionDocs";
+import SkeletonDocs from "./SkeletonDocs";
 import DocAdmin from "./DocAdmin";
 
 export const DocsRouter: React.FC = () => {
@@ -65,6 +66,7 @@ export const DocsRouter: React.FC = () => {
       <Route path="menu" element={<MenuDocs />} />
       <Route path="snackbar" element={<SnackbarDocs />} />
       <Route path="accordion" element={<AccordionDocs />} />
+      <Route path="skeleton" element={<SkeletonDocs />} />
       <Route path="admin" element={<DocAdmin />} />
     </Routes>
   );

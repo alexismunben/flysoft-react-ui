@@ -1,5 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wdth,wght@0,75..100,400..700;1,75..100,400..700&display=swap");
-@import "tailwindcss";
+
+/* 
+  Tailwind v4 Imports - We exclude Preflight (base) to avoid conflicts 
+  with the consumer's base styles.
+*/
+@import "tailwindcss/theme";
 
 /* Theme CSS Variables - These will be dynamically updated by the theme system */
 :root {
@@ -43,7 +48,7 @@
   --flysoft-info-contrast: #ffffff;
   --flysoft-info-dark: #0891b2;
   --flysoft-info-light: #22d3ee;
-  
+
   /* Accent colors */
   --flysoft-accent: #7c3aed;
   --flysoft-accent-contrast: #ffffff;
@@ -80,10 +85,10 @@
 
   /* Shadow */
   --flysoft-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --flysoft-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
-    0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --flysoft-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --flysoft-shadow-md:
+    0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --flysoft-shadow-lg:
+    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 
   /* Border radius */
   --flysoft-radius-sm: 0.375rem;
@@ -99,7 +104,6 @@
   --flysoft-spacing-xl: 2rem;
 }
 
-/* Legacy CSS variables for backward compatibility */
 @theme {
   --font-default: var(--flysoft-font-default);
   --font-size-default: var(--flysoft-font-size-default);
@@ -194,87 +198,94 @@
   --spacing-xl: var(--flysoft-spacing-xl);
 }
 
-/* Theme-specific styles */
-[data-theme="dark"] {
-  /* Dark theme overrides can be added here if needed */
-}
+/* 
+  Flysoft Layer - Encapsulates all library styles to prevent specificity 
+  conflicts with consuming projects.
+*/
+@layer flysoft {
+  @import "tailwindcss/utilities";
 
-[data-theme="blue"] {
-  /* Blue theme overrides can be added here if needed */
-}
-
-[data-theme="green"] {
-  /* Green theme overrides can be added here if needed */
-}
-
-
-html {
-  background-color: var(--flysoft-gray-50);
-}
-
-/* Custom component styles */
-@layer components {
-
-  /* Button focus states */
-  .btn:focus {
-    @apply outline-none ring-2 ring-offset-2;
-    ring-color: var(--flysoft-primary);
+  /* Theme-specific styles */
+  [data-theme="dark"] {
+    /* Dark theme overrides */
   }
 
-  .flysoft-button-ripple {
-    transform: translate(-50%, -50%) scale(0);
-    pointer-events: none;
-    will-change: transform, opacity;
-    animation: flysoft-button-ripple 600ms ease-out;
+  [data-theme="blue"] {
+    /* Blue theme overrides */
   }
 
-  /* Reset fontStretch for buttons inside DataTable */
-  table button {
-    font-stretch: normal;
+  [data-theme="green"] {
+    /* Green theme overrides */
   }
 
-  /* Input focus states */
-  .input:focus {
-    @apply outline-none ring-2 ring-offset-2;
-    ring-color: var(--flysoft-primary);
+  /* Custom component styles */
+  @layer components {
+    /* Button focus states */
+    .btn:focus {
+      @apply outline-none ring-2 ring-offset-2;
+      ring-color: var(--flysoft-primary);
+    }
+
+    .flysoft-button-ripple {
+      transform: translate(-50%, -50%) scale(0);
+      pointer-events: none;
+      will-change: transform, opacity;
+      animation: flysoft-button-ripple 600ms ease-out;
+    }
+
+    /* Reset fontStretch for buttons inside DataTable */
+    table button {
+      font-stretch: normal;
+    }
+
+    /* Input focus states */
+    .input:focus {
+      @apply outline-none ring-2 ring-offset-2;
+      ring-color: var(--flysoft-primary);
+    }
+
+    /* Card hover effects */
+    .card-hover:hover {
+      @apply transition-shadow duration-200;
+      box-shadow: var(--flysoft-shadow-lg);
+    }
+
+    /* Scrollbar hide utility */
+    .scrollbar-hide {
+      /* Firefox */
+      scrollbar-width: none;
+      /* Safari and Chrome */
+      -ms-overflow-style: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
   }
 
-  /* Card hover effects */
-  .card-hover:hover {
-    @apply transition-shadow duration-200;
-    box-shadow: var(--flysoft-shadow-lg);
+  /* Animations are also part of the library layer */
+  @keyframes flysoft-button-ripple {
+    100% {
+      transform: translate(-50%, -50%) scale(1.4);
+      opacity: 0;
+    }
   }
 
-  /* Scrollbar hide utility */
-  .scrollbar-hide {
-    /* Firefox */
-    scrollbar-width: none;
-    /* Safari and Chrome */
-    -ms-overflow-style: none;
-  }
-
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-}
-
-@keyframes flysoft-button-ripple {
-  100% {
-    transform: translate(-50%, -50%) scale(1.4);
-    opacity: 0;
-  }
-}
-
-@keyframes l16 {
-  0% {
-    background-position: -150% 0, -150% 0;
-  }
-
-  66% {
-    background-position: 250% 0, -150% 0;
-  }
-
-  100% {
-    background-position: 250% 0, 250% 0;
+  @keyframes l16 {
+    0% {
+      background-position:
+        -150% 0,
+        -150% 0;
+    }
+    66% {
+      background-position:
+        250% 0,
+        -150% 0;
+    }
+    100% {
+      background-position:
+        250% 0,
+        250% 0;
+    }
   }
 }

@@ -232,6 +232,15 @@ export const DocsMenu = () => {
             Loader
           </LinkButton>
           <LinkButton
+            to="/docs/skeleton"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            Skeleton
+          </LinkButton>
+          <LinkButton
             to="/docs/snackbar"
             variant="ghost"
             size="sm"

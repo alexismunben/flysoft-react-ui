@@ -25,6 +25,11 @@ export interface DropdownMenuProps<T = { label: string }> {
    * Por defecto es false.
    */
   replaceOnSingleOption?: boolean;
+  /**
+   * Si es true, el menú se abre al pasar el mouse por encima.
+   * Por defecto es false.
+   */
+  openOnHover?: boolean;
 }
 
 export const DropdownMenu = <T = { label: string },>({
@@ -34,12 +39,14 @@ export const DropdownMenu = <T = { label: string },>({
   getOptionLabel,
   renderOption,
   replaceOnSingleOption = false,
+  openOnHover = false,
 }: DropdownMenuProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState<"top" | "bottom">("bottom");
   const [scrollUpdate, setScrollUpdate] = useState(0);
   const triggerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const hoverTimeoutRef = useRef<number | null>(null);
 
   // Calcular posición del menú
   const calculatePosition = useCallback(() => {
@@ -128,17 +135,42 @@ export const DropdownMenu = <T = { label: string },>({
     };
   }, [isOpen]);
 
+  // Limpiar timeout al desmontar
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        window.clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const labelGetter = useCallback(
     (item: T): string => {
       if (getOptionLabel) return getOptionLabel(item);
       const anyItem = item as unknown as { label?: string };
       return (anyItem.label ?? "").toString();
     },
-    [getOptionLabel]
+    [getOptionLabel],
   );
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleMouseEnter = () => {
+    if (!openOnHover) return;
+    if (hoverTimeoutRef.current) {
+      window.clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (!openOnHover) return;
+    hoverTimeoutRef.current = window.setTimeout(() => {
+      setIsOpen(false);
+    }, 150); // Pequeño delay para permitir mover el mouse al menú
   };
 
   const handleOptionClick = (item: T) => {
@@ -205,7 +237,12 @@ export const DropdownMenu = <T = { label: string },>({
   }
 
   return (
-    <div className="relative inline-block" ref={triggerRef}>
+    <div
+      className="relative inline-block"
+      ref={triggerRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* Trigger */}
       <div onClick={handleToggle} className="cursor-pointer">
         {renderNode ? (
@@ -219,33 +256,35 @@ export const DropdownMenu = <T = { label: string },>({
       {isOpen &&
         (typeof document !== "undefined" && document.body
           ? createPortal(
-            <div
-              ref={menuRef}
-              className="fixed z-[2000] bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-lg)] py-1 min-w-[160px] font-[var(--font-default)]"
-              style={menuStyles}
-            >
-              {options.map((option, index) => {
-                const key = String(
-                  (option as unknown as { id?: string | number })?.id ??
-                  labelGetter(option) ??
-                  index
-                );
+              <div
+                ref={menuRef}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                className="fixed z-[2000] bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-lg)] py-1 min-w-[160px] font-[var(--font-default)]"
+                style={menuStyles}
+              >
+                {options.map((option, index) => {
+                  const key = String(
+                    (option as unknown as { id?: string | number })?.id ??
+                      labelGetter(option) ??
+                      index,
+                  );
 
-                return (
-                  <div
-                    key={key}
-                    onClick={() => handleOptionClick(option)}
-                    className="px-4 py-2 text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] cursor-pointer transition-colors flex items-center"
-                  >
-                    {renderOption
-                      ? renderOption(option)
-                      : labelGetter(option)}
-                  </div>
-                );
-              })}
-            </div>,
-            document.body
-          )
+                  return (
+                    <div
+                      key={key}
+                      onClick={() => handleOptionClick(option)}
+                      className="px-4 py-2 text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] cursor-pointer transition-colors flex items-center"
+                    >
+                      {renderOption
+                        ? renderOption(option)
+                        : labelGetter(option)}
+                    </div>
+                  );
+                })}
+              </div>,
+              document.body,
+            )
           : null)}
     </div>
   );

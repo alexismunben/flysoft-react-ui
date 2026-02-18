@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Loader, Button, Input } from "../index";
+import { Card, Loader, Button, Input, Skeleton } from "../index";
 
 const LoaderDocs: React.FC = () => {
   const [isLoading1, setIsLoading1] = useState(false);
@@ -14,16 +14,16 @@ const LoaderDocs: React.FC = () => {
     <Card title="Cargando contenido...">
       <div className="space-y-4">
         <div className="space-y-2">
-          <div className="h-4 bg-[var(--color-bg-secondary)] rounded animate-pulse w-3/4" />
-          <div className="h-4 bg-[var(--color-bg-secondary)] rounded animate-pulse w-full" />
-          <div className="h-4 bg-[var(--color-bg-secondary)] rounded animate-pulse w-5/6" />
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
         </div>
         <div className="grid grid-cols-3 gap-4">
-          <div className="h-20 bg-[var(--color-bg-secondary)] rounded animate-pulse" />
-          <div className="h-20 bg-[var(--color-bg-secondary)] rounded animate-pulse" />
-          <div className="h-20 bg-[var(--color-bg-secondary)] rounded animate-pulse" />
+          <Skeleton className="h-20" />
+          <Skeleton className="h-20" />
+          <Skeleton className="h-20" />
         </div>
-        <div className="h-10 bg-[var(--color-bg-secondary)] rounded animate-pulse w-1/3" />
+        <Skeleton className="h-10 w-1/3" />
       </div>
     </Card>
   );
