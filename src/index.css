@@ -77,6 +77,7 @@
   --flysoft-bg-default: #ffffff;
   --flysoft-bg-secondary: var(--flysoft-gray50);
   --flysoft-bg-disabled: var(--flysoft-gray100);
+  --flysoft-bg-hover: var(--flysoft-gray100);
 
   /* Text colors */
   --flysoft-text-primary: var(--flysoft-gray900);
@@ -90,6 +91,8 @@
     0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --flysoft-shadow-lg:
     0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --flysoft-shadow-xl:
+    0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
   /* Border radius */
   --flysoft-radius-sm: 0.375rem;
@@ -173,6 +176,7 @@
   --color-bg-default: var(--flysoft-bg-default);
   --color-bg-secondary: var(--flysoft-bg-secondary);
   --color-bg-disabled: var(--flysoft-bg-disabled);
+  --color-bg-hover: var(--flysoft-bg-hover);
 
   /* Text colors */
   --color-text-primary: var(--flysoft-text-primary);
@@ -184,6 +188,7 @@
   --shadow-sm: var(--flysoft-shadow-sm);
   --shadow-md: var(--flysoft-shadow-md);
   --shadow-lg: var(--flysoft-shadow-lg);
+  --shadow-xl: var(--flysoft-shadow-xl);
 
   /* Border radius */
   --radius-sm: var(--flysoft-radius-sm);

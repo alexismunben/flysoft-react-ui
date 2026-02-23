@@ -8,6 +8,7 @@ export interface DialogProps {
   footer?: React.ReactNode;
   onClose?: () => void;
   closeOnOverlayClick?: boolean;
+  compact?: boolean;
 }
 
 export const Dialog: React.FC<DialogProps> = ({
@@ -17,6 +18,7 @@ export const Dialog: React.FC<DialogProps> = ({
   footer,
   onClose,
   closeOnOverlayClick = false,
+  compact = false,
 }) => {
   // Prevenir scroll del body cuando el dialog está abierto
   useEffect(() => {
@@ -78,7 +80,9 @@ export const Dialog: React.FC<DialogProps> = ({
         style={{ overflow: "visible" }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border-default)] flex-shrink-0">
+        <div
+          className={`flex items-center justify-between ${compact ? "px-4 py-2" : "px-6 py-4"} border-b border-[var(--color-border-default)] flex-shrink-0`}
+        >
           <h2
             id="dialog-title"
             className="text-lg font-semibold text-[var(--color-text-primary)]"
@@ -88,7 +92,7 @@ export const Dialog: React.FC<DialogProps> = ({
           {onClose && (
             <button
               onClick={onClose}
-              className="ml-4 p-1 rounded-md text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] transition-colors cursor-pointer"
+              className="ml-4 p-1 rounded-md flysoft-button-reset bg-transparent border-none text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] transition-colors cursor-pointer"
               aria-label="Cerrar dialog"
             >
               <i className={normalizeIconClass("fa-times")} />
@@ -98,11 +102,11 @@ export const Dialog: React.FC<DialogProps> = ({
 
         {/* Body */}
         <div
-          className="px-6 py-4 flex-1 text-[var(--color-text-primary)] min-w-0"
+          className={`${compact ? "px-4 py-3" : "px-6 py-4"} flex-1 text-[var(--color-text-primary)] min-w-0`}
           style={{
             overflowY: "auto",
             overflowX: "visible",
-            maxHeight: "calc(90vh - 200px)"
+            maxHeight: "calc(90vh - 200px)",
           }}
         >
           {children}
@@ -110,7 +114,9 @@ export const Dialog: React.FC<DialogProps> = ({
 
         {/* Footer */}
         {footer && (
-          <div className="px-6 py-4 border-t border-[var(--color-border-default)] flex items-center justify-end gap-2 flex-shrink-0 flex-wrap">
+          <div
+            className={`${compact ? "px-4 py-2" : "px-6 py-4"} border-t border-[var(--color-border-default)] flex items-center justify-end gap-2 flex-shrink-0 flex-wrap`}
+          >
             {footer}
           </div>
         )}

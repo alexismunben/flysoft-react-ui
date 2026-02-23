@@ -7,6 +7,7 @@ const DialogDocs: React.FC = () => {
   const [isOpenConfirm, setIsOpenConfirm] = useState(false);
   const [isOpenNoOverlay, setIsOpenNoOverlay] = useState(false);
   const [isOpenCustom, setIsOpenCustom] = useState(false);
+  const [isOpenCompact, setIsOpenCompact] = useState(false);
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
@@ -25,7 +26,8 @@ const DialogDocs: React.FC = () => {
             >
               El componente Dialog muestra un modal centrado con overlay. Se
               controla mediante la prop <code>isOpen</code> y se cierra con{" "}
-              <code>onClose</code>. El contenido se pasa como <code>children</code>.
+              <code>onClose</code>. El contenido se pasa como{" "}
+              <code>children</code>.
             </p>
             <div className="space-y-4">
               <Button
@@ -62,9 +64,73 @@ const DialogDocs: React.FC = () => {
                     cualquier contenido como <code>children</code>.
                   </p>
                   <p style={{ color: "var(--flysoft-text-secondary)" }}>
-                    El dialog se puede cerrar haciendo clic en el overlay, en
-                    el botón de cerrar (X), o presionando la tecla Escape.
+                    El dialog se puede cerrar haciendo clic en el overlay, en el
+                    botón de cerrar (X), o presionando la tecla Escape.
                   </p>
+                </div>
+              </Dialog>
+            </div>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Modo Compacto
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              El prop <code>compact</code> reduce los paddings del header, body
+              y footer, permitiendo mostrar más contenido en menos espacio.
+              Ideal para formularios densos.
+            </p>
+            <div className="space-y-4">
+              <Button
+                variant="primary"
+                icon="fa-compress-alt"
+                onClick={() => setIsOpenCompact(true)}
+              >
+                Abrir Dialog Compacto
+              </Button>
+              <Dialog
+                isOpen={isOpenCompact}
+                compact={true}
+                title="Dialog Modo Compacto"
+                footer={
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsOpenCompact(false)}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      variant="primary"
+                      onClick={() => setIsOpenCompact(false)}
+                    >
+                      Aceptar
+                    </Button>
+                  </>
+                }
+                onClose={() => setIsOpenCompact(false)}
+              >
+                <div className="space-y-3">
+                  <p
+                    className="text-sm"
+                    style={{ color: "var(--flysoft-text-secondary)" }}
+                  >
+                    Este es un ejemplo de dialog en modo compacto. El padding
+                    interno es reducido para optimizar el espacio.
+                  </p>
+                  <div className="p-3 bg-gray-50 border border-gray-200 rounded">
+                    <p className="text-xs text-gray-500 italic">
+                      Este modo es ideal para modales que contienen formularios
+                      complejos o tablas.
+                    </p>
+                  </div>
                 </div>
               </Dialog>
             </div>
@@ -348,8 +414,9 @@ const DialogDocs: React.FC = () => {
                   style={{ color: "var(--flysoft-text-secondary)" }}
                 >
                   <li>
-                    <strong>Overlay con blur:</strong> El overlay tiene un efecto
-                    de desenfoque (backdrop-blur) para mejor enfoque visual
+                    <strong>Overlay con blur:</strong> El overlay tiene un
+                    efecto de desenfoque (backdrop-blur) para mejor enfoque
+                    visual
                   </li>
                   <li>
                     <strong>Cierre múltiple:</strong> Se puede cerrar haciendo
@@ -372,6 +439,11 @@ const DialogDocs: React.FC = () => {
                     <strong>Contenido flexible:</strong> El body tiene scroll
                     automático si el contenido es muy largo
                   </li>
+                  <li>
+                    <strong>Modo Compacto:</strong> Soporte para paddings
+                    reducidos mediante la prop <code>compact</code>, ideal para
+                    interfaces de alta densidad
+                  </li>
                 </ul>
               </div>
             </div>
@@ -383,4 +455,3 @@ const DialogDocs: React.FC = () => {
 };
 
 export default DialogDocs;
-
