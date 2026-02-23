@@ -1,8 +1,10 @@
 import React from "react";
 import { normalizeIconClass } from "../utils/iconUtils";
 
-export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+export interface InputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "size"
+> {
   label?: string;
   error?: string;
   icon?: string;
@@ -34,84 +36,85 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       readOnly = false,
       ...props
     },
-    ref
+    ref,
   ) => {
-  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+    const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
-  const baseClasses = `
+    const baseClasses = `
     w-full border rounded-lg transition-colors focus:outline-none
     disabled:opacity-50 disabled:cursor-not-allowed
     font-[var(--font-default)] text-[var(--color-text-primary)]
+    flysoft-input-reset
   `;
 
-  const readOnlyClasses = readOnly
-    ? `border-transparent bg-transparent focus:ring-0`
-    : `focus:ring-1 bg-[var(--color-bg-default)]`;
+    const readOnlyClasses = readOnly
+      ? `border-transparent bg-transparent focus:ring-0`
+      : `focus:ring-1 bg-[var(--color-bg-default)]`;
 
-  const sizeClasses = {
-    sm: "px-3 py-1.5 text-sm",
-    md: "px-4 py-2 text-base",
-    lg: "px-6 py-3 text-lg",
-  };
+    const sizeClasses = {
+      sm: "px-3 py-1.5 text-sm",
+      md: "px-4 py-2 text-base",
+      lg: "px-6 py-3 text-lg",
+    };
 
-  const stateClasses = readOnly
-    ? ""
-    : error
-    ? `border-[var(--color-border-error)] focus:border-[var(--color-border-error)] focus:ring-[var(--color-border-error)]`
-    : `border-[var(--color-border-default)] focus:border-[var(--color-border-focus)] focus:ring-[var(--color-border-focus)]`;
+    const stateClasses = readOnly
+      ? ""
+      : error
+        ? `border-[var(--color-border-error)] focus:border-[var(--color-border-error)] focus:ring-[var(--color-border-error)]`
+        : `border-[var(--color-border-default)] focus:border-[var(--color-border-focus)] focus:ring-[var(--color-border-focus)]`;
 
-  const inputClasses = `${baseClasses} ${readOnlyClasses} ${sizeClasses[size]} ${stateClasses} ${className}`;
+    const inputClasses = `${baseClasses} ${readOnlyClasses} ${sizeClasses[size]} ${stateClasses} ${className}`;
 
-  const iconClasses =
-    size === "sm" ? "w-4 h-4" : size === "md" ? "w-5 h-5" : "w-6 h-6";
+    const iconClasses =
+      size === "sm" ? "w-4 h-4" : size === "md" ? "w-5 h-5" : "w-6 h-6";
 
-  const renderIcon = () => {
-    if (!icon) return null;
+    const renderIcon = () => {
+      if (!icon) return null;
 
-    const iconElement = (
-      <i
-        className={`${normalizeIconClass(icon)} ${iconClasses} text-[var(--color-text-muted)] absolute top-1/2 transform -translate-y-1/2 ${
-          iconPosition === "left" ? "left-3" : "right-3"
-        } ${onIconClick && !readOnly ? "cursor-pointer hover:text-[var(--color-primary)] transition-colors" : ""}`}
-        onClick={readOnly ? undefined : onIconClick}
-      />
-    );
-
-    return iconElement;
-  };
-
-  return (
-    <div className="w-full">
-      {label && (
-        <label
-          htmlFor={inputId}
-          className="block text-sm text-[var(--color-primary)] mb-1 font-[var(--font-default)]"
-        >
-          {label}
-        </label>
-      )}
-      <div className="relative">
-        {icon && iconPosition === "left" && renderIcon()}
-        <input
-          ref={ref}
-          id={inputId}
-          className={`${inputClasses} ${
-            icon && iconPosition === "left" ? "pl-10" : ""
-          } ${icon && iconPosition === "right" ? "pr-10" : ""}`}
-          autoComplete="off"
-          readOnly={readOnly}
-          {...props}
+      const iconElement = (
+        <i
+          className={`${normalizeIconClass(icon)} ${iconClasses} text-[var(--color-text-muted)] absolute top-1/2 transform -translate-y-1/2 ${
+            iconPosition === "left" ? "left-3" : "right-3"
+          } ${onIconClick && !readOnly ? "cursor-pointer hover:text-[var(--color-primary)] transition-colors" : ""}`}
+          onClick={readOnly ? undefined : onIconClick}
         />
-        {icon && iconPosition === "right" && renderIcon()}
+      );
+
+      return iconElement;
+    };
+
+    return (
+      <div className="w-full">
+        {label && (
+          <label
+            htmlFor={inputId}
+            className="block text-sm text-[var(--color-primary)] mb-1 font-[var(--font-default)]"
+          >
+            {label}
+          </label>
+        )}
+        <div className="relative">
+          {icon && iconPosition === "left" && renderIcon()}
+          <input
+            ref={ref}
+            id={inputId}
+            className={`${inputClasses} ${
+              icon && iconPosition === "left" ? "pl-10" : ""
+            } ${icon && iconPosition === "right" ? "pr-10" : ""}`}
+            autoComplete="off"
+            readOnly={readOnly}
+            {...props}
+          />
+          {icon && iconPosition === "right" && renderIcon()}
+        </div>
+        {error && (
+          <p className="mt-1 text-sm text-[var(--color-danger)] font-[var(--font-default)]">
+            {error}
+          </p>
+        )}
       </div>
-      {error && (
-        <p className="mt-1 text-sm text-[var(--color-danger)] font-[var(--font-default)]">
-          {error}
-        </p>
-      )}
-    </div>
-  );
-  }
+    );
+  },
 );
 
 Input.displayName = "Input";

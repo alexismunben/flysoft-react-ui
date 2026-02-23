@@ -96,14 +96,14 @@ export const Accordion: React.FC<AccordionProps> = ({
     <div className={`${classes} overflow-hidden`}>
       <button
         onClick={handleToggle}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+        className="w-full flex items-center justify-between px-4 py-3 flysoft-button-reset bg-transparent border-none hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
         aria-expanded={isOpen}
       >
         <div className="flex items-center gap-3 flex-1 min-w-0">
           {icon && (
             <i
               className={`${normalizeIconClass(
-                icon
+                icon,
               )} text-[var(--color-text-secondary)] flex-shrink-0`}
             />
           )}
@@ -122,7 +122,7 @@ export const Accordion: React.FC<AccordionProps> = ({
           )}
           <i
             className={`${normalizeIconClass(
-              `fa-chevron-${isOpen ? "up" : "down"}`
+              `fa-chevron-${isOpen ? "up" : "down"}`,
             )} text-[var(--color-text-secondary)] transition-all duration-200 flex-shrink-0`}
           />
         </div>

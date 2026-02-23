@@ -5,9 +5,10 @@
   with the consumer's base styles.
 */
 @import "tailwindcss/theme";
+@import "tailwindcss/utilities";
 
 /* Theme CSS Variables - These will be dynamically updated by the theme system */
-:root {
+:root {      
   /* Font variables */
   --flysoft-font-default: "Instrument Sans", sans-serif;
   --flysoft-font-size-default: 16px;
@@ -203,8 +204,6 @@
   conflicts with consuming projects.
 */
 @layer flysoft {
-  @import "tailwindcss/utilities";
-
   /* Theme-specific styles */
   [data-theme="dark"] {
     /* Dark theme overrides */
@@ -220,6 +219,28 @@
 
   /* Custom component styles */
   @layer components {
+    /* Base resets for components when Preflight is disabled */
+    .flysoft-button-reset {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-color: transparent;
+      border: none;
+      text-align: inherit;
+      font: inherit;
+      padding: 0;
+      margin: 0;
+    }
+
+    .flysoft-input-reset {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-color: transparent;
+      border: none;
+      outline: none;
+    }
+
     /* Button focus states */
     .btn:focus {
       @apply outline-none ring-2 ring-offset-2;
@@ -262,30 +283,32 @@
       display: none;
     }
   }
+}
 
-  /* Animations are also part of the library layer */
-  @keyframes flysoft-button-ripple {
-    100% {
-      transform: translate(-50%, -50%) scale(1.4);
-      opacity: 0;
-    }
-  }
 
-  @keyframes l16 {
-    0% {
-      background-position:
-        -150% 0,
-        -150% 0;
-    }
-    66% {
-      background-position:
-        250% 0,
-        -150% 0;
-    }
-    100% {
-      background-position:
-        250% 0,
-        250% 0;
-    }
+/* Animations and keyframes */
+@keyframes flysoft-button-ripple {
+  100% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0;
   }
 }
+
+@keyframes l16 {
+  0% {
+    background-position:
+      -150% 0,
+      -150% 0;
+  }
+  66% {
+    background-position:
+      250% 0,
+      -150% 0;
+  }
+  100% {
+    background-position:
+      250% 0,
+      250% 0;
+  }
+}
+

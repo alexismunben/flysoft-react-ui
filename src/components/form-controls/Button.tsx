@@ -32,8 +32,7 @@ const getColorValue = (color?: string): string | undefined => {
   return colorMap[color.toLowerCase()] || color;
 };
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
   color?: "primary" | "secondary" | "success" | "warning" | "danger" | "info";
@@ -75,6 +74,7 @@ export const Button: React.FC<ButtonProps> = ({
     cursor-pointer relative overflow-hidden
     disabled:opacity-50 disabled:cursor-not-allowed
     font-[var(--font-default)]
+    flysoft-button-reset
   `;
 
   // Mapeo de clases para variant primary con color primary (usa Tailwind)
@@ -83,28 +83,38 @@ export const Button: React.FC<ButtonProps> = ({
     if (colorType === "primary") {
       if (variantType === "primary") {
         return `
-          bg-[var(--color-primary)] text-[var(--color-primary-contrast)] 
-          hover:bg-[var(--color-primary-dark)] focus:ring-[var(--color-primary)]
-        `;
-      } else if (variantType === "outline") {
-        return `
-          border border-[var(--color-primary)] text-[var(--color-primary)] 
-          hover:bg-[var(--color-bg-secondary)] focus:ring-[var(--color-primary)]
-        `;
-      } else {
-        return `
-          text-[var(--color-primary)] hover:bg-[var(--color-bg-secondary)] 
-          focus:ring-[var(--color-primary)]
+          bg-primary text-primary-contrast 
+          hover:bg-primary-dark focus:ring-primary
         `;
       }
+      if (variantType === "secondary") {
+        return `
+          bg-primary-light/10 text-primary border border-primary/20
+          hover:bg-primary-light/20 focus:ring-primary
+        `;
+      }
+      if (variantType === "outline") {
+        return `
+          border border-primary text-primary bg-transparent
+          hover:bg-primary hover:text-primary-contrast focus:ring-primary
+        `;
+      }
+      if (variantType === "ghost") {
+        return `
+          text-primary bg-transparent
+          hover:bg-primary/10 focus:ring-primary
+        `;
+      }
+      // Default for primary colorType if variantType not matched
+      return `focus:ring-2 focus:ring-offset-2`;
     }
     // Para otros colores, retornar clases base sin color (se aplicarán con estilos inline)
     if (variantType === "primary") {
       return `focus:ring-2 focus:ring-offset-2`;
     } else if (variantType === "outline") {
-      return `border hover:bg-[var(--color-bg-secondary)] focus:ring-2 focus:ring-offset-2`;
+      return `border bg-transparent hover:bg-[var(--color-bg-secondary)] focus:ring-2 focus:ring-offset-2`;
     } else {
-      return `hover:bg-[var(--color-bg-secondary)] focus:ring-2 focus:ring-offset-2`;
+      return `bg-transparent border-none hover:bg-[var(--color-bg-secondary)] focus:ring-2 focus:ring-offset-2`;
     }
   };
 
@@ -162,20 +172,20 @@ export const Button: React.FC<ButtonProps> = ({
         }),
       }
     : needsInlineStyles
-    ? {
-        ...(variant === "primary" && {
-          backgroundColor: getCSSVariable(`--color-${color}`),
-          color: getCSSVariable(`--color-${color}-contrast`) || "#ffffff",
-        }),
-        ...(variant === "outline" && {
-          borderColor: getCSSVariable(`--color-${color}`),
-          color: getCSSVariable(`--color-${color}`),
-        }),
-        ...(variant === "ghost" && {
-          color: getCSSVariable(`--color-${color}`),
-        }),
-      }
-    : {};
+      ? {
+          ...(variant === "primary" && {
+            backgroundColor: getCSSVariable(`--color-${color}`),
+            color: getCSSVariable(`--color-${color}-contrast`) || "#ffffff",
+          }),
+          ...(variant === "outline" && {
+            borderColor: getCSSVariable(`--color-${color}`),
+            color: getCSSVariable(`--color-${color}`),
+          }),
+          ...(variant === "ghost" && {
+            color: getCSSVariable(`--color-${color}`),
+          }),
+        }
+      : {};
 
   // Función para oscurecer un color (para hover en variant primary con bg personalizado)
   const darkenColor = (color: string, percent: number): string => {
@@ -184,7 +194,7 @@ export const Button: React.FC<ButtonProps> = ({
     const r = Math.max(0, Math.floor((num >> 16) * (1 - percent / 100)));
     const g = Math.max(
       0,
-      Math.floor(((num >> 8) & 0x00ff) * (1 - percent / 100))
+      Math.floor(((num >> 8) & 0x00ff) * (1 - percent / 100)),
     );
     const b = Math.max(0, Math.floor((num & 0x0000ff) * (1 - percent / 100)));
     return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
@@ -219,8 +229,8 @@ export const Button: React.FC<ButtonProps> = ({
       ? "rgba(255, 255, 255, 0.45)"
       : "rgba(0, 0, 0, 0.15)"
     : variant === "primary"
-    ? "rgba(255, 255, 255, 0.45)"
-    : "rgba(0, 0, 0, 0.15)";
+      ? "rgba(255, 255, 255, 0.45)"
+      : "rgba(0, 0, 0, 0.15)";
 
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
     if (!disabled && !loading && buttonRef.current) {
@@ -268,7 +278,7 @@ export const Button: React.FC<ButtonProps> = ({
             e.currentTarget.style.backgroundColor = getColorValue(bg) || bg;
           } else if (needsInlineStyles) {
             e.currentTarget.style.backgroundColor = getCSSVariable(
-              `--color-${color}`
+              `--color-${color}`,
             );
           }
         }
