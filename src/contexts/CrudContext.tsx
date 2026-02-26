@@ -62,7 +62,7 @@ export const CrudContext = createCrudContext<any>();
 export interface PromiseWithOptions<TResult, TParams extends any[] = []> {
   execute: (...params: TParams) => Promise<TResult>;
   successMessage?: string;
-  errorMessage?: string;
+  errorMessage?: string | ((error: any) => string);
 }
 
 interface CrudProviderProps<T> {

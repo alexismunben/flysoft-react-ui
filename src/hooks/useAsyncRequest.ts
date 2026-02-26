@@ -4,7 +4,7 @@ import type { SnackbarVariant } from "../contexts/SnackbarContext";
 
 export interface AsyncRequestOptions {
   successMessage?: string;
-  errorMessage?: string;
+  errorMessage?: string | ((error: any) => string);
   successVariant?: SnackbarVariant;
   errorVariant?: SnackbarVariant;
   onSuccess?: (data: any) => void;
@@ -51,29 +51,13 @@ export function useAsyncRequest(
       } catch (error) {
         console.error("Error en async request:", error);
 
-        // Determinar el mensaje de error:
-        // 1. Si existe errorMessage en las opciones, usarlo
-        // 2. Si no, intentar usar error.message
-        // 3. Si tampoco existe, usar un mensaje genérico
-        let finalErrorMessage: string | undefined;
-
+        // Mostrar snackbar de error solo si existe errorMessage configurado
         if (errorMessage) {
-          finalErrorMessage = errorMessage;
-        } else if (error instanceof Error && error.message) {
-          finalErrorMessage = error.message;
-        } else if (
-          error &&
-          typeof error === "object" &&
-          "message" in error &&
-          typeof error.message === "string"
-        ) {
-          finalErrorMessage = error.message;
-        } else {
-          finalErrorMessage = "Ha ocurrido un error";
-        }
+          const finalErrorMessage =
+            typeof errorMessage === "function"
+              ? errorMessage(error)
+              : errorMessage;
 
-        // Mostrar snackbar de error solo si existe un mensaje de error
-        if (finalErrorMessage) {
           showSnackbar(finalErrorMessage, errorVariant);
         }
 

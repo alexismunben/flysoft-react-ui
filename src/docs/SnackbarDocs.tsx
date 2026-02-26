@@ -499,6 +499,60 @@ const SnackbarExamples: React.FC = () => {
           </Card>
         </div>
       </section>
+
+      <section className="mt-12 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
+        <h3 className="text-xl font-bold mb-4 text-blue-800 dark:text-blue-300">
+          <i className="fa fa-magic mr-2"></i>
+          Automatización con <code>useAsyncRequest</code>
+        </h3>
+        <p className="mb-6 text-blue-700 dark:text-blue-400">
+          El hook <code>useAsyncRequest</code> permite gestionar peticiones
+          asíncronas y mostrar automáticamente snackbars de éxito o error.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card
+            className="bg-white dark:bg-gray-800"
+            title="Configuración de Mensajes"
+          >
+            <div className="space-y-4 text-sm">
+              <p>
+                <strong>successMessage:</strong> Mensaje a mostrar si la promesa
+                se resuelve.
+              </p>
+              <p>
+                <strong>errorMessage:</strong> Puede ser un <code>string</code>{" "}
+                o una <code>función</code> que recibe el error. Si no se envía,
+                no se mostrará feedback de error automáticamente.
+              </p>
+              <div className="bg-gray-100 dark:bg-gray-900 p-3 rounded font-mono text-xs">
+                {`const { execute } = useAsyncRequest({
+  successMessage: "¡Guardado!",
+  // Función para mensajes dinámicos
+  errorMessage: (err) => \`Error: \${err.message}\`,
+});`}
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            className="bg-white dark:bg-gray-800"
+            title="Sin Feedback Automático"
+          >
+            <p className="text-sm mb-4">
+              Si omites <code>errorMessage</code>, el hook no disparará ningún
+              snackbar ante errores, permitiéndote manejar el feedback de forma
+              manual.
+            </p>
+            <div className="bg-gray-100 dark:bg-gray-900 p-3 rounded font-mono text-xs">
+              {`// No mostrará snackbar si falla
+const { execute } = useAsyncRequest({
+  successMessage: "Carga completa"
+});`}
+            </div>
+          </Card>
+        </div>
+      </section>
     </div>
   );
 };
