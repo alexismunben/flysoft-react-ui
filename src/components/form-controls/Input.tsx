@@ -44,7 +44,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     w-full border rounded-lg transition-colors focus:outline-none
     disabled:opacity-50 disabled:cursor-not-allowed
     font-[var(--font-default)] text-[var(--color-text-primary)]
-    flysoft-input-reset
+    flysoft-input-reset box-border
   `;
 
     const readOnlyClasses = readOnly

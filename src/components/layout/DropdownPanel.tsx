@@ -224,6 +224,7 @@ export const DropdownPanel = ({
                 ref={menuRef}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
+                onClick={(e) => e.stopPropagation()}
                 className="fixed z-[2000] bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-lg)] py-1 min-w-[160px] font-[var(--font-default)]"
                 style={menuStyles}
               >

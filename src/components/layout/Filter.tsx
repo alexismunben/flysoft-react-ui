@@ -758,11 +758,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
               <div className="space-y-3">
                 {/* Opciones estáticas si existen */}
                 {staticOptions && staticOptions.length > 0 && (
-                  <ul className="py-1 max-h-60 overflow-auto">
+                  <ul className="py-1 max-h-60 overflow-auto list-none pl-0">
                     {staticOptions.map((option) => (
                       <li
                         key={option.value}
-                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${
+                        className={`px-3 py-2 cursor-pointer flex items-center justify-start text-left gap-2 text-sm rounded transition-colors ${
                           currentValue === option.value
                             ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
                             : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
@@ -781,7 +781,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
                 )}
 
                 {/* Form control */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-start gap-2">
                   <div style={{ width: finalInputWidth }}>
                     <AutocompleteInput
                       ref={autocompleteInputRef}
@@ -849,11 +849,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
               <div className="space-y-3">
                 {/* Opciones estáticas si existen */}
                 {staticOptions && staticOptions.length > 0 && (
-                  <ul className="py-1 max-h-60 overflow-auto">
+                  <ul className="py-1 max-h-60 overflow-auto list-none pl-0">
                     {staticOptions.map((option) => (
                       <li
                         key={option.value}
-                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${
+                        className={`px-3 py-2 cursor-pointer flex items-center justify-start text-left gap-2 text-sm rounded transition-colors ${
                           currentValue === option.value
                             ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
                             : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
@@ -872,7 +872,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
                 )}
 
                 {/* Form control */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-start gap-2">
                   <div style={{ width: finalInputWidth }}>
                     <DateInput
                       ref={dateInputRef}
@@ -929,11 +929,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
               <div className="space-y-3">
                 {/* Opciones estáticas si existen */}
                 {staticOptions && staticOptions.length > 0 && (
-                  <ul className="py-1 max-h-60 overflow-auto">
+                  <ul className="py-1 max-h-60 overflow-auto list-none pl-0">
                     {staticOptions.map((option) => (
                       <li
                         key={option.value}
-                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${
+                        className={`px-3 py-2 cursor-pointer flex items-center justify-start text-left gap-2 text-sm rounded transition-colors ${
                           currentValue === option.value
                             ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
                             : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
@@ -1045,11 +1045,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
             <div className="space-y-3">
               {/* Opciones estáticas si existen */}
               {staticOptions && staticOptions.length > 0 && (
-                <ul className="py-1 max-h-60 overflow-auto">
+                <ul className="py-1 max-h-60 overflow-auto list-none pl-0">
                   {staticOptions.map((option) => (
                     <li
                       key={option.value}
-                      className={`px-3 py-2 cursor-pointer flex items-center gap-2 text-sm rounded transition-colors ${
+                      className={`px-3 py-2 cursor-pointer flex items-center justify-start text-left gap-2 text-sm rounded transition-colors ${
                         urlValue === option.value
                           ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
                           : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
@@ -1068,7 +1068,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
               )}
 
               {/* Form control */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-start gap-2">
                 <div style={{ width: finalInputWidth }}>
                   <Input
                     ref={inputRef}

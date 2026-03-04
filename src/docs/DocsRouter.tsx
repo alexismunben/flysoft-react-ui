@@ -30,6 +30,7 @@ import MenuDocs from "./MenuDocs";
 import SnackbarDocs from "./SnackbarDocs";
 import AccordionDocs from "./AccordionDocs";
 import SkeletonDocs from "./SkeletonDocs";
+import CurrencyInputDocs from "./CurrencyInputDocs";
 import DocAdmin from "./DocAdmin";
 
 export const DocsRouter: React.FC = () => {
@@ -49,6 +50,7 @@ export const DocsRouter: React.FC = () => {
       <Route path="dateinput" element={<DateInputDocs />} />
       <Route path="checkbox" element={<CheckboxDocs />} />
       <Route path="radiobuttongroup" element={<RadioButtonGroupDocs />} />
+      <Route path="currency-input" element={<CurrencyInputDocs />} />
       <Route path="theme" element={<ThemeSwitcherDocs />} />
       <Route path="datafield" element={<DataFieldDocs />} />
       <Route path="tabsgroup" element={<TabsGroupDocs />} />

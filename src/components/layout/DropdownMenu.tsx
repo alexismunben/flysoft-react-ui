@@ -174,8 +174,8 @@ export const DropdownMenu = <T = { label: string },>({
   };
 
   const handleOptionClick = (item: T) => {
-    onOptionSelected(item);
     setIsOpen(false);
+    onOptionSelected(item);
   };
 
   // Si replaceOnSingleOption es true y hay una sola opción, mostrar directamente la opción
@@ -260,6 +260,7 @@ export const DropdownMenu = <T = { label: string },>({
                 ref={menuRef}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
+                onClick={(e) => e.stopPropagation()}
                 className="fixed z-[2000] bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-lg)] py-1 min-w-[160px] font-[var(--font-default)]"
                 style={menuStyles}
               >

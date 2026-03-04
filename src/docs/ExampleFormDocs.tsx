@@ -9,6 +9,7 @@ import {
   Button,
   Checkbox,
   RadioButtonGroup,
+  CurrencyInput,
 } from "../index";
 import type { AutocompleteOption } from "../index";
 import { useForm, FormProvider } from "react-hook-form";
@@ -46,17 +47,17 @@ const searchSelectOptions: Array<{ label: string; id: number }> = [
 ];
 
 const mockSearchPromise = async (
-  text: string
+  text: string,
 ): Promise<Array<{ label: string; id: number }>> => {
   await new Promise((resolve) => setTimeout(resolve, 300));
   const search = text.toLowerCase();
   return searchSelectOptions.filter((option) =>
-    option.label.toLowerCase().includes(search)
+    option.label.toLowerCase().includes(search),
   );
 };
 
 const mockSingleSearchPromise = async (
-  id: number
+  id: number,
 ): Promise<{ label: string; id: number } | undefined> => {
   await new Promise((resolve) => setTimeout(resolve, 300));
   return searchSelectOptions.find((option) => option.id === id);
@@ -73,6 +74,7 @@ const ExampleFormDocs: React.FC = () => {
     aceptaTerminos: boolean;
     genero: string;
     tipoUsuario: string;
+    salario: number | null;
   }>({
     defaultValues: {
       nombre: "Alexis Wursten",
@@ -82,6 +84,7 @@ const ExampleFormDocs: React.FC = () => {
       aceptaTerminos: false,
       genero: "masculino",
       tipoUsuario: "user",
+      salario: 1500.5,
     },
   });
 
@@ -258,6 +261,19 @@ const ExampleFormDocs: React.FC = () => {
               </div>
               <div>Género: {watch("genero")}</div>
 
+              <CurrencyInput
+                label="Salario mensual"
+                placeholder="0,00"
+                icon="fa-money-bill-wave"
+                readOnly={isReadOnly}
+                {...register("salario", {
+                  required: "El salario es obligatorio",
+                  min: { value: 1, message: "El salario debe ser mayor a 0" },
+                })}
+                error={errors.salario?.message}
+              />
+              <div>Salario: {watch("salario")}</div>
+
               <div>
                 <label className="block text-sm text-[var(--color-primary)] mb-1 font-[var(--font-default)]">
                   Tipo de Usuario
@@ -291,6 +307,7 @@ const ExampleFormDocs: React.FC = () => {
                       aceptaTerminos: false,
                       genero: "",
                       tipoUsuario: "",
+                      salario: null,
                     });
                   }}
                 >

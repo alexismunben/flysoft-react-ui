@@ -7,6 +7,17 @@
 @import "tailwindcss/theme";
 @import "tailwindcss/utilities";
 
+/* Global resets for the library's components */
+@layer base {
+  *, ::after, ::before {
+    box-sizing: border-box;
+    margin: 0;
+    border-width: 0;
+    border-style: solid;
+    border-color: var(--flysoft-border-default, currentColor);
+  }
+}
+
 /* Theme CSS Variables - These will be dynamically updated by the theme system */
 :root {      
   /* Font variables */

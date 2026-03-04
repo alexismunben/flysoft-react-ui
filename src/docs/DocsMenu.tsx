@@ -42,6 +42,15 @@ export const DocsMenu = () => {
             AutocompleteInput
           </LinkButton>
           <LinkButton
+            to="/docs/currency-input"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            CurrencyInput
+          </LinkButton>
+          <LinkButton
             to="/docs/search-select-input"
             variant="ghost"
             size="sm"

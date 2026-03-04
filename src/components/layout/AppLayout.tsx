@@ -42,8 +42,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const isTransitioningRef = useRef(false);
   const lastScrollYRef = useRef(0);
 
-  console.log("navbar", navbar);
-  console.log("leftDrawer", leftDrawer);
   // Determinar si hay algún contenido en el drawer izquierdo
   const hasLeftDrawerContent =
     leftDrawerHeader || leftDrawerContent || leftDrawerFooter;
