@@ -32,7 +32,9 @@ export interface CrudContextType<T> {
     isLoading: boolean;
   };
   fetchItem: {
-    execute: (id: string | number) => Promise<T | undefined>;
+    execute: (
+      params?: Record<string, any> | string | number,
+    ) => Promise<T | undefined>;
     isLoading: boolean;
   };
   createItem: {
@@ -336,21 +338,23 @@ export function CrudProvider<T>({
 
   // Función para obtener un item individual
   const fetchItemExecute = useCallback(
-    async (id: string | number): Promise<T | undefined> => {
+    async (
+      params?: Record<string, any> | string | number,
+    ): Promise<T | undefined> => {
       if (!getItemPromiseExecute) {
         throw new Error(
           "getItemPromise is not defined. Please provide getItemPromise to CrudProvider.",
         );
       }
-      // Use provided id or fallback to singleItemId if available
-      const finalId = id !== undefined ? id : singleItemId;
-      if (finalId === undefined) {
+      // Si no se pasan parámetros, usar singleItemId si está disponible
+      const finalParams = params !== undefined ? params : singleItemId;
+      if (finalParams === undefined) {
         throw new Error(
-          "No id provided and singleItemId is not defined. Please provide an id or set singleItemId in CrudProvider.",
+          "No parameters provided and singleItemId is not defined. Please provide parameters or set singleItemId in CrudProvider.",
         );
       }
       const result = await fetchItemAsync.execute(async () => {
-        return await getItemPromiseExecute(finalId);
+        return await (getItemPromiseExecute as any)(finalParams);
       });
       if (result !== undefined) {
         setItem(result);
