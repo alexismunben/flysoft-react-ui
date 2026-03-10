@@ -32,9 +32,7 @@ export interface CrudContextType<T> {
     isLoading: boolean;
   };
   fetchItem: {
-    execute: (
-      params?: Record<string, any> | string | number,
-    ) => Promise<T | undefined>;
+    execute: (id: string | number) => Promise<T | undefined>;
     isLoading: boolean;
   };
   createItem: {
@@ -76,13 +74,8 @@ interface CrudProviderProps<T> {
         [params?: Record<string, any>]
       >;
   getItemPromise?:
-    | ((
-        params?: Record<string, any> | string | number,
-      ) => Promise<T | undefined>)
-    | PromiseWithOptions<
-        T | undefined,
-        [params?: Record<string, any> | string | number]
-      >;
+    | ((id: string | number) => Promise<T | undefined>)
+    | PromiseWithOptions<T | undefined, [id: string | number]>;
   postPromise?:
     | ((item: T) => Promise<T | undefined | null>)
     | PromiseWithOptions<T | undefined | null, [item: T]>;
@@ -343,23 +336,21 @@ export function CrudProvider<T>({
 
   // Función para obtener un item individual
   const fetchItemExecute = useCallback(
-    async (
-      params?: Record<string, any> | string | number,
-    ): Promise<T | undefined> => {
+    async (id: string | number): Promise<T | undefined> => {
       if (!getItemPromiseExecute) {
         throw new Error(
           "getItemPromise is not defined. Please provide getItemPromise to CrudProvider.",
         );
       }
-      // Si no se pasan parámetros, usar singleItemId si está disponible
-      const finalParams = params !== undefined ? params : singleItemId;
-      if (finalParams === undefined) {
+      // Use provided id or fallback to singleItemId if available
+      const finalId = id !== undefined ? id : singleItemId;
+      if (finalId === undefined) {
         throw new Error(
-          "No parameters provided and singleItemId is not defined. Please provide parameters or set singleItemId in CrudProvider.",
+          "No id provided and singleItemId is not defined. Please provide an id or set singleItemId in CrudProvider.",
         );
       }
       const result = await fetchItemAsync.execute(async () => {
-        return await getItemPromiseExecute(finalParams);
+        return await getItemPromiseExecute(finalId);
       });
       if (result !== undefined) {
         setItem(result);

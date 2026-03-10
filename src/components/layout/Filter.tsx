@@ -711,7 +711,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
         {currentValue && (
           <button
             onClick={handleClearFilter}
-            className="p-0.5 hover:bg-[var(--color-bg-secondary)] rounded transition-colors flex items-center justify-center"
+            className="p-0.5 hover:bg-[var(--color-bg-secondary)] rounded transition-colors flex items-center justify-center cursor-pointer"
             aria-label="Borrar filtro"
             type="button"
           >

@@ -216,9 +216,9 @@ export const Button: React.FC<ButtonProps> = ({
 
     return (
       <i
-        className={`${normalizeIconClass(icon)} ${iconClasses} ${
+        className={`${normalizeIconClass(icon)} ${iconClasses} flex items-center justify-center ${
           children ? (iconPosition === "right" ? "ml-2" : "mr-2") : ""
-        } mt-0.5`}
+        }`}
       />
     );
   };
