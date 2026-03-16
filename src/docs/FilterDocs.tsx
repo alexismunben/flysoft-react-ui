@@ -196,6 +196,7 @@ const FilterDocs: React.FC = () => {
                     paramName="estado"
                     label="Estado"
                     filterType="autocomplete"
+                    multiple
                     options={[
                       { label: "Activo", value: "activo" },
                       { label: "Inactivo", value: "inactivo" },

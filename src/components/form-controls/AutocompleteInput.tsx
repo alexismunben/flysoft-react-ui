@@ -4,6 +4,7 @@ import { useFormContext } from "react-hook-form";
 import { Input } from "./Input";
 import type { InputProps } from "./Input";
 import { normalizeIconClass } from "../utils/iconUtils";
+import { Checkbox } from "./Checkbox";
 
 // Interfaz por defecto para mantener compatibilidad
 export interface AutocompleteOption {
@@ -16,14 +17,14 @@ export interface AutocompleteOption {
 export interface AutocompleteInputProps<T = AutocompleteOption, K = string>
   extends Omit<InputProps, "onChange" | "value" | "ref"> {
   options: T[];
-  value?: string;
+  value?: string | string[];
   /**
    * Valor de texto del input (controlado)
    * Puede ser un ChangeEventHandler (de register) o una función que recibe string (API personalizada)
    */
   onChange?:
     | React.ChangeEventHandler<HTMLInputElement>
-    | ((value: string) => void);
+    | ((value: string | string[]) => void);
   /**
    * Callback al seleccionar una opción. Devuelve el item completo (T) y el valor mapeado (K)
    */
@@ -50,6 +51,11 @@ export interface AutocompleteInputProps<T = AutocompleteOption, K = string>
    * Por defecto es false.
    */
   readOnly?: boolean;
+  /**
+   * Si es true, permite seleccionar múltiples opciones usando Checkboxes.
+   * El valor será un array con los valores (K) de las opciones seleccionadas.
+   */
+  multiple?: boolean;
 }
 
 const AutocompleteInputInner = React.forwardRef<
@@ -69,12 +75,13 @@ const AutocompleteInputInner = React.forwardRef<
       getOptionDescription,
       renderOption,
       readOnly = false,
+      multiple = false,
       ...inputProps
     },
     ref: React.ForwardedRef<HTMLInputElement>
   ) => {
-    const [internalValue, setInternalValue] = React.useState<string>(
-      value || ""
+    const [internalValue, setInternalValue] = React.useState<string | string[]>(
+      value || (multiple ? [] : "")
     );
     const [displayValue, setDisplayValue] = React.useState<string>("");
     const [isOpen, setIsOpen] = React.useState(false);
@@ -112,9 +119,33 @@ const AutocompleteInputInner = React.forwardRef<
 
     const inputValue = isRegisterMode
       ? displayValue
-      : value !== undefined
-      ? value
-      : internalValue;
+      : (multiple ? displayValue : (typeof value === "string" ? value : (typeof internalValue === "string" ? internalValue : "")));
+
+    const selectedValuesArray = React.useMemo(() => {
+      const currentVal = isRegisterMode && hiddenInputRef.current
+          ? hiddenInputRef.current.value
+          : (value !== undefined ? value : internalValue);
+
+      if (Array.isArray(currentVal)) return currentVal;
+      
+      // En modo register, los valores múltiples podrían estar como un string JSON o separados por comas.
+      // Si el hiddenInput recibe un array en react-hook-form, su valor puede volverse "[object Object]" o concatenado.
+      // Asumiremos que react-hook-form maneja correctamente el array si el value prop es un array.
+      // Si recibimos un string:
+      if (typeof currentVal === "string") {
+        if (!currentVal) return [];
+        try {
+          // Intentar parsear si es JSON
+          const parsed = JSON.parse(currentVal);
+          if (Array.isArray(parsed)) return parsed.map(String);
+          return [currentVal];
+        } catch {
+          // Si no es JSON, asumir es un solo string o separado por comas (no recomendado por conflicto con comas en valores)
+          return [currentVal];
+        }
+      }
+      return [];
+    }, [isRegisterMode, value, internalValue, multiple]);
 
     const labelGetter = React.useCallback(
       (item: any): string => {
@@ -134,6 +165,23 @@ const AutocompleteInputInner = React.forwardRef<
       [getOptionValue]
     );
 
+    // Calcular el label unificado para multiple
+    const getMultipleDisplayValue = React.useCallback(
+      (values: string[]) => {
+        if (!values || values.length === 0) return "";
+        const labels = values.map((val) => {
+          const matchingOption = options.find(
+            (option) => String(valueGetter(option)) === String(val)
+          );
+          return matchingOption ? labelGetter(matchingOption) : String(val);
+        });
+        return labels.join(", ");
+      },
+      [options, valueGetter, labelGetter]
+    );
+
+
+
     const descriptionGetter = React.useCallback(
       (item: any): string | number | undefined => {
         if (getOptionDescription) return getOptionDescription(item);
@@ -144,7 +192,18 @@ const AutocompleteInputInner = React.forwardRef<
     );
 
     const filteredOptions = React.useMemo(() => {
-      const search = inputValue.trim().toLowerCase();
+      let search = displayValue.trim().toLowerCase();
+      
+      // Si es múltiple y no estamos enfocando el input para buscar, no filtramos por displayValue
+      // (ya que displayValue contiene los labels de los items seleccionados separados por coma)
+      if (multiple) {
+         if (document.activeElement !== inputRef.current || displayValue === getMultipleDisplayValue(selectedValuesArray)) {
+             search = ""; 
+         }
+      } else {
+         search = inputValue.trim().toLowerCase();
+      }
+
       if (!search) return options;
 
       return options.filter((option) => {
@@ -161,26 +220,40 @@ const AutocompleteInputInner = React.forwardRef<
         const targetInput = hiddenInputRef.current || inputRef.current;
         if (targetInput) {
           const formValue = targetInput.value;
-          // Si el valor del formulario coincide con algún getOptionValue, mostrar su label
-          const matchingOption = options.find(
-            (option) => String(valueGetter(option)) === String(formValue)
-          );
-          if (matchingOption) {
-            const label = labelGetter(matchingOption);
-            setDisplayValue(label);
-            return true; // Indica que se encontró y sincronizó un valor
-          } else if (formValue) {
-            // Si hay un valor pero no coincide, mostrarlo tal cual (o buscar por label si fuera el caso)
-            setDisplayValue(formValue);
-            return true;
+          
+          if (multiple) {
+            let parsedValues: string[] = [];
+            try {
+              parsedValues = JSON.parse(formValue);
+            } catch {
+              parsedValues = formValue ? [formValue] : [];
+            }
+            if (Array.isArray(parsedValues)) {
+               setDisplayValue(getMultipleDisplayValue(parsedValues));
+               return true;
+            }
           } else {
-            setDisplayValue("");
-            return false; // No hay valor aún
+              // Si el valor del formulario coincide con algún getOptionValue, mostrar su label
+              const matchingOption = options.find(
+                (option) => String(valueGetter(option)) === String(formValue)
+              );
+              if (matchingOption) {
+                const label = labelGetter(matchingOption);
+                setDisplayValue(label);
+                return true; // Indica que se encontró y sincronizó un valor
+              } else if (formValue) {
+                // Si hay un valor pero no coincide, mostrarlo tal cual (o buscar por label si fuera el caso)
+                setDisplayValue(formValue);
+                return true;
+              } else {
+                setDisplayValue("");
+                return false; // No hay valor aún
+              }
           }
         }
       }
       return false;
-    }, [isRegisterMode, options, valueGetter, labelGetter]);
+    }, [isRegisterMode, options, valueGetter, labelGetter, multiple, getMultipleDisplayValue]);
 
     // Sincronizar displayValue con el valor del formulario en modo register
     // Usar un intervalo que se ejecute hasta que encuentre el valor o hasta un máximo de intentos
@@ -195,17 +268,28 @@ const AutocompleteInputInner = React.forwardRef<
           if (targetInput) {
             const formValue = targetInput.value;
             if (formValue) {
-              // Hay un valor, intentar sincronizar
-              const matchingOption = options.find(
-                (option) => String(valueGetter(option)) === String(formValue)
-              );
-              if (matchingOption) {
-                const label = labelGetter(matchingOption);
-                setDisplayValue(label);
-                return true; // Valor encontrado y sincronizado
+              if (multiple) {
+                let parsedValues: string[] = [];
+                try {
+                  parsedValues = JSON.parse(formValue);
+                } catch {
+                  parsedValues = [formValue];
+                }
+                setDisplayValue(getMultipleDisplayValue(parsedValues));
+                return true;
               } else {
-                setDisplayValue(formValue);
-                return true; // Valor encontrado pero no coincide con opciones
+                  // Hay un valor, intentar sincronizar
+                  const matchingOption = options.find(
+                    (option) => String(valueGetter(option)) === String(formValue)
+                  );
+                  if (matchingOption) {
+                    const label = labelGetter(matchingOption);
+                    setDisplayValue(label);
+                    return true; // Valor encontrado y sincronizado
+                  } else {
+                    setDisplayValue(formValue);
+                    return true; // Valor encontrado pero no coincide con opciones
+                  }
               }
             }
           }
@@ -287,15 +371,18 @@ const AutocompleteInputInner = React.forwardRef<
       const newValue = event.target.value;
 
       if (isRegisterMode) {
-        // En modo register, actualizar el displayValue para mostrar lo que el usuario escribe
         setDisplayValue(newValue);
       } else {
-        // Modo API personalizada
-        if (value === undefined) {
-          setInternalValue(newValue);
-        }
-        if (onChange) {
-          (onChange as (value: string) => void)(newValue);
+        if (multiple) {
+           setDisplayValue(newValue);
+        } else {
+            // Modo API personalizada para input simple
+            if (value === undefined) {
+              setInternalValue(newValue);
+            }
+            if (onChange) {
+              (onChange as (value: string) => void)(newValue);
+            }
         }
       }
 
@@ -310,23 +397,46 @@ const AutocompleteInputInner = React.forwardRef<
       const selectedValue = valueGetter(option);
       const valueString = String(selectedValue ?? "");
 
+      let newValuesArray: string[] = [];
+      let newValueToSet: any = valueString;
+      let newLabelToSet: string = label;
+      
+      if (multiple) {
+        // Toggle selection
+        if (selectedValuesArray.includes(valueString)) {
+           newValuesArray = selectedValuesArray.filter(v => v !== valueString);
+        } else {
+           newValuesArray = [...selectedValuesArray, valueString];
+        }
+        
+        if (!isRegisterMode && value === undefined) {
+            setInternalValue(newValuesArray);
+        }
+        
+        newLabelToSet = getMultipleDisplayValue(newValuesArray);
+        setDisplayValue(newLabelToSet);
+        
+        // Pass the array to the onChange/register hooks
+        newValueToSet = newValuesArray;
+      }
+
       if (isRegisterMode) {
         // En modo register, setear el valor usando setValue o actualizando el input nativo (hidden)
         if (setValue && fieldName) {
-          setValue(fieldName, selectedValue, {
+          setValue(fieldName, newValueToSet, {
             shouldValidate: true,
             shouldDirty: true,
           });
           
-          // Actualizar el input hidden con el ID
+          // Actualizar el input hidden
           if (hiddenInputRef.current) {
-             hiddenInputRef.current.value = valueString;
+             hiddenInputRef.current.value = multiple ? JSON.stringify(newValuesArray) : valueString;
           }
           
-          // Actualizar displayValue con el label para mostrarlo visualmente en el input visible
-          setDisplayValue(label);
+          // Actualizar displayValue con el label
+          setDisplayValue(newLabelToSet);
         } else {
-           // Fallback si no hay setValue (raro en registerMode) o para inputs manuales
+           // Fallback
            const targetInput = hiddenInputRef.current || inputRef.current;
            if (targetInput) {
              const nativeInput = targetInput;
@@ -335,18 +445,20 @@ const AutocompleteInputInner = React.forwardRef<
                "value"
              )?.set;
 
+             const stringObjToSet = multiple ? JSON.stringify(newValuesArray) : valueString;
+
              if (nativeInputValueSetter) {
-               nativeInputValueSetter.call(nativeInput, valueString);
+               nativeInputValueSetter.call(nativeInput, stringObjToSet);
              } else {
-               nativeInput.value = valueString;
+               nativeInput.value = stringObjToSet;
              }
              
-             // Disparar eventos en el input que tiene el ref de register
+             // Disparar eventos
              if (onChange) {
                 const changeEvent = {
                   target: nativeInput,
                   currentTarget: nativeInput,
-                } as unknown as React.ChangeEvent<HTMLInputElement>; // Cast agresivo necesario
+                } as unknown as React.ChangeEvent<HTMLInputElement>;
                 (onChange as React.ChangeEventHandler<HTMLInputElement>)(
                   changeEvent
                 );
@@ -364,19 +476,24 @@ const AutocompleteInputInner = React.forwardRef<
              nativeInput.dispatchEvent(changeEventNative);
            }
            
-           // Y actualizamos visualmente
-           setDisplayValue(label);
+           setDisplayValue(newLabelToSet);
         }
       } else {
         // Modo API personalizada - comportamiento original
-        // Pasar el valor devuelto por getOptionValue, no el label
         if (onChange) {
-          (onChange as (value: string) => void)(valueString);
+           if (multiple) {
+              (onChange as (value: string[]) => void)(newValuesArray);
+           } else {
+              (onChange as (value: string) => void)(valueString);
+           }
         }
       }
 
       onSelectOption?.(option, selectedValue);
-      setIsOpen(false);
+      
+      if (!multiple) {
+          setIsOpen(false);
+      }
     };
 
     const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (
@@ -449,20 +566,30 @@ const AutocompleteInputInner = React.forwardRef<
         if (value !== undefined) {
           // Si el value es el resultado de getOptionValue, buscar la opción correspondiente
           // y mostrar su label. Si no se encuentra, mostrar el value tal cual.
-          const matchingOption = options.find(
-            (option) => String(valueGetter(option)) === String(value)
-          );
-          if (matchingOption) {
-            setInternalValue(labelGetter(matchingOption));
+          if (multiple) {
+              const arrayVals = Array.isArray(value) ? value : [value];
+              setDisplayValue(getMultipleDisplayValue(arrayVals as string[]));
           } else {
-            setInternalValue(value);
+              const matchingOption = options.find(
+                (option) => String(valueGetter(option)) === String(value)
+              );
+              if (matchingOption) {
+                setInternalValue(labelGetter(matchingOption));
+              } else {
+                setInternalValue(value as string);
+              }
           }
         } else {
           // Resetear el estado interno cuando value es undefined (por ejemplo, después de un reset)
-          setInternalValue("");
+           if (multiple) {
+              setDisplayValue("");
+              setInternalValue([]);
+           } else {
+              setInternalValue("");
+           }
         }
       }
-    }, [value, options, valueGetter, labelGetter, isRegisterMode]);
+    }, [value, options, valueGetter, labelGetter, isRegisterMode, multiple, getMultipleDisplayValue]);
 
     const showDropdown =
       !readOnly && isOpen && (filteredOptions.length > 0 || noResultsText);
@@ -509,6 +636,10 @@ const AutocompleteInputInner = React.forwardRef<
     // Detectar si hay un valor seleccionado
     // Un valor está seleccionado si el value coincide con el getOptionValue de alguna opción
     const hasSelectedValue = React.useMemo(() => {
+      if (multiple) {
+        return selectedValuesArray.length > 0;
+      }
+      
       if (isRegisterMode) {
         const targetInput = hiddenInputRef.current || inputRef.current;
         if (targetInput) {
@@ -525,7 +656,7 @@ const AutocompleteInputInner = React.forwardRef<
       return options.some(
         (option) => String(valueGetter(option)) === String(value)
       );
-    }, [value, options, valueGetter, isRegisterMode]);
+    }, [value, options, valueGetter, isRegisterMode, multiple, selectedValuesArray]);
 
     // Función para limpiar el valor
     const handleClear = React.useCallback(
@@ -572,11 +703,20 @@ const AutocompleteInputInner = React.forwardRef<
         } else {
           // Modo API personalizada
           if (value === undefined) {
-            setInternalValue("");
+             if (multiple) {
+               setInternalValue([]);
+             } else {
+               setInternalValue("");
+             }
           }
           if (onChange) {
-            (onChange as (value: string) => void)("");
+             if (multiple) {
+                (onChange as (value: string[]) => void)([]);
+             } else {
+                (onChange as (value: string) => void)("");
+             }
           }
+          setDisplayValue("");
         }
 
         setIsOpen(false);
@@ -630,10 +770,21 @@ const AutocompleteInputInner = React.forwardRef<
                         (option) =>
                           String(valueGetter(option)) === String(formValue)
                       );
-                      if (matchingOption) {
-                        setDisplayValue(labelGetter(matchingOption));
+                      if (multiple) {
+                        try {
+                           const parsed = JSON.parse(formValue);
+                           if (Array.isArray(parsed)) {
+                               setDisplayValue(getMultipleDisplayValue(parsed));
+                           }
+                        } catch {
+                           setDisplayValue(getMultipleDisplayValue([formValue]));
+                        }
                       } else {
-                        setDisplayValue(formValue);
+                        if (matchingOption) {
+                          setDisplayValue(labelGetter(matchingOption));
+                        } else {
+                          setDisplayValue(formValue);
+                        }
                       }
                     }
                   }
@@ -642,7 +793,7 @@ const AutocompleteInputInner = React.forwardRef<
             }
         }
       },
-      [ref, isRegisterMode, options, valueGetter, labelGetter]
+      [ref, isRegisterMode, options, valueGetter, labelGetter, multiple, getMultipleDisplayValue]
     );
 
     const setVisibleRef = React.useCallback(
@@ -677,7 +828,7 @@ const AutocompleteInputInner = React.forwardRef<
           {...visibleInputProps}
           name={isRegisterMode ? undefined : (nameProp as string)} // Evitar duplicar name en el visible si estamos en register
           ref={setVisibleRef} // Usar el ref visible
-          value={inputValue}
+          value={multiple ? displayValue : inputValue}
           onChange={handleChange}
           onFocus={() => {
             if (!readOnly && !justClearedRef.current) {
@@ -718,7 +869,7 @@ const AutocompleteInputInner = React.forwardRef<
                 }}
               >
                 {filteredOptions.length > 0 ? (
-                  <ul className="py-1">
+                  <ul className="py-1 list-none pl-0 m-0">
                     {filteredOptions.map((option, index) => {
                       const label = labelGetter(option);
                       const description = descriptionGetter(option);
@@ -743,11 +894,18 @@ const AutocompleteInputInner = React.forwardRef<
                             renderOption(option)
                           ) : (
                             <>
+                              {multiple && (
+                                <Checkbox
+                                   readOnly
+                                   checked={selectedValuesArray.includes(String(valueGetter(option) ?? ""))}
+                                   className="mr-2 pointer-events-none"
+                                />
+                              )}
                               {anyOption.icon && (
                                 <i
                                   className={`${normalizeIconClass(
                                     anyOption.icon
-                                  )} mt-0.5 text-[var(--color-text-muted)] flex-shrink-0`}
+                                  )} mt-0.5 text-[var(--color-text-muted)] flex-shrink-0 mr-2`}
                                 />
                               )}
                               <div className="flex flex-col min-w-0">

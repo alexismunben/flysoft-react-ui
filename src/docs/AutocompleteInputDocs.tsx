@@ -80,6 +80,7 @@ const AutocompleteInputDocs: React.FC = () => {
   >();
   const [value, setValue] = React.useState("");
   const [selectedUser, setSelectedUser] = React.useState<User | undefined>();
+  const [selectedCountries, setSelectedCountries] = React.useState<string[]>([]);
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
@@ -162,7 +163,9 @@ const AutocompleteInputDocs: React.FC = () => {
                   icon="fa-search"
                   options={sampleOptions}
                   value={value}
-                  onChange={setValue}
+                  onChange={(val) => {
+                     if (typeof val === "string") setValue(val);
+                  }}
                 />
                 <p
                   className="text-sm"
@@ -218,6 +221,55 @@ const AutocompleteInputDocs: React.FC = () => {
                 >
                   respeta el estado disabled heredado del componente Input
                 </p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Selección múltiple
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <AutocompleteInput
+                  label="Múltiples Países"
+                  placeholder="Selecciona uno o más países..."
+                  icon="fa-globe"
+                  options={sampleOptions}
+                  multiple
+                  value={selectedCountries}
+                  onChange={(val: string | string[]) => {
+                     const stringArray = Array.isArray(val) ? val : [val];
+                     setSelectedCountries(stringArray);
+                  }}
+                />
+                <p
+                  className="text-sm"
+                  style={{ color: "var(--flysoft-text-secondary)" }}
+                >
+                  usando la prop <code>multiple={true}</code> permite seleccionar varias opciones con checkboxes.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p
+                  className="text-sm font-medium"
+                  style={{ color: "var(--flysoft-text-primary)" }}
+                >
+                  Valores seleccionados
+                </p>
+                <Card variant="outlined">
+                  <p
+                    className="text-sm"
+                    style={{ color: "var(--flysoft-text-secondary)" }}
+                  >
+                    {selectedCountries.length > 0
+                      ? selectedCountries.join(", ")
+                      : "Ningún país seleccionado"}
+                  </p>
+                </Card>
               </div>
             </div>
           </section>

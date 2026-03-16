@@ -408,8 +408,7 @@ const SearchSelectInputInner = React.forwardRef<
         <div>
           <Loader isLoading={isLoading}>
             {!hasSearched || options.length > 0 ? (
-              <ul className="space-y-1 max-h-96 overflow-y-auto">
-                <ul className="space-y-1 max-h-96 overflow-y-auto">
+              <ul className="space-y-1 max-h-96 overflow-y-auto list-none pl-0 m-0">
                   {options.map((option, index) => {
                     const label = labelGetter(option);
                     const description = descriptionGetter(option);
@@ -450,7 +449,6 @@ const SearchSelectInputInner = React.forwardRef<
                     );
                   })}
                 </ul>
-              </ul>
             ) : (
               <div className="px-3 py-8 text-center text-sm text-[var(--color-text-secondary)]">
                 {noResultsText}

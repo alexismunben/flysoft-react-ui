@@ -63,6 +63,7 @@ export interface AutocompleteFilterProps<
   getOptionValue?: (item: T) => K;
   renderOption?: (item: T) => React.ReactNode;
   noResultsText?: string;
+  multiple?: boolean;
 }
 
 export interface SearchFilterProps extends BaseFilterProps {
@@ -122,8 +123,10 @@ export const Filter: React.FC<FilterProps> = (props) => {
   const [inputValue, setInputValue] = useState<string>(currentValue || "");
   const [searchValue, setSearchValue] = useState<string>(currentValue || "");
   const [dateValue, setDateValue] = useState<Dayjs | null>(null);
-  const [autocompleteValue, setAutocompleteValue] = useState<string>(
-    currentValue || "",
+  const [autocompleteValue, setAutocompleteValue] = useState<string | string[]>(
+    currentValue ? 
+      (props.filterType === "autocomplete" && (props as AutocompleteFilterProps).multiple ? currentValue.split("|") : currentValue)
+    : "",
   );
   const [searchSelectValue, setSearchSelectValue] = useState<any>(
     currentValue || undefined,
@@ -223,11 +226,12 @@ export const Filter: React.FC<FilterProps> = (props) => {
   // Para autocomplete, mantener el value (no el label) para que AutocompleteInput pueda encontrar la opción
   useEffect(() => {
     if (filterType === "autocomplete") {
+      const isMultiple = (props as AutocompleteFilterProps).multiple;
       // Mantener el value, el AutocompleteInput se encargará de mostrar el label
-      setAutocompleteValue(currentValue || "");
+      setAutocompleteValue(currentValue ? (isMultiple ? currentValue.split("|") : currentValue) : (isMultiple ? [] : ""));
       setIsUserTyping(false);
     }
-  }, [currentValue, filterType]);
+  }, [currentValue, filterType, props]);
 
   // Cerrar el panel al hacer clic fuera
   useEffect(() => {
@@ -368,9 +372,16 @@ export const Filter: React.FC<FilterProps> = (props) => {
     }
   };
 
-  const handleAutocompleteChange = () => {
-    // Marcar que el usuario está escribiendo para que el AutocompleteInput pueda manejar el texto libremente
-    setIsUserTyping(true);
+  const handleAutocompleteChange = (val?: string | string[]) => {
+    // Si viene undefined pero estamos en múltiple, podría ser por limpieza
+    if (val !== undefined && Array.isArray(val) && (props as AutocompleteFilterProps).multiple) {
+       setAutocompleteValue(val);
+       // En múltiple no manejamos "free text" que no sea opción
+       setIsUserTyping(false);
+    } else {
+       // Marcar que el usuario está escribiendo libremente (input manual simple mode)
+       setIsUserTyping(true);
+    }
   };
 
   const handleAutocompleteSelect = () => {
@@ -393,19 +404,25 @@ export const Filter: React.FC<FilterProps> = (props) => {
 
       let newValue: string | undefined;
 
-      if (matchingOption) {
-        newValue = String(getOptionValue(matchingOption));
-        setAutocompleteValue(newValue);
-        setIsUserTyping(false);
-      } else if (currentInputValue.trim()) {
-        // Si no coincide con ninguna opción, guardar el texto tal cual
-        newValue = currentInputValue.trim();
-        setAutocompleteValue(newValue);
-        setIsUserTyping(false);
+      if (autocompleteProps.multiple) {
+          // Extraemos del estado que ya contiene el arreglo
+          newValue = Array.isArray(autocompleteValue) && autocompleteValue.length > 0 ? autocompleteValue.join("|") : undefined;
+          setIsUserTyping(false);
       } else {
-        newValue = undefined;
-        setAutocompleteValue("");
-        setIsUserTyping(false);
+          if (matchingOption) {
+            newValue = String(getOptionValue(matchingOption));
+            setAutocompleteValue(newValue);
+            setIsUserTyping(false);
+          } else if (currentInputValue.trim()) {
+            // Si no coincide con ninguna opción, guardar el texto tal cual
+            newValue = currentInputValue.trim();
+            setAutocompleteValue(newValue);
+            setIsUserTyping(false);
+          } else {
+            newValue = undefined;
+            setAutocompleteValue("");
+            setIsUserTyping(false);
+          }
       }
 
       // Si hay onChange, llamarlo con el nuevo valor
@@ -433,19 +450,32 @@ export const Filter: React.FC<FilterProps> = (props) => {
       const autocompleteProps = props as AutocompleteFilterProps;
       const getOptionValue =
         autocompleteProps.getOptionValue || ((item: any) => item.value || "");
-      const newValue = String(getOptionValue(option));
-      setAutocompleteValue(newValue);
-      setIsUserTyping(false);
+      const optionValueStr = String(getOptionValue(option));
+      
+      let newValueToEmit: string | undefined;
+      
+      if (autocompleteProps.multiple) {
+          // El onChange directo del AutocompleteInput ya maneja el arreglo, 
+          // pero si por alguna razón onSelect atrapa esto, actualizamos el array (aunque lo hace en setAutocompleteValue arriba)
+          // El array completo actual deberia estar en `autocompleteValue` pero asíncronamente; 
+          // mejor confiamos en la lógica de `AutocompleteInput` de toggle.
+          // En modo onSelect individual (cuando se clickea una recien), solo la disparamos o dejamos que HandleAutoCompleteChange actúe.
+          return; // Para múltiple dejamos que submit o el Autocomplete lo haga, o lo sincronizamos a nivel onChange general de autComplete y en Confirm.
+      } else {
+          newValueToEmit = optionValueStr;
+          setAutocompleteValue(newValueToEmit);
+          setIsUserTyping(false);
+      }
 
       // Si hay onChange, llamarlo con el nuevo valor
       if (onChange) {
-        onChange(newValue);
+        onChange(newValueToEmit);
       }
 
       // Si hay paramName, actualizar el query param
       if (paramName) {
         const newSearchParams = new URLSearchParams(searchParams);
-        newSearchParams.set(paramName, newValue);
+        newSearchParams.set(paramName, newValueToEmit);
         setSearchParams(newSearchParams, { replace: true });
       }
 
@@ -570,11 +600,23 @@ export const Filter: React.FC<FilterProps> = (props) => {
           autocompleteProps.getOptionLabel || ((item: any) => item.label || "");
         const getOptionValue =
           autocompleteProps.getOptionValue || ((item: any) => item.value || "");
-        const option = autocompleteProps.options.find(
-          (opt) => String(getOptionValue(opt)) === String(currentValue),
-        );
-        if (option) {
-          return getOptionLabel(option);
+          
+        if (autocompleteProps.multiple) {
+           const valuesArray = currentValue.split("|");
+           const labels = valuesArray.map((val) => {
+              const option = autocompleteProps.options.find(
+                  (opt) => String(getOptionValue(opt)) === String(val),
+              );
+              return option ? getOptionLabel(option) : val;
+           });
+           return labels.join(", ");
+        } else {
+            const option = autocompleteProps.options.find(
+              (opt) => String(getOptionValue(opt)) === String(currentValue),
+            );
+            if (option) {
+              return getOptionLabel(option);
+            }
         }
       }
     }
@@ -800,13 +842,16 @@ export const Filter: React.FC<FilterProps> = (props) => {
                       noResultsText={
                         (props as AutocompleteFilterProps).noResultsText
                       }
+                      multiple={
+                        (props as AutocompleteFilterProps).multiple
+                      }
                       onSelectOption={handleAutocompleteOptionSelect}
                       disabled={disabled}
                     />
                   </div>
                   <Button
                     onClick={handleAutocompleteSelect}
-                    icon="fa-arrow-right"
+                    icon={(props as AutocompleteFilterProps).multiple ? "fa-check" : "fa-arrow-right"}
                     variant="ghost"
                   />
                 </div>

@@ -1,7 +1,9 @@
 import React from "react";
 
-export interface CheckboxProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "size"> {
+export interface CheckboxProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "type" | "size"
+> {
   label?: string;
   labelPosition?: "left" | "right";
   error?: string;
@@ -27,7 +29,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       onChange,
       ...props
     },
-    ref
+    ref,
   ) => {
     const checkboxId =
       id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
@@ -119,7 +121,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     };
 
     return (
-      <div className="w-full">
+      <div>
         <div className={containerClasses}>
           <input
             ref={ref}
@@ -150,7 +152,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 Checkbox.displayName = "Checkbox";
