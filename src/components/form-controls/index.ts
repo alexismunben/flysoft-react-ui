@@ -2,7 +2,7 @@ export { Button } from "./Button";
 export { LinkButton } from "./LinkButton";
 export { Input } from "./Input";
 export { AutocompleteInput } from "./AutocompleteInput";
-export { SearchSelectInput } from "./SearchSelectInput-OLD";
+export { SearchSelectInput } from "./SearchSelectInput";
 export { DatePicker } from "./DatePicker";
 export { DateInput } from "./DateInput";
 export { Pagination } from "./Pagination";
@@ -19,7 +19,7 @@ export type {
 export type {
   SearchSelectInputProps,
   SearchSelectOption,
-} from "./SearchSelectInput-OLD";
+} from "./SearchSelectInput";
 export type { DatePickerProps } from "./DatePicker";
 export type { DateInputProps, DateInputFormat } from "./DateInput";
 export type { PaginationProps } from "./Pagination";
