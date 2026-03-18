@@ -52,9 +52,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       : `focus:ring-1 bg-[var(--color-bg-default)]`;
 
     const sizeClasses = {
-      sm: `py-1.5 text-sm ${readOnly ? "px-0" : "px-3"}`,
-      md: `py-2 text-base ${readOnly ? "px-0" : "px-4"}`,
-      lg: `py-3 text-lg ${readOnly ? "px-0" : "px-6"}`,
+      sm: `${readOnly ? "p-0" : "px-3 py-1.5"} text-sm`,
+      md: `${readOnly ? "p-0" : "px-4 py-2"} text-base`,
+      lg: `${readOnly ? "p-0" : "px-6 py-3"} text-lg`,
     };
 
     const stateClasses = readOnly
