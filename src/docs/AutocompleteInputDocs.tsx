@@ -80,7 +80,9 @@ const AutocompleteInputDocs: React.FC = () => {
   >();
   const [value, setValue] = React.useState("");
   const [selectedUser, setSelectedUser] = React.useState<User | undefined>();
-  const [selectedCountries, setSelectedCountries] = React.useState<string[]>([]);
+  const [selectedCountries, setSelectedCountries] = React.useState<string[]>(
+    [],
+  );
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
@@ -163,8 +165,8 @@ const AutocompleteInputDocs: React.FC = () => {
                   icon="fa-search"
                   options={sampleOptions}
                   value={value}
-                  onChange={(val) => {
-                     if (typeof val === "string") setValue(val);
+                  onChange={(val: string | string[]) => {
+                    if (typeof val === "string") setValue(val);
                   }}
                 />
                 <p
@@ -242,15 +244,16 @@ const AutocompleteInputDocs: React.FC = () => {
                   multiple
                   value={selectedCountries}
                   onChange={(val: string | string[]) => {
-                     const stringArray = Array.isArray(val) ? val : [val];
-                     setSelectedCountries(stringArray);
+                    const stringArray = Array.isArray(val) ? val : [val];
+                    setSelectedCountries(stringArray);
                   }}
                 />
                 <p
                   className="text-sm"
                   style={{ color: "var(--flysoft-text-secondary)" }}
                 >
-                  usando la prop <code>multiple={true}</code> permite seleccionar varias opciones con checkboxes.
+                  usando la prop <code>multiple={true}</code> permite
+                  seleccionar varias opciones con checkboxes.
                 </p>
               </div>
               <div className="space-y-2">

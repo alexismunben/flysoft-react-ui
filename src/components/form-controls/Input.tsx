@@ -52,9 +52,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       : `focus:ring-1 bg-[var(--color-bg-default)]`;
 
     const sizeClasses = {
-      sm: "px-3 py-1.5 text-sm",
-      md: "px-4 py-2 text-base",
-      lg: "px-6 py-3 text-lg",
+      sm: `py-1.5 text-sm ${readOnly ? "px-0" : "px-3"}`,
+      md: `py-2 text-base ${readOnly ? "px-0" : "px-4"}`,
+      lg: `py-3 text-lg ${readOnly ? "px-0" : "px-6"}`,
     };
 
     const stateClasses = readOnly
@@ -69,7 +69,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       size === "sm" ? "w-4 h-4" : size === "md" ? "w-5 h-5" : "w-6 h-6";
 
     const renderIcon = () => {
-      if (!icon) return null;
+      if (!icon || readOnly) return null;
 
       const iconElement = (
         <i
@@ -99,8 +99,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={`${inputClasses} ${
-              icon && iconPosition === "left" ? "pl-10" : ""
-            } ${icon && iconPosition === "right" ? "pr-10" : ""}`}
+              icon && iconPosition === "left" && !readOnly ? "pl-10" : ""
+            } ${icon && iconPosition === "right" && !readOnly ? "pr-10" : ""}`}
             autoComplete="off"
             readOnly={readOnly}
             {...props}
