@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Menu, Badge } from "../index";
+import { Card, Menu, Badge, Checkbox } from "../index";
 
 interface BasicOption {
     label: string;
@@ -21,6 +21,7 @@ interface UserOption {
 
 const MenuDocs: React.FC = () => {
     const [selectedItem, setSelectedItem] = useState<BasicOption | null>(null);
+    const [isCompact, setIsCompact] = useState(false);
 
     // Opciones básicas
     const basicOptions: BasicOption[] = [
@@ -47,6 +48,13 @@ const MenuDocs: React.FC = () => {
         <div className="max-w-5xl mx-auto space-y-8">
             <Card title="Menu - Lista de Opciones">
                 <div className="space-y-10">
+                    <div className="flex items-center gap-4 mb-4">
+                        <Checkbox
+                            label="Modo compacto"
+                            checked={isCompact}
+                            onChange={(e) => setIsCompact(e.target.checked)}
+                        />
+                    </div>
                     <section>
                         <h3
                             className="text-lg font-semibold mb-4"
@@ -63,6 +71,7 @@ const MenuDocs: React.FC = () => {
                         <div className="space-y-4">
                             <div className="flex items-start gap-8">
                                 <Menu<BasicOption>
+                                    compact={isCompact}
                                     options={basicOptions}
                                     onOptionSelected={(item) => setSelectedItem(item)}
                                 />
@@ -92,6 +101,7 @@ const MenuDocs: React.FC = () => {
                         </p>
                         <div className="space-y-4">
                             <Menu<ActionOption>
+                                compact={isCompact}
                                 options={optionsWithIcons}
                                 onOptionSelected={(item) => console.log(item)}
                                 renderOption={(item) => (
@@ -119,6 +129,7 @@ const MenuDocs: React.FC = () => {
                         </p>
                         <div className="space-y-4">
                             <Menu<UserOption>
+                                compact={isCompact}
                                 options={userOptions}
                                 onOptionSelected={(item) => console.log(item)}
                                 getOptionLabel={(item) => item.name}
@@ -155,6 +166,7 @@ const MenuDocs: React.FC = () => {
                                 <div>
                                     <h4 className="text-sm font-medium mb-2">Fondo Oscuro</h4>
                                     <Menu<BasicOption>
+                                        compact={isCompact}
                                         options={basicOptions}
                                         onOptionSelected={(item) => setSelectedItem(item)}
                                         className="bg-gray-800 border-gray-700 text-white"
@@ -167,6 +179,7 @@ const MenuDocs: React.FC = () => {
                                 <div>
                                     <h4 className="text-sm font-medium mb-2">Sin Borde ni Sombra</h4>
                                     <Menu<BasicOption>
+                                        compact={isCompact}
                                         options={basicOptions}
                                         onOptionSelected={(item) => setSelectedItem(item)}
                                         className="border-0 shadow-none bg-blue-50"
@@ -175,6 +188,7 @@ const MenuDocs: React.FC = () => {
                                 <div>
                                     <h4 className="text-sm font-medium mb-2">Estilo Destacado</h4>
                                     <Menu<BasicOption>
+                                        compact={isCompact}
                                         options={basicOptions}
                                         onOptionSelected={(item) => setSelectedItem(item)}
                                         className="bg-indigo-50 border-indigo-200 shadow-md"

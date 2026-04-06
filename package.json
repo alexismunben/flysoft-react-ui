@@ -47,11 +47,14 @@
     "dist",
     "styles.d.ts",
     "README.md",
-    "AI_CONTEXT.md"
+    "AI_CONTEXT.md",
+    "AI_INTEGRATION_GUIDE.md",
+    "INTEGRATION_GUIDE.md"
   ],
   "scripts": {
     "dev": "vite --port 3112 --strictPort",
-    "build": "vite build && tsc -p tsconfig.lib.json",
+    "clean:dist": "node -e \"const fs=require('fs'); fs.rmSync('dist',{recursive:true,force:true});\"",
+    "build": "npm run clean:dist && vite build && tsc -p tsconfig.lib.json",
     "build:types": "tsc -p tsconfig.lib.json --emitDeclarationOnly",
     "preview": "vite preview",
     "lint": "eslint .",

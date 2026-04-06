@@ -30,6 +30,7 @@ export interface DropdownMenuProps<T = { label: string }> {
    * Por defecto es false.
    */
   openOnHover?: boolean;
+  compact?: boolean;
 }
 
 export const DropdownMenu = <T = { label: string },>({
@@ -40,6 +41,7 @@ export const DropdownMenu = <T = { label: string },>({
   renderOption,
   replaceOnSingleOption = false,
   openOnHover = false,
+  compact = false,
 }: DropdownMenuProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState<"top" | "bottom">("bottom");
@@ -192,7 +194,7 @@ export const DropdownMenu = <T = { label: string },>({
 
     // Asegurar que el menú no se salga de la pantalla horizontalmente
     let leftPosition = triggerRect.left;
-    const menuMinWidth = 160;
+    const menuMinWidth = compact ? 120 : 160;
     const viewportWidth = window.innerWidth;
 
     // Si el menú se sale por la derecha, ajustar la posición
@@ -222,7 +224,7 @@ export const DropdownMenu = <T = { label: string },>({
     }
     // scrollUpdate se usa intencionalmente para forzar el recálculo en scroll
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, menuPosition, scrollUpdate]);
+  }, [isOpen, menuPosition, scrollUpdate, compact]);
 
   // Si debe reemplazar con la opción única, mostrar directamente la opción
   if (shouldReplace && singleOption) {
@@ -248,7 +250,7 @@ export const DropdownMenu = <T = { label: string },>({
         {renderNode ? (
           renderNode
         ) : (
-          <Button variant="ghost" icon="fa-ellipsis-h" />
+          <Button variant="ghost" icon="fa-ellipsis-h" size={compact ? "sm" : undefined} />
         )}
       </div>
 
@@ -261,7 +263,7 @@ export const DropdownMenu = <T = { label: string },>({
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onClick={(e) => e.stopPropagation()}
-                className="fixed z-[2000] bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-lg)] py-1 min-w-[160px] font-[var(--font-default)]"
+                className={`fixed z-[2000] bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-lg)] ${compact ? "py-0.5 min-w-[120px]" : "py-1 min-w-[160px]"} font-[var(--font-default)]`}
                 style={menuStyles}
               >
                 {options.map((option, index) => {
@@ -275,7 +277,7 @@ export const DropdownMenu = <T = { label: string },>({
                     <div
                       key={key}
                       onClick={() => handleOptionClick(option)}
-                      className="px-4 py-2 text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] cursor-pointer transition-colors flex items-center"
+                      className={`${compact ? "px-2 py-1" : "px-4 py-2"} text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] cursor-pointer transition-colors flex items-center`}
                     >
                       {renderOption
                         ? renderOption(option)

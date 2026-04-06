@@ -36,6 +36,7 @@ export interface DashboardLayoutProps {
   actions?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
+  compact?: boolean;
 }
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
@@ -45,6 +46,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   actions,
   children,
   className = "",
+  compact = false,
 }) => {
   const getChangeColor = (changeType?: string) => {
     switch (changeType) {
@@ -73,7 +75,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <div className={`flex justify-between items-center ${compact ? "py-3" : "py-6"}`}>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
               {subtitle && (
@@ -89,10 +91,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
       {/* Stats Cards */}
       {stats.length > 0 && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${compact ? "py-3" : "py-6"}`}>
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ${compact ? "gap-3" : "gap-6"}`}>
             {stats.map((stat, index) => (
-              <Card key={index} variant="elevated" className="p-6">
+              <Card key={index} variant="elevated" className={compact ? "p-3" : "p-6"} compact={compact}>
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
                     {stat.icon && (
@@ -133,7 +135,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       )}
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${compact ? "py-3" : "py-6"}`}>
         {children}
       </div>
     </div>

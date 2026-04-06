@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, DataTable, Button, Badge } from "../index";
+import { Card, DataTable, Button, Badge, Checkbox } from "../index";
 import type { DataTableColumn } from "../components/layout/DataTable";
 
 interface Product {
@@ -13,6 +13,7 @@ interface Product {
 
 const DataTableDocs: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
 
   const allProducts: Product[] = [
     {
@@ -317,6 +318,14 @@ const DataTableDocs: React.FC = () => {
     <div className="max-w-5xl mx-auto space-y-8">
       <Card title="DataTable - Variantes y Ejemplos">
         <div className="space-y-10">
+          <div className="flex items-center gap-4 mb-4">
+            <Checkbox
+              label="Modo compacto"
+              checked={isCompact}
+              onChange={(e) => setIsCompact(e.target.checked)}
+            />
+          </div>
+
           <section>
             <h3
               className="text-lg font-semibold mb-4"
@@ -332,7 +341,7 @@ const DataTableDocs: React.FC = () => {
               propiedades.
             </p>
             <Card>
-              <DataTable columns={basicColumns} rows={products} />
+              <DataTable columns={basicColumns} rows={products} compact={isCompact} />
             </Card>
           </section>
 
@@ -351,7 +360,7 @@ const DataTableDocs: React.FC = () => {
               columnas se formatean automáticamente según su tipo.
             </p>
             <Card>
-              <DataTable columns={fullColumns} rows={products} />
+              <DataTable columns={fullColumns} rows={products} compact={isCompact} />
             </Card>
           </section>
 
@@ -375,7 +384,7 @@ const DataTableDocs: React.FC = () => {
               menú.
             </p>
             <Card>
-              <DataTable columns={customColumns} rows={products} />
+              <DataTable columns={customColumns} rows={products} compact={isCompact} />
             </Card>
           </section>
 
@@ -396,7 +405,7 @@ const DataTableDocs: React.FC = () => {
               acciones en el header de la columna.
             </p>
             <Card>
-              <DataTable columns={headerCustomColumns} rows={products} />
+              <DataTable columns={headerCustomColumns} rows={products} compact={isCompact} />
             </Card>
           </section>
 
@@ -418,7 +427,7 @@ const DataTableDocs: React.FC = () => {
               <code>footer</code> en las columnas.
             </p>
             <Card>
-              <DataTable columns={fullColumns} rows={allProducts} maxRows={5} />
+              <DataTable columns={fullColumns} rows={allProducts} maxRows={5} compact={isCompact} />
             </Card>
           </section>
 
@@ -440,7 +449,7 @@ const DataTableDocs: React.FC = () => {
               como separador decimal.
             </p>
             <Card>
-              <DataTable columns={fullColumns} rows={products} locale="en-US" />
+              <DataTable columns={fullColumns} rows={products} locale="en-US" compact={isCompact} />
             </Card>
           </section>
 
@@ -481,6 +490,7 @@ const DataTableDocs: React.FC = () => {
                 rows={products}
                 isLoading={isLoading}
                 loadingRows={5}
+                compact={isCompact}
               />
             </Card>
           </section>
@@ -504,6 +514,7 @@ const DataTableDocs: React.FC = () => {
               <DataTable
                 columns={basicColumns}
                 rows={products}
+                compact={isCompact}
                 rowClassName={(row) =>
                   row.stock === 0 ? "bg-red-50 dark:bg-red-900/20" : ""
                 }
@@ -532,6 +543,7 @@ const DataTableDocs: React.FC = () => {
               <DataTable
                 columns={fullColumns}
                 rows={products}
+                compact={isCompact}
                 headerClassName="bg-red-50/50 border-b-2 border-primary"
                 footerClassName="border-t-2 border-primary bg-green-500"
               />
@@ -558,6 +570,7 @@ const DataTableDocs: React.FC = () => {
               <DataTable
                 columns={basicColumns}
                 rows={products}
+                compact={isCompact}
                 headerCellClassName="text-primary italic uppercase tracking-wider"
                 cellClassName={(_row, column) =>
                   column.value === "name" ? "font-bold text-blue-600" : ""
@@ -586,7 +599,7 @@ const DataTableDocs: React.FC = () => {
               <DataTable
                 columns={basicColumns}
                 rows={products}
-                compact={true}
+                compact={isCompact}
               />
             </Card>
           </section>

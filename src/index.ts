@@ -50,6 +50,9 @@ export type {
   FormField,
 } from "./templates/patterns/FormPattern";
 
+export { ListPattern } from "./templates/patterns/ListPattern";
+export type { ListPatternProps } from "./templates/patterns/ListPattern";
+
 // Styles are available via package exports: import 'flysoft-react-ui/styles'
 
 // Re-export React for convenience

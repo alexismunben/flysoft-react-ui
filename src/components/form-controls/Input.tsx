@@ -65,17 +65,20 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     const inputClasses = `${baseClasses} ${readOnlyClasses} ${sizeClasses[size]} ${stateClasses} ${className}`;
 
-    const iconClasses =
-      size === "sm" ? "w-4 h-4" : size === "md" ? "w-5 h-5" : "w-6 h-6";
+    const iconSizeClasses =
+      size === "sm" ? "text-xs" : size === "md" ? "text-sm" : "text-base";
+
+    const iconPositionClasses =
+      size === "sm"
+        ? iconPosition === "left" ? "left-2.5" : "right-2.5"
+        : iconPosition === "left" ? "left-3" : "right-3";
 
     const renderIcon = () => {
       if (!icon || readOnly) return null;
 
       const iconElement = (
         <i
-          className={`${normalizeIconClass(icon)} ${iconClasses} text-[var(--color-text-muted)] absolute top-1/2 transform -translate-y-1/2 ${
-            iconPosition === "left" ? "left-3" : "right-3"
-          } ${onIconClick && !readOnly ? "cursor-pointer hover:text-[var(--color-primary)] transition-colors" : ""}`}
+          className={`${normalizeIconClass(icon)} ${iconSizeClasses} text-[var(--color-text-muted)] absolute top-1/2 -translate-y-1/2 flex items-center justify-center ${iconPositionClasses} ${onIconClick && !readOnly ? "cursor-pointer hover:text-[var(--color-primary)] transition-colors" : ""}`}
           onClick={readOnly ? undefined : onIconClick}
         />
       );
@@ -99,8 +102,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={`${inputClasses} ${
-              icon && iconPosition === "left" && !readOnly ? "pl-10" : ""
-            } ${icon && iconPosition === "right" && !readOnly ? "pr-10" : ""}`}
+              icon && iconPosition === "left" && !readOnly ? (size === "sm" ? "pl-7" : "pl-10") : ""
+            } ${icon && iconPosition === "right" && !readOnly ? (size === "sm" ? "pr-7" : "pr-10") : ""}`}
             autoComplete="off"
             readOnly={readOnly}
             {...props}

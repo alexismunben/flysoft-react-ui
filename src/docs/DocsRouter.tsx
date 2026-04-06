@@ -32,6 +32,13 @@ import AccordionDocs from "./AccordionDocs";
 import SkeletonDocs from "./SkeletonDocs";
 import CurrencyInputDocs from "./CurrencyInputDocs";
 import DocAdmin from "./DocAdmin";
+import LoginFormDocs from "./LoginFormDocs";
+import RegistrationFormDocs from "./RegistrationFormDocs";
+import ContactFormDocs from "./ContactFormDocs";
+import DashboardLayoutDocs from "./DashboardLayoutDocs";
+import SidebarLayoutDocs from "./SidebarLayoutDocs";
+import FormPatternDocs from "./FormPatternDocs";
+import ListPatternDocs from "./ListPatternDocs";
 
 export const DocsRouter: React.FC = () => {
   return (
@@ -69,6 +76,13 @@ export const DocsRouter: React.FC = () => {
       <Route path="snackbar" element={<SnackbarDocs />} />
       <Route path="accordion" element={<AccordionDocs />} />
       <Route path="skeleton" element={<SkeletonDocs />} />
+      <Route path="templates/login-form" element={<LoginFormDocs />} />
+      <Route path="templates/registration-form" element={<RegistrationFormDocs />} />
+      <Route path="templates/contact-form" element={<ContactFormDocs />} />
+      <Route path="templates/dashboard-layout" element={<DashboardLayoutDocs />} />
+      <Route path="templates/sidebar-layout" element={<SidebarLayoutDocs />} />
+      <Route path="templates/form-pattern" element={<FormPatternDocs />} />
+      <Route path="templates/list-pattern" element={<ListPatternDocs />} />
       <Route path="admin" element={<DocAdmin />} />
     </Routes>
   );

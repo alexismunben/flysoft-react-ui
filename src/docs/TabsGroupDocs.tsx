@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Card, TabsGroup, TabPanel, Button, Badge, Input } from "../index";
+import { Card, TabsGroup, TabPanel, Button, Badge, Input, Checkbox } from "../index";
 
 const UrlSyncExample: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -143,6 +143,7 @@ const UrlSyncExample: React.FC = () => {
 
 const TabsGroupDocs: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<string>("");
+  const [isCompact, setIsCompact] = useState(false);
 
   const basicTabs = [
     { id: "users", label: "Usuarios" },
@@ -166,6 +167,13 @@ const TabsGroupDocs: React.FC = () => {
     <div className="max-w-5xl mx-auto space-y-8">
       <Card title="TabsGroup - Variantes y Ejemplos">
         <div className="space-y-10">
+          <div className="flex items-center gap-4 mb-4">
+            <Checkbox
+              label="Modo compacto"
+              checked={isCompact}
+              onChange={(e) => setIsCompact(e.target.checked)}
+            />
+          </div>
           <section>
             <h3
               className="text-lg font-semibold mb-4"
@@ -182,7 +190,7 @@ const TabsGroupDocs: React.FC = () => {
               está activo.
             </p>
             <Card title="Ejemplo básico">
-              <TabsGroup tabs={basicTabs}>
+              <TabsGroup tabs={basicTabs} compact={isCompact}>
                 <TabPanel tabId="users">
                   <div className="space-y-4">
                     <h4 className="text-lg font-semibold text-[var(--color-text-primary)]">
@@ -260,7 +268,7 @@ const TabsGroupDocs: React.FC = () => {
               identificadores.
             </p>
             <Card title="Ejemplo con IDs numéricos">
-              <TabsGroup tabs={tabsWithNumbers}>
+              <TabsGroup tabs={tabsWithNumbers} compact={isCompact}>
                 <TabPanel tabId={1}>
                   <div className="space-y-4">
                     <h4 className="text-lg font-semibold text-[var(--color-text-primary)]">
@@ -313,6 +321,7 @@ const TabsGroupDocs: React.FC = () => {
             <Card title="Ejemplo con headerNode">
               <TabsGroup
                 tabs={tabsWithHeader}
+                compact={isCompact}
                 headerNode={
                   <div className="flex items-center gap-2">
                     <Badge variant="info">Nuevo</Badge>
@@ -386,6 +395,7 @@ const TabsGroupDocs: React.FC = () => {
                 )}
                 <TabsGroup
                   tabs={basicTabs}
+                  compact={isCompact}
                   onChangeTab={(tab) => setSelectedTab(tab)}
                 >
                   <TabPanel tabId="users">
@@ -468,6 +478,7 @@ const TabsGroupDocs: React.FC = () => {
             </p>
             <Card title="Formulario de Configuración">
               <TabsGroup
+                compact={isCompact}
                 tabs={[
                   { id: "personal", label: "Personal" },
                   { id: "contact", label: "Contacto" },

@@ -18,6 +18,7 @@ export interface LoginFormProps {
   loading?: boolean;
   error?: string;
   className?: string;
+  compact?: boolean;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
@@ -25,6 +26,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   loading = false,
   error,
   className = "",
+  compact = false,
 }) => {
   const [formData, setFormData] = useState({
     email: "",
@@ -72,6 +74,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       title="Iniciar Sesión"
       subtitle="Ingresa tus credenciales para acceder"
       className={className}
+      compact={compact}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
@@ -92,6 +95,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           onChange={handleChange("email")}
           error={errors.email}
           disabled={loading}
+          size={compact ? "sm" : undefined}
         />
 
         <Input
@@ -103,12 +107,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           onChange={handleChange("password")}
           error={errors.password}
           disabled={loading}
+          size={compact ? "sm" : undefined}
         />
 
         <Button
           type="submit"
           variant="primary"
-          size="lg"
+          size={compact ? "sm" : "lg"}
           icon="fa-sign-in-alt"
           loading={loading}
           className="w-full"

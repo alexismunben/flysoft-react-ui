@@ -24,6 +24,7 @@ export interface ContactFormProps {
   success?: boolean;
   error?: string;
   className?: string;
+  compact?: boolean;
 }
 
 export const ContactForm: React.FC<ContactFormProps> = ({
@@ -32,6 +33,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
   success = false,
   error,
   className = "",
+  compact = false,
 }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -96,6 +98,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
         title="Mensaje Enviado"
         subtitle="Gracias por contactarnos"
         className={className}
+        compact={compact}
       >
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -124,6 +127,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
       title="Contáctanos"
       subtitle="Envíanos un mensaje y te responderemos pronto"
       className={className}
+      compact={compact}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
@@ -144,6 +148,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
             onChange={handleChange("name")}
             error={errors.name}
             disabled={loading}
+            size={compact ? "sm" : undefined}
           />
 
           <Input
@@ -155,6 +160,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
             onChange={handleChange("email")}
             error={errors.email}
             disabled={loading}
+            size={compact ? "sm" : undefined}
           />
         </div>
 
@@ -166,6 +172,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
           onChange={handleChange("subject")}
           error={errors.subject}
           disabled={loading}
+          size={compact ? "sm" : undefined}
         />
 
         <div className="w-full">
@@ -203,7 +210,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
         <Button
           type="submit"
           variant="primary"
-          size="lg"
+          size={compact ? "sm" : "lg"}
           icon="fa-paper-plane"
           loading={loading}
           className="w-full"

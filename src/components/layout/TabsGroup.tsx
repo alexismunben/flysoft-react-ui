@@ -12,6 +12,7 @@ export interface TabsGroupProps {
   paramName?: string;
   headerNode?: React.ReactNode;
   onChangeTab?: (selectedTab: string) => void;
+  compact?: boolean;
 }
 
 interface TabsContextType {
@@ -35,6 +36,7 @@ export const TabsGroup: React.FC<TabsGroupProps> = ({
   paramName,
   headerNode,
   onChangeTab,
+  compact = false,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const defaultTab = tabs[0]?.id?.toString() || "";
@@ -91,7 +93,7 @@ export const TabsGroup: React.FC<TabsGroupProps> = ({
                   key={tab.id}
                   onClick={() => handleTabClick(tab.id)}
                   className={`
-                    px-4 py-2 text-sm font-medium transition-colors cursor-pointer
+                    ${compact ? "px-3 py-1" : "px-4 py-2"} text-sm font-medium transition-colors cursor-pointer
                     border-b-2 -mb-[1px]
                     ${
                       isActive
@@ -117,7 +119,7 @@ export const TabsGroup: React.FC<TabsGroupProps> = ({
         </div>
 
         {/* Contenido de los tabs */}
-        <div className="mt-4">
+        <div className={compact ? "mt-2" : "mt-4"}>
           {children}
         </div>
       </div>

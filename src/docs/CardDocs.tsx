@@ -1,11 +1,20 @@
-import React from "react";
-import { Card, Button, DropdownMenu } from "../index";
+import React, { useState } from "react";
+import { Card, Button, DropdownMenu, Checkbox } from "../index";
 
 const CardDocs: React.FC = () => {
+  const [isCompact, setIsCompact] = useState(false);
+
   return (
     <div className="max-w-5xl mx-auto space-y-8">
       <Card title="Card - Variantes y Ejemplos">
         <div className="space-y-10">
+          <div className="flex items-center gap-4 mb-4">
+            <Checkbox
+              label="Modo compacto"
+              checked={isCompact}
+              onChange={(e) => setIsCompact(e.target.checked)}
+            />
+          </div>
           <section>
             <h3
               className="text-lg font-semibold mb-4"
@@ -14,17 +23,17 @@ const CardDocs: React.FC = () => {
               Variantes
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card variant="default" title="Default">
+              <Card variant="default" title="Default" compact={isCompact}>
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
                   card por defecto
                 </p>
               </Card>
-              <Card variant="elevated" title="Elevated">
+              <Card variant="elevated" title="Elevated" compact={isCompact}>
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
                   card con sombra elevada
                 </p>
               </Card>
-              <Card variant="outlined" title="Outlined">
+              <Card variant="outlined" title="Outlined" compact={isCompact}>
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
                   card con borde destacado
                 </p>
@@ -52,6 +61,7 @@ const CardDocs: React.FC = () => {
               <Card
                 title="Card con múltiples acciones"
                 subtitle="Ejemplo con botones en el header"
+                compact={isCompact}
                 headerActions={
                   <div>
                     <DropdownMenu
@@ -109,6 +119,7 @@ const CardDocs: React.FC = () => {
               <Card
                 title="Card con una sola acción"
                 subtitle="Se muestra directamente"
+                compact={isCompact}
                 headerActions={
                   <Button
                     size="sm"
@@ -134,6 +145,7 @@ const CardDocs: React.FC = () => {
               Title y Subtitle como ReactNode
             </h3>
             <Card
+              compact={isCompact}
               title={
                 <div className="flex items-center gap-2">
                   <i className="fal fa-user-circle" />
@@ -170,7 +182,7 @@ const CardDocs: React.FC = () => {
               card. Las demás clases se aplican normalmente al contenedor.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card title="Card con bg-blue-50" className="bg-blue-50">
+              <Card title="Card con bg-blue-50" className="bg-blue-50" compact={isCompact}>
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
                   Card con background personalizado usando clases de Tailwind
                 </p>
@@ -178,6 +190,7 @@ const CardDocs: React.FC = () => {
               <Card
                 title="Card con bg-gradient"
                 className="bg-gradient-to-br from-purple-100 to-pink-100"
+                compact={isCompact}
               >
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
                   Card con gradiente personalizado
@@ -186,6 +199,7 @@ const CardDocs: React.FC = () => {
               <Card
                 title="Card con bg y otras clases"
                 className="bg-green-50 p-8"
+                compact={isCompact}
               >
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
                   Puedes combinar clases de background con otras clases de
@@ -215,7 +229,7 @@ const CardDocs: React.FC = () => {
               <Card
                 title="Card Compacta"
                 subtitle="Diseño denso"
-                compact
+                compact={isCompact}
                 footer={
                   <Button size="sm" variant="primary">
                     Acción
@@ -232,6 +246,7 @@ const CardDocs: React.FC = () => {
               </Card>
               <Card
                 title="Estilos Personalizados"
+                compact={isCompact}
                 headerClassName="bg-gray-100 border-b"
                 contentClassName="bg-blue-50/30"
                 footerClassName="bg-gray-50 border-t"

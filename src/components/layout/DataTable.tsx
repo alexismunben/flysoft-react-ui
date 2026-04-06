@@ -262,6 +262,7 @@ export const DataTable = <T,>({
                           }}
                           renderOption={(item) => item.content}
                           replaceOnSingleOption={true}
+                          compact={compact}
                         />
                       </div>
                     ) : (
@@ -349,6 +350,7 @@ export const DataTable = <T,>({
                                   }}
                                   renderOption={(item) => item.content}
                                   replaceOnSingleOption={true}
+                                  compact={compact}
                                 />
                               </div>
                             </div>

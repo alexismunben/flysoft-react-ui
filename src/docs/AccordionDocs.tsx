@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Accordion, Card, Badge, Input } from "../index";
+import { Accordion, Card, Badge, Input, Checkbox } from "../index";
 
 const AccordionDocs: React.FC = () => {
   const [openAccordions, setOpenAccordions] = useState<Set<string>>(new Set());
+  const [isCompact, setIsCompact] = useState(false);
 
   const handleToggle = (id: string, isOpen: boolean) => {
     const newSet = new Set(openAccordions);
@@ -18,6 +19,14 @@ const AccordionDocs: React.FC = () => {
     <div className="max-w-5xl mx-auto space-y-8">
       <Card title="Accordion - Variantes y Ejemplos">
         <div className="space-y-10">
+          <div className="flex items-center gap-4 mb-4">
+            <Checkbox
+              label="Modo compacto"
+              checked={isCompact}
+              onChange={(e) => setIsCompact(e.target.checked)}
+            />
+          </div>
+
           <section>
             <h3
               className="text-lg font-semibold mb-4"
@@ -33,17 +42,17 @@ const AccordionDocs: React.FC = () => {
               elevated (con sombra) y outlined (con borde destacado).
             </p>
             <div className="space-y-3">
-              <Accordion variant="default" title="Default">
+              <Accordion compact={isCompact} variant="default" title="Default">
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
                   Accordion con variante por defecto.
                 </p>
               </Accordion>
-              <Accordion variant="elevated" title="Elevated">
+              <Accordion compact={isCompact} variant="elevated" title="Elevated">
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
                   Accordion con sombra elevada.
                 </p>
               </Accordion>
-              <Accordion variant="outlined" title="Outlined">
+              <Accordion compact={isCompact} variant="outlined" title="Outlined">
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
                   Accordion con borde destacado.
                 </p>
@@ -67,7 +76,7 @@ const AccordionDocs: React.FC = () => {
               para abrir o cerrar el contenido.
             </p>
             <div className="space-y-3">
-              <Accordion title="Información General">
+              <Accordion compact={isCompact} title="Información General">
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
                   Este es un accordion básico sin icono ni elementos
                   adicionales. El contenido se muestra cuando el accordion está
@@ -75,7 +84,7 @@ const AccordionDocs: React.FC = () => {
                   cerrado.
                 </p>
               </Accordion>
-              <Accordion title="Detalles del Producto" defaultOpen>
+              <Accordion compact={isCompact} title="Detalles del Producto" defaultOpen>
                 <div className="space-y-2">
                   <p style={{ color: "var(--flysoft-text-secondary)" }}>
                     Este accordion está abierto por defecto usando la propiedad{" "}
@@ -112,7 +121,7 @@ const AccordionDocs: React.FC = () => {
               título usando la propiedad <code>icon</code>.
             </p>
             <div className="space-y-3">
-              <Accordion title="Configuración" icon="fa-cog">
+              <Accordion compact={isCompact} title="Configuración" icon="fa-cog">
                 <div className="space-y-2">
                   <p style={{ color: "var(--flysoft-text-secondary)" }}>
                     Este accordion tiene un icono de configuración en el lado
@@ -126,13 +135,13 @@ const AccordionDocs: React.FC = () => {
                   />
                 </div>
               </Accordion>
-              <Accordion title="Información de Usuario" icon="fa-user">
+              <Accordion compact={isCompact} title="Información de Usuario" icon="fa-user">
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
                   Accordion con icono de usuario. Los iconos ayudan a
                   identificar visualmente el tipo de contenido.
                 </p>
               </Accordion>
-              <Accordion title="Notificaciones" icon="fa-bell">
+              <Accordion compact={isCompact} title="Notificaciones" icon="fa-bell">
                 <p style={{ color: "var(--flysoft-text-secondary)" }}>
                   Accordion con icono de notificaciones. Puedes usar cualquier
                   icono de FontAwesome 5.
@@ -158,6 +167,7 @@ const AccordionDocs: React.FC = () => {
             </p>
             <div className="space-y-3">
               <Accordion
+                compact={isCompact}
                 title="Mensajes"
                 icon="fa-envelope"
                 rightNode={<Badge variant="info">3</Badge>}
@@ -168,6 +178,7 @@ const AccordionDocs: React.FC = () => {
                 </p>
               </Accordion>
               <Accordion
+                compact={isCompact}
                 title="Tareas Pendientes"
                 icon="fa-tasks"
                 rightNode={<Badge variant="warning">5</Badge>}
@@ -178,6 +189,7 @@ const AccordionDocs: React.FC = () => {
                 </p>
               </Accordion>
               <Accordion
+                compact={isCompact}
                 title="Configuración Avanzada"
                 icon="fa-sliders-h"
                 rightNode={
@@ -230,6 +242,7 @@ const AccordionDocs: React.FC = () => {
                 </div>
               )}
               <Accordion
+                compact={isCompact}
                 title="Sección 1"
                 icon="fa-folder"
                 onToggle={(isOpen) => handleToggle("seccion1", isOpen)}
@@ -240,6 +253,7 @@ const AccordionDocs: React.FC = () => {
                 </p>
               </Accordion>
               <Accordion
+                compact={isCompact}
                 title="Sección 2"
                 icon="fa-folder"
                 onToggle={(isOpen) => handleToggle("seccion2", isOpen)}
@@ -250,6 +264,7 @@ const AccordionDocs: React.FC = () => {
                 </p>
               </Accordion>
               <Accordion
+                compact={isCompact}
                 title="Sección 3"
                 icon="fa-folder"
                 onToggle={(isOpen) => handleToggle("seccion3", isOpen)}
@@ -278,6 +293,7 @@ const AccordionDocs: React.FC = () => {
             </p>
             <div className="space-y-3">
               <Accordion
+                compact={isCompact}
                 title="Información Personal"
                 icon="fa-user-circle"
                 rightNode={<Badge variant="success">Completo</Badge>}
@@ -293,6 +309,7 @@ const AccordionDocs: React.FC = () => {
                 </div>
               </Accordion>
               <Accordion
+                compact={isCompact}
                 title="Información de Contacto"
                 icon="fa-address-book"
                 rightNode={<Badge variant="warning">Pendiente</Badge>}
@@ -313,6 +330,7 @@ const AccordionDocs: React.FC = () => {
                 </div>
               </Accordion>
               <Accordion
+                compact={isCompact}
                 title="Configuración de Seguridad"
                 icon="fa-shield-alt"
                 rightNode={<Badge variant="info">Recomendado</Badge>}
@@ -352,6 +370,7 @@ const AccordionDocs: React.FC = () => {
             </p>
             <div className="space-y-3">
               <Accordion
+                compact={isCompact}
                 title="Accordion con bg-blue-50"
                 className="bg-blue-50"
               >
@@ -361,6 +380,7 @@ const AccordionDocs: React.FC = () => {
                 </p>
               </Accordion>
               <Accordion
+                compact={isCompact}
                 title="Accordion con bg-gradient"
                 className="bg-gradient-to-br from-purple-100 to-pink-100"
               >
@@ -369,6 +389,7 @@ const AccordionDocs: React.FC = () => {
                 </p>
               </Accordion>
               <Accordion
+                compact={isCompact}
                 title="Accordion con bg y otras clases"
                 className="bg-green-50"
               >
@@ -397,6 +418,7 @@ const AccordionDocs: React.FC = () => {
             </p>
             <div className="space-y-3">
               <Accordion
+                compact={isCompact}
                 title={
                   <div className="flex items-center gap-2">
                     <span>Proyecto Importante</span>
@@ -413,6 +435,7 @@ const AccordionDocs: React.FC = () => {
                 </p>
               </Accordion>
               <Accordion
+                compact={isCompact}
                 title={
                   <div className="flex items-center gap-2">
                     <i className="fal fa-star text-yellow-500" />

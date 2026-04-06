@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Card, Filter, Collection, FiltersDialog } from "../index";
+import { Card, Filter, Collection, FiltersDialog, Checkbox } from "../index";
 import dayjs from "dayjs";
 import { personaService } from "./docMockServices/personaService";
 
 const FilterDocs: React.FC = () => {
   const [searchParams] = useSearchParams();
+  const [isCompact, setIsCompact] = useState(false);
 
   const currentFilterValue = searchParams.get("filtro");
 
@@ -13,6 +14,13 @@ const FilterDocs: React.FC = () => {
     <div className="max-w-5xl mx-auto space-y-8">
       <Card title="Filter - Gestión de Filtros con Query Parameters">
         <div className="space-y-10">
+          <div className="flex items-center gap-4 mb-4">
+            <Checkbox
+              label="Modo compacto"
+              checked={isCompact}
+              onChange={(e) => setIsCompact(e.target.checked)}
+            />
+          </div>
           <section>
             <h3
               className="text-lg font-semibold mb-4"
@@ -36,7 +44,7 @@ const FilterDocs: React.FC = () => {
             </p>
             <Card title="Ejemplo básico">
               <div className="space-y-4">
-                <Filter paramName="filtro" label="Filtro" />
+                <Filter paramName="filtro" label="Filtro" compact={isCompact} />
                 {currentFilterValue && (
                   <div className="p-3 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded">
                     <p className="text-sm">
@@ -110,7 +118,7 @@ const FilterDocs: React.FC = () => {
                     automáticamente.
                   </p>
                 </div>
-                <Filter paramName="test" label="Filtro de prueba" />
+                <Filter paramName="test" label="Filtro de prueba" compact={isCompact} />
                 <div className="p-3 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded">
                   <p
                     className="text-xs"
@@ -152,11 +160,13 @@ const FilterDocs: React.FC = () => {
               <div className="space-y-4">
                 <Collection direction="row" gap="1rem" wrap>
                   <Filter
+                    compact={isCompact}
                     paramName="categoria"
                     label="Categoría"
                     filterType="text"
                   />
                   <Filter
+                    compact={isCompact}
                     paramName="cantidad"
                     label="Cantidad"
                     filterType="number"
@@ -164,6 +174,7 @@ const FilterDocs: React.FC = () => {
                     max={1000}
                   />
                   <Filter
+                    compact={isCompact}
                     paramName="fecha"
                     label="Fecha"
                     filterType="date"
@@ -193,6 +204,7 @@ const FilterDocs: React.FC = () => {
                     }))}
                   />
                   <Filter
+                    compact={isCompact}
                     paramName="estado"
                     label="Estado"
                     filterType="autocomplete"
@@ -205,6 +217,7 @@ const FilterDocs: React.FC = () => {
                     ]}
                   />
                   <Filter
+                    compact={isCompact}
                     paramName="busqueda"
                     label="Búsqueda"
                     filterType="search"
@@ -251,6 +264,7 @@ const FilterDocs: React.FC = () => {
             <Card title="Ejemplo de filtro Search">
               <div className="space-y-4">
                 <Filter
+                  compact={isCompact}
                   paramName="busquedaTexto"
                   label="Buscar"
                   filterType="search"
@@ -329,6 +343,7 @@ const FilterDocs: React.FC = () => {
             <Card title="Ejemplo de filtro SearchSelect">
               <div className="space-y-4">
                 <Filter
+                  compact={isCompact}
                   paramName="persona"
                   label="Persona"
                   filterType="searchSelect"
@@ -447,6 +462,7 @@ const FilterDocs: React.FC = () => {
                   </p>
                 </div>
                 <Filter
+                  compact={isCompact}
                   paramName="filtroCompleto"
                   label="Filtro completo"
                   filterType="text"
@@ -509,7 +525,7 @@ const FilterDocs: React.FC = () => {
                     </li>
                   </ol>
                 </div>
-                <Filter paramName="historial" label="Filtro de historial" />
+                <Filter paramName="historial" label="Filtro de historial" compact={isCompact} />
               </div>
             </Card>
           </section>
@@ -753,12 +769,14 @@ const FilterDocs: React.FC = () => {
                 <div className="flex items-center justify-between w-full">
                   <Collection direction="row">
                     <Filter
+                      compact={isCompact}
                       paramName="busquedaGlobal"
                       label="Buscar..."
                       filterType="search"
                       inputWidth="300px"
                     />
                     <Filter
+                      compact={isCompact}
                       paramName="filtroFecha"
                       label="Fecha"
                       filterType="date"
@@ -766,6 +784,7 @@ const FilterDocs: React.FC = () => {
                       hideEmpty
                     />
                     <Filter
+                      compact={isCompact}
                       paramName="filtroEstado"
                       label="Estado"
                       filterType="autocomplete"

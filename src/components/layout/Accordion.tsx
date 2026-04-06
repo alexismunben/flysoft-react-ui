@@ -10,6 +10,7 @@ export interface AccordionProps {
   className?: string;
   variant?: "default" | "elevated" | "outlined";
   onToggle?: (isOpen: boolean) => void;
+  compact?: boolean;
 }
 
 export const Accordion: React.FC<AccordionProps> = ({
@@ -21,6 +22,7 @@ export const Accordion: React.FC<AccordionProps> = ({
   className = "",
   variant = "default",
   onToggle,
+  compact = false,
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [contentHeight, setContentHeight] = useState<number>(0);
@@ -96,10 +98,10 @@ export const Accordion: React.FC<AccordionProps> = ({
     <div className={`${classes} overflow-hidden`}>
       <button
         onClick={handleToggle}
-        className="w-full flex items-center justify-between px-4 py-3 flysoft-button-reset bg-transparent border-none hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+        className={`w-full flex items-center justify-between ${compact ? "px-2 py-1.5" : "px-4 py-3"} flysoft-button-reset bg-transparent border-none hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer`}
         aria-expanded={isOpen}
       >
-        <div className="flex items-center gap-3 flex-1 min-w-0">
+        <div className={`flex items-center ${compact ? "gap-2" : "gap-3"} flex-1 min-w-0`}>
           {icon && (
             <i
               className={`${normalizeIconClass(
@@ -134,7 +136,7 @@ export const Accordion: React.FC<AccordionProps> = ({
           maxHeight: `${contentHeight}px`,
         }}
       >
-        <div className="px-4 py-3 text-[var(--color-text-primary)]">
+        <div className={`${compact ? "px-2 py-1.5" : "px-4 py-3"} text-[var(--color-text-primary)]`}>
           {children}
         </div>
       </div>

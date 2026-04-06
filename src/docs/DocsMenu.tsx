@@ -293,6 +293,74 @@ export const DocsMenu = () => {
         </div>
       </Accordion>
 
+      <Accordion title="Templates" icon="fa-file-alt">
+        <div className="space-y-2">
+          <LinkButton
+            to="/docs/templates/login-form"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            LoginForm
+          </LinkButton>
+          <LinkButton
+            to="/docs/templates/registration-form"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            RegistrationForm
+          </LinkButton>
+          <LinkButton
+            to="/docs/templates/contact-form"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            ContactForm
+          </LinkButton>
+          <LinkButton
+            to="/docs/templates/dashboard-layout"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            DashboardLayout
+          </LinkButton>
+          <LinkButton
+            to="/docs/templates/sidebar-layout"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            SidebarLayout
+          </LinkButton>
+          <LinkButton
+            to="/docs/templates/form-pattern"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            FormPattern
+          </LinkButton>
+          <LinkButton
+            to="/docs/templates/list-pattern"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            ListPattern
+          </LinkButton>
+        </div>
+      </Accordion>
+
       <Accordion title="Otros" icon="fa-folder">
         <div className="space-y-2">
           <LinkButton

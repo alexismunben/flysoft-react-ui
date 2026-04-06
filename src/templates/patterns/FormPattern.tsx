@@ -53,6 +53,7 @@ export interface FormPatternProps {
   success?: boolean;
   className?: string;
   gridCols?: 1 | 2;
+  compact?: boolean;
 }
 
 export const FormPattern: React.FC<FormPatternProps> = ({
@@ -67,6 +68,7 @@ export const FormPattern: React.FC<FormPatternProps> = ({
   success = false,
   className = "",
   gridCols = 1,
+  compact = false,
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>(
     fields.reduce((acc, field) => ({ ...acc, [field.name]: "" }), {})
@@ -122,6 +124,7 @@ export const FormPattern: React.FC<FormPatternProps> = ({
       onChange: handleChange(field.name),
       error: errors[field.name],
       disabled: loading,
+      size: compact ? "sm" as const : undefined,
     };
 
     if (field.multiline) {
@@ -177,6 +180,7 @@ export const FormPattern: React.FC<FormPatternProps> = ({
         title="¡Éxito!"
         subtitle="La operación se completó correctamente"
         className={className}
+        compact={compact}
       >
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -201,7 +205,7 @@ export const FormPattern: React.FC<FormPatternProps> = ({
   }
 
   return (
-    <Card title={title} subtitle={subtitle} className={className}>
+    <Card title={title} subtitle={subtitle} className={className} compact={compact}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -223,7 +227,7 @@ export const FormPattern: React.FC<FormPatternProps> = ({
         <Button
           type="submit"
           variant="primary"
-          size="lg"
+          size={compact ? "sm" : "lg"}
           icon={submitIcon}
           loading={loading}
           className="w-full"

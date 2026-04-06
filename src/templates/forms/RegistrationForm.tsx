@@ -24,6 +24,7 @@ export interface RegistrationFormProps {
   loading?: boolean;
   error?: string;
   className?: string;
+  compact?: boolean;
 }
 
 export const RegistrationForm: React.FC<RegistrationFormProps> = ({
@@ -31,6 +32,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
   loading = false,
   error,
   className = "",
+  compact = false,
 }) => {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -101,6 +103,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
       title="Crear Cuenta"
       subtitle="Completa los datos para registrarte"
       className={className}
+      compact={compact}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
@@ -121,6 +124,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
             onChange={handleChange("firstName")}
             error={errors.firstName}
             disabled={loading}
+            size={compact ? "sm" : undefined}
           />
 
           <Input
@@ -131,6 +135,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
             onChange={handleChange("lastName")}
             error={errors.lastName}
             disabled={loading}
+            size={compact ? "sm" : undefined}
           />
         </div>
 
@@ -143,6 +148,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
           onChange={handleChange("email")}
           error={errors.email}
           disabled={loading}
+          size={compact ? "sm" : undefined}
         />
 
         <Input
@@ -154,6 +160,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
           onChange={handleChange("password")}
           error={errors.password}
           disabled={loading}
+          size={compact ? "sm" : undefined}
         />
 
         <Input
@@ -165,12 +172,13 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
           onChange={handleChange("confirmPassword")}
           error={errors.confirmPassword}
           disabled={loading}
+          size={compact ? "sm" : undefined}
         />
 
         <Button
           type="submit"
           variant="primary"
-          size="lg"
+          size={compact ? "sm" : "lg"}
           icon="fa-user-plus"
           loading={loading}
           className="w-full"

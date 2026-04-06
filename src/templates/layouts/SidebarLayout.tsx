@@ -48,6 +48,7 @@ export interface SidebarLayoutProps {
   children: React.ReactNode;
   className?: string;
   onLogout?: () => void;
+  compact?: boolean;
 }
 
 export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
@@ -57,6 +58,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
   children,
   className = "",
   onLogout,
+  compact = false,
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeItem, setActiveItem] = useState(menuItems[0]?.href || "");
@@ -111,7 +113,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
                   handleMenuClick(item.href);
                 }}
                 className={`
-                  group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
+                  group flex items-center ${compact ? "px-2 py-1" : "px-3 py-2"} text-sm font-medium rounded-md transition-colors
                   ${
                     activeItem === item.href
                       ? "bg-blue-100 text-blue-700"
@@ -182,7 +184,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
         </div>
 
         {/* Page content */}
-        <main className="p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className={compact ? "p-2 sm:p-3 lg:p-4" : "p-4 sm:p-6 lg:p-8"}>{children}</main>
       </div>
     </div>
   );

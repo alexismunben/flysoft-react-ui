@@ -36,6 +36,7 @@ interface BaseFilterProps {
    * Si el panel está abierto, se cerrará automáticamente.
    */
   disabled?: boolean;
+  compact?: boolean;
 }
 
 // Props específicas para cada tipo de filtro
@@ -106,6 +107,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
 
     hideEmpty = false,
     disabled = false,
+    compact = false,
   } = props;
   const filterType = props.filterType || "text";
 
@@ -728,7 +730,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
   // Altura ajustada para coincidir con input sm: py-1.5 (6px arriba y abajo) + text-sm (14px línea) = ~26px total
   const badgeContainer = (
     <div
-      className="inline-flex items-center gap-2 px-3 py-1.5 h-[2.1rem] rounded-lg border border-[var(--color-border-default)] bg-[var(--color-bg-default)] text-[var(--color-text-primary)] font-[var(--font-default)] cursor-pointer text-sm transition-colors"
+      className={`inline-flex items-center gap-2 ${compact ? "px-2 py-1 h-[1.8rem]" : "px-3 py-1.5 h-[2.1rem]"} rounded-lg border border-[var(--color-border-default)] bg-[var(--color-bg-default)] text-[var(--color-text-primary)] font-[var(--font-default)] cursor-pointer text-sm transition-colors`}
       onClick={handleTogglePanel}
     >
       {/* Valor a la izquierda (o vacío si no tiene valor) */}
@@ -791,7 +793,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
           createPortal(
             <div
               ref={panelRef}
-              className="fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] p-4"
+              className={`fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] ${compact ? "p-2" : "p-4"}`}
               style={{
                 top: `${panelPosition.top}px`,
                 left: `${panelPosition.left}px`,
@@ -847,12 +849,14 @@ export const Filter: React.FC<FilterProps> = (props) => {
                       }
                       onSelectOption={handleAutocompleteOptionSelect}
                       disabled={disabled}
+                      size="sm"
                     />
                   </div>
                   <Button
                     onClick={handleAutocompleteSelect}
                     icon={(props as AutocompleteFilterProps).multiple ? "fa-check" : "fa-arrow-right"}
                     variant="ghost"
+                    size={compact ? "sm" : undefined}
                   />
                 </div>
               </div>
@@ -885,7 +889,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
           createPortal(
             <div
               ref={panelRef}
-              className="fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] p-4"
+              className={`fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] ${compact ? "p-2" : "p-4"}`}
               style={{
                 top: `${panelPosition.top}px`,
                 left: `${panelPosition.left}px`,
@@ -924,12 +928,14 @@ export const Filter: React.FC<FilterProps> = (props) => {
                       value={dateValue}
                       onChange={handleDateChange}
                       format="dd/mm/yyyy"
+                      size="sm"
                     />
                   </div>
                   <Button
                     onClick={handleSetDateFilter}
                     icon="fa-arrow-right"
                     variant="ghost"
+                    size={compact ? "sm" : undefined}
                   />
                 </div>
               </div>
@@ -965,7 +971,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
           createPortal(
             <div
               ref={panelRef}
-              className="fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] p-4"
+              className={`fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] ${compact ? "p-2" : "p-4"}`}
               style={{
                 top: `${panelPosition.top}px`,
                 left: `${panelPosition.left}px`,
@@ -1011,6 +1017,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
                     renderOption={searchSelectProps.renderOption}
                     dialogTitle={searchSelectProps.dialogTitle}
                     noResultsText={searchSelectProps.noResultsText}
+                    size="sm"
                   />
                 </div>
               </div>
@@ -1049,6 +1056,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
                 onIconClick={handleSearchIconClick}
                 placeholder="Buscar..."
                 size="sm"
+                className={compact ? "!py-1 !h-[1.8rem]" : ""}
                 disabled={disabled}
               />
             </div>
@@ -1081,7 +1089,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
         createPortal(
           <div
             ref={panelRef}
-            className="fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] p-4"
+            className={`fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] ${compact ? "p-2" : "p-4"}`}
             style={{
               top: `${panelPosition.top}px`,
               left: `${panelPosition.left}px`,
@@ -1121,6 +1129,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder="Ingresa un valor"
+                    size="sm"
                     min={
                       filterType === "number"
                         ? (props as NumberFilterProps).min
@@ -1142,6 +1151,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
                   onClick={handleSetFilter}
                   icon="fa-arrow-right"
                   variant="ghost"
+                  size={compact ? "sm" : undefined}
                 />
               </div>
             </div>

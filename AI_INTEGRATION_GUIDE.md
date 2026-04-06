@@ -1,178 +1,343 @@
-# Integration Guide: Using Flysoft React UI with AI Agents
+# AI Integration Guide (Consumer Projects)
 
-When using this library in another project (the "Consumer Project"), you need to inform your AI assistant (Cursor, Windsurf, Copilot, etc.) about how to use `flysoft-react-ui`.
+This file is designed to be copied into any client project that consumes `flysoft-react-ui`. It helps AI agents understand the complete API surface and generate correct code.
 
-## 1. Installation in Consumer Project
-Ensure the library is installed in your consumer project:
+## 1) Install
+
 ```bash
 npm install flysoft-react-ui
-# or
-npm install ../path/to/flysoft-react-ui # for local development
 ```
 
-## 2. Configuring the AI
-To ensure the AI understands the library and prioritizes its components, follow these steps based on your tool.
+## 2) Required Runtime Setup
 
-### Option A: Cursor IDE (.cursorrules)
-Create a file named `.cursorrules` in the root of your **Consumer Project** and paste the content below.
+At app root:
 
-### Option B: General Usage (System Prompt/Context)
-If you are using a chat interface (ChatGPT, Claude, Gemini), paste the content below into the chat or upload it as a "Project Knowledge" file.
+```tsx
+import { ThemeProvider } from "flysoft-react-ui";
+import "flysoft-react-ui/styles";
+
+export function AppRoot() {
+  return <ThemeProvider initialTheme="light">{/* app */}</ThemeProvider>;
+}
+```
+
+For full app layout with navbar, sidebar, and snackbars:
+
+```tsx
+import { AppLayoutProvider } from "flysoft-react-ui";
+import "flysoft-react-ui/styles";
+
+export function AppRoot() {
+  return (
+    <AppLayoutProvider
+      initialTheme="light"
+      initialNavbar={{ navBarLeftNode: <h1>Mi App</h1>, fullWidthNavbar: true }}
+    >
+      {/* routes */}
+    </AppLayoutProvider>
+  );
+}
+```
+
+## 3) Copy-paste prompt for AI agents
+
+Copy the following block into `.cursorrules`, `AGENTS.md`, `copilot-instructions.md`, `CLAUDE.md`, or your AI system prompt:
 
 ---
 
-### 📋 Copy Content Below This Line 📋
+```md
+This project uses `flysoft-react-ui` as the default UI library.
 
-You are working on a project that uses the `flysoft-react-ui` component library.
-Use this library for all UI elements unless minimal HTML/CSS is strictly better.
+## Rules
+1. Always import from `flysoft-react-ui` (top-level only). Never from internal paths.
+2. Prefer existing library components before creating custom UI. Never duplicate Button, Input, Card, Badge, Dialog, etc.
+3. Use exported TypeScript types for type safety (e.g. ButtonProps, DataTableColumn<T>).
+4. Keep style import at app root only: `import "flysoft-react-ui/styles";`
+5. Wrap app with `ThemeProvider` (or `AppLayoutProvider` for full layout).
+6. Use FontAwesome 5 icon classes (`fa-*`). Components auto-normalize to light style (fal). Never use other icon libraries.
+7. Use theme CSS variables for custom styling: `var(--color-primary)`, `var(--color-bg-default)`, etc.
 
-# Flysoft React UI Documentation
+## Available Components
 
-## Library Philosophy
-`flysoft-react-ui` is a React component library built with TypeScript. It emphasizes a consistent look and feel, ease of use, and "premium" aesthetics out of the box.
+### Form Controls
+- `Button` — variant: "primary"|"outline"|"ghost", size: "sm"|"md"|"lg", color: "primary"|"secondary"|"success"|"warning"|"danger"|"info", icon, loading, bg, textColor
+- `LinkButton` — Same as Button but renders as link. Props: to (route/URL), target, variant, size, color, icon
+- `Input` — label, error, icon, iconPosition, size, onIconClick, readOnly. Extends HTML input attributes
+- `AutocompleteInput<T,K>` — Searchable dropdown. Props: options, value, onChange, multiple, getOptionLabel, getOptionValue, renderOption, noResultsText
+- `SearchSelectInput<T,K>` — Dialog-based async search. Props: onSearchPromiseFn, onSingleSearchPromiseFn, dialogTitle, getOptionLabel, getOptionValue
+- `DatePicker` — Standalone calendar. Props: value (Dayjs), onChange, startWeekOn
+- `DateInput` — Input with DatePicker dropdown. Props: value (Dayjs|string), onChange, format ("dd/mm/yyyy"|"mm/dd/yyyy")
+- `Checkbox` — Props: label, labelPosition, error, size, readOnly
+- `RadioButtonGroup` — Props: options ({label,value,disabled}[]), value, onChange, direction ("vertical"|"horizontal"), gap, size
+- `CurrencyInput` — Numeric input formatted as currency (es-AR: 1.234,56). Props: value (number), onChange
+- `Pagination` — URL-based pagination. Props: page, pages, total, isLoading, fieldName
 
-## 🚨 Critical Rules for AI
-1. **Top-Level Imports Only**: Always import components from the root package `flysoft-react-ui`.
-   - **CORRECT**: `import { Button, Card } from 'flysoft-react-ui';`
-   - **INCORRECT**: `import { Button } from 'flysoft-react-ui/components/Button';`
-2. **TypeScript First**: Use the exported types (e.g., `ButtonProps`, `DataTableColumn`) to ensure type safety.
-3. **No Direct Style Imports**: Do not import CSS files from the library (like `flysoft-react-ui/dist/index.css`) in components. This is handled at the app root.
+### Layout & Data
+- `Card` — Props: title, subtitle, headerActions, footer, variant ("default"|"elevated"|"outlined"), compact, alwaysDisplayHeaderActions
+- `AppLayout` — Main layout. Props: navbar (NavbarInterface), leftDrawer (LeftDrawerInterface), children
+- `Collection` — Flex container. Props: gap, direction, wrap
+- `DataField` — Label+value pair. Props: label, value, inline, align, link
+- `TabsGroup` + `TabPanel` — Tabbed interface. TabsGroup: tabs ({id,label}[]), paramName (URL sync). TabPanel: tabId
+- `DataTable<T>` — Data table. Props: columns (DataTableColumn<T>[]), rows, maxRows, isLoading, loadingRows, compact, locale
+  - DataTableColumn: header, value (key or function), type ("text"|"numeric"|"currency"|"date"), actions, width, align, tooltip, footer
+- `Accordion` — Collapsible section. Props: title, icon, rightNode, defaultOpen, variant, onToggle
+- `Menu<T>` — Simple menu list. Props: options, onOptionSelected, getOptionLabel, renderOption
+- `DropdownMenu<T>` — Portal dropdown. Props: options, onOptionSelected, renderNode, openOnHover, replaceOnSingleOption
+- `DropdownPanel` — Portal dropdown with arbitrary content. Props: children, renderNode, openOnHover
+- `Filter` — Versatile filter by type. filterType: "text"|"number"|"date"|"autocomplete"|"search"|"searchSelect". Props: paramName (URL sync), label, value, onChange
 
-## Component Categorization
+### Utility & Feedback
+- `Badge` — Props: variant, size, rounded, icon, iconPosition, bg, textColor, onClick
+- `Avatar` — Props: text (for initials), image, bgColor, textColor, size
+- `RoadMap` — Stage visualization. Props: stages ({name, description?, icon?, variant?, bg?, disabled?}[])
+- `Dialog` — Modal. Props: isOpen, title, children, footer, onClose, closeOnOverlayClick, compact
+- `Loader` — Loading indicator. Props: isLoading, text, keepContentWhileLoading, contentLoadingNode, overlayClassName
+- `FiltersDialog` — Groups multiple filters in dialog. Props: filters (FilterConfig[])
+- `Snackbar` — (Used internally) Toast notification
+- `SnackbarContainer` — Place at root. Props: position, maxSnackbars
+- `Skeleton` — Pulse placeholder. Props: className
+- `ThemeSwitcher` — No props. Self-contained theme toggle
 
-### 1. Layouts & Structure
-- **AppLayout**: The main wrapper for applications.
-  - **Props**: `navbar` (NavbarInterface), `leftDrawer` (LeftDrawerInterface), `children`.
-- **Card**: Generic container with shadow and rounded corners.
-- **Accordion**: Collapsible content sections.
-- **Collection**: Renders a list of items using a render prop or component.
-- **TabsGroup / TabPanel**: Tabbed interfaces.
-- **Menu**: Menu component.
-- **DropdownMenu / DropdownPanel**: Components for building drop-down menus.
-- **DashboardLayout**: Specialized layout for dashboard views with statistics.
-- **SidebarLayout**: Layout with a persistent sidebar.
+### Templates
+- `LoginForm` — Props: onSubmit, loading, error, className
+- `RegistrationForm` — Props: onSubmit, loading, error, className
+- `ContactForm` — Props: onSubmit, loading, success, error, className
+- `DashboardLayout` — Props: title, subtitle, stats (DashboardStat[]), actions, children
+- `SidebarLayout` — Props: title, menuItems (MenuItem[]), user (User), onLogout, children
+- `FormPattern` — Dynamic form builder. Props: title, fields (FormField[]), onSubmit, gridCols, submitText, submitIcon, loading, error, success
+- `ListPattern<T>` — List page with Card + search + filters + pagination + DataTable. Props: title, columns, rows, searchParamName, onAdd, addButtonText, filtersNode, page, pages, total, isLoading, compact
 
-### 2. Form Controls
-- **Button / LinkButton**: Standard buttons. Supports `variant` ('primary' | 'secondary' | 'danger' | 'ghost') and `icon`.
-- **Input**: Text inputs.
-- **AutocompleteInput**: Searchable dropdown.
-- **SearchSelectInput**: Specialized input for selecting from search results.
-- **DatePicker / DateInput**: Date picking and input.
-- **Checkbox**: Boolean selection.
-- **RadioButtonGroup**: Single selection from a group.
-- **ThemeSwitcher**: Component to toggle theme (light/dark).
-- **FormPattern**: Template pattern for building forms.
+### Contexts & Hooks
+- `ThemeProvider` — initialTheme, storageKey, forceInitialTheme, onThemeChange
+- `useTheme()` — Returns: theme, setTheme, updateTheme, currentThemeName, availableThemes, isDark, resetToDefault
+- `AuthProvider` — getToken, getUserData, refreshToken, removeToken
+- `AuthContext` — user, login, logout, isAuthenticated, isLoading
+- `CrudProvider<T>` — getPromise, getItemPromise, postPromise, putPromise, deletePromise, urlParams, limit, pageParam
+- `useCrud<T>()` — Returns: list, item, isLoading, pagination, fetchItems, fetchItem, createItem, updateItem, deleteItem, params, page, pages, total
+- `SnackbarProvider` + `useSnackbar()` — showSnackbar(message, variant?, options?), removeSnackbar(id)
+- `AppLayoutProvider` — Combines Theme + Snackbar + AppLayout. useAppLayout() to set navbar/drawer dynamically
+- `useAsyncRequest(options)` — Returns: execute(fn), isLoading. Options: successMessage, errorMessage, onSuccess, onError
+- `useBreakpoint()` — Returns: breakpoint, windowSize, isMobile, isTablet, isDesktop
+- `useThemeOverride(options)` — Returns: applyOverride, revertOverride, revertAllOverrides
+- `useElementScroll(ref)` — Returns: scrollY, scrollDirection
+- `useEnum(enum)` — Returns: getArray(), getInstance(id)
 
-### 3. Data Display
-- **DataTable<T>**: High-performance table.
-  - **Props**: `columns` (array of definitions), `rows` (data), `isLoading`.
-- **DataField**: Displays a Label + Value pair, useful for detail views.
-- **Pagination**: Pagination controls.
+### Services
+- `apiClient` — HTTP client. Methods: get<T>, post<T>, put<T>, del<T>, getFile, downloadFile, uploadFile, openFile
+- `setApiClientTokenProvider(fn)` — Set auth token globally
+- `createApiClient(config)` — Create isolated API client instance
 
-### 4. Utilities & Feedback
-- **Dialog**: Modal windows for confirmation or complex forms.
-- **Filter / FiltersDialog**: Components for filtering lists/tables.
-- **Snackbar**: Toast notifications. Requires `SnackbarContainer` at the app root.
-- **Loader**: Visual loading indicator.
-- **Badge**: Status indicators.
-- **Avatar**: User profile images.
-- **RoadMap**: Progress or stage visualization.
+### Helpers
+- `currencyFormat(n)` → "1.234,56"
+- `getErrorMessage(error)` → user-friendly error string
+- `getInitialLetters(text)` → "JP" from "Juan Pérez"
+- `objectToQueryString(obj)` → "a=1&b=2"
+- `queryStringToObject(str)` → {a: "1", b: "2"}
+- `promiseMapper(promise, mapperFn)` — Maps paginated/array/single results
+- `RegularExpressions` — .email, .dateString, .password(config)
 
-### 5. Ready-to-use Templates
-- **LoginForm**
-- **RegistrationForm**
-- **ContactForm**
+### Interfaces
+- `NameValueInterface<T>` — { name: string; value: T; extras?: any }
+- `PaginationInterface<T>` — { list: T[]; limit: number; page: number; pages: number; total: number }
 
 ## Common Patterns
 
-### Basic Page Usage (Simple Card)
-Use this pattern for simple pages that do not require the full `AppLayout` wrapper or when inserting into an existing structure.
-```tsx
-import { Card, Button } from 'flysoft-react-ui';
-
-export default function SimplePage() {
-  return (
-    <div className="p-4">
-      <Card>
-        <h2 className="text-xl font-bold mb-4">Content Title</h2>
-        <p className="mb-4">This is the content within a basic card.</p>
-        <Button variant="primary" onClick={() => console.log('Clicked')}>
-          Action
-        </Button>
-      </Card>
-    </div>
-  );
-}
-```
-
-### Full Page Layout
-```tsx
-import { AppLayout } from 'flysoft-react-ui';
-
-export default function Page() {
-  return (
-    <AppLayout
-      navbar={{ title: "My Page" }}
-    >
-      {/* Children content goes here */}
-    </AppLayout>
-  );
-}
-```
-
-### Data Table Usage
-```tsx
-import { DataTable, DataTableColumn } from 'flysoft-react-ui';
-
-interface User { id: number; name: string; }
-
-const columns: DataTableColumn<User>[] = [
-  { header: 'ID', accessorKey: 'id' },
-  { header: 'Name', accessorKey: 'name' },
-];
-
-<DataTable columns={columns} rows={users} />
-```
-
-## Icons
-The library is agnostic but pairs well with `lucide-react` or FontAwesome. Pass icons as ReactNodes to props like `icon`, `startIcon`, or `endIcon`.
-
-## Contexts & State Management
-
-### 1. AuthContext
-Manages user authentication state.
-- **Provider**: `AuthProvider`
-- **Hook**: `useContext(AuthContext)`
-- **Key Features**: `user`, `login`, `logout`, `isAuthenticated`.
-
-### 2. CrudContext<T>
-Powerful context for managing standard CRUD operations with pagination, filtering, and loading states.
-- **Provider**: `CrudProvider<T>`
-- **Hook**: `useCrud<T>()`
-- **Key Features**: Auto-fetching, `list`, `item`, `pagination` node, `isLoading`, CRUD actions (`createItem`, `updateItem`, `deleteItem`).
-
-**Usage:**
-```tsx
-import { CrudProvider, useCrud, DataTable } from 'flysoft-react-ui';
+### CRUD List Page
+​```tsx
+<CrudProvider<User>
+  getPromise={(params) => apiClient.get({ url: "/api/users", params })}
+  deletePromise={{ execute: (u) => apiClient.del({ url: `/api/users/${u.id}` }), successMessage: "Eliminado" }}
+  urlParams={["nombre"]}
+>
+  <UserList />
+</CrudProvider>
 
 function UserList() {
-  const { list, isLoading, pagination } = useCrud<User>();
+  const { list, isLoading, pagination, deleteItem } = useCrud<User>();
+  const columns: DataTableColumn<User>[] = [
+    { header: "Nombre", value: "name" },
+    { header: "Email", value: "email" },
+    { actions: (row) => [
+      <Button key="del" variant="ghost" size="sm" icon="fa-trash" color="danger"
+        loading={deleteItem.isLoading} onClick={() => deleteItem.execute(row)}>
+        Eliminar
+      </Button>
+    ]}
+  ];
   return (
-    <div>
-      <DataTable rows={list} isLoading={isLoading} ... />
+    <Card title="Usuarios">
+      <Filter filterType="text" paramName="nombre" label="Nombre" />
+      <DataTable columns={columns} rows={list ?? []} isLoading={isLoading} />
       {pagination}
-    </div>
+    </Card>
   );
 }
+​```
+
+### Form with Async Save
+​```tsx
+const { execute, isLoading } = useAsyncRequest({
+  successMessage: "Guardado exitosamente",
+  errorMessage: (err) => getErrorMessage(err),
+});
+
+<Card title="Nuevo Usuario">
+  <Input label="Nombre" value={name} onChange={(e) => setName(e.target.value)} icon="fa-user" />
+  <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} icon="fa-envelope" />
+  <Button variant="primary" icon="fa-save" loading={isLoading}
+    onClick={() => execute(() => apiClient.post({ url: "/api/users", body: { name, email } }))}>
+    Guardar
+  </Button>
+</Card>
+​```
+
+### Dialog Confirmation
+​```tsx
+<Dialog isOpen={showConfirm} title="Confirmar eliminación" onClose={() => setShowConfirm(false)}
+  footer={<>
+    <Button variant="ghost" onClick={() => setShowConfirm(false)}>Cancelar</Button>
+    <Button variant="primary" color="danger" icon="fa-trash" onClick={handleDelete}>Eliminar</Button>
+  </>}
+>
+  <p>¿Está seguro?</p>
+</Dialog>
+​```
+
+### List Page (without CrudContext)
+Full implementation of Card + search + filters + pagination + DataTable. Uses URL query params for filters and pagination.
+​```tsx
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import {
+  Card, Button, Collection, Filter, Pagination, DataTable, Dialog,
+} from "flysoft-react-ui";
+import type { DataTableColumn } from "flysoft-react-ui";
+
+interface User { id: number; name: string; email: string; role: string; }
+
+function UserListPage() {
+  const [searchParams] = useSearchParams();
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User>();
+
+  // Read filters from URL
+  const search = searchParams.get("buscar") || "";
+  const role = searchParams.get("rol") || "";
+  const currentPage = Number(searchParams.get("pagina") || "1");
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetchUsers({ search, role, page: currentPage }).then((res) => {
+      setUsers(res.list);
+      setPage(res.page);
+      setPages(res.pages);
+      setTotal(res.total);
+      setIsLoading(false);
+    });
+  }, [search, role, currentPage]);
+
+  const columns: DataTableColumn<User>[] = [
+    { header: "Nombre", value: (row) => row.name },
+    { header: "Email", value: (row) => row.email },
+    { header: "Rol", value: (row) => row.role },
+    {
+      align: "center",
+      actions: (row) => [
+        <Button key="edit" size="sm" variant="ghost" icon="fa-edit"
+          onClick={() => handleEdit(row)}>Editar</Button>,
+        <Button key="del" size="sm" variant="ghost" icon="fa-trash"
+          onClick={() => { setSelectedUser(row); setShowDeleteDialog(true); }}>
+          Eliminar
+        </Button>,
+      ],
+    },
+  ];
+
+  return (
+    <>
+      <Card
+        title="Usuarios"
+        alwaysDisplayHeaderActions
+        headerActions={
+          <Button icon="fa-plus" onClick={() => handleAdd()}>
+            Nuevo Usuario
+          </Button>
+        }
+      >
+        <div className="flex justify-between items-center my-2">
+          <Collection direction="row" wrap>
+            <Filter paramName="buscar" label="Buscar" filterType="search" />
+            <Filter paramName="rol" label="Rol" filterType="autocomplete"
+              options={[
+                { label: "Admin", value: "admin" },
+                { label: "Editor", value: "editor" },
+              ]}
+            />
+          </Collection>
+          <Collection direction="row" wrap>
+            <Pagination page={page} pages={pages} total={total}
+              fieldName="pagina" isLoading={isLoading} />
+          </Collection>
+        </div>
+        <DataTable columns={columns} rows={users}
+          isLoading={isLoading} loadingRows={10} maxRows={10} />
+      </Card>
+
+      <Dialog isOpen={showDeleteDialog} title="Eliminar usuario"
+        onClose={() => setShowDeleteDialog(false)}
+        footer={<>
+          <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>Cancelar</Button>
+          <Button variant="primary" color="danger" icon="fa-trash"
+            onClick={() => handleDelete(selectedUser)}>Eliminar</Button>
+        </>}
+      >
+        <p>¿Está seguro de eliminar a {selectedUser?.name}?</p>
+      </Dialog>
+    </>
+  );
+}
+​```
+
+### List Page (using ListPattern template)
+Same pattern as above but using the `ListPattern` template component for less boilerplate:
+​```tsx
+import { ListPattern, Filter } from "flysoft-react-ui";
+import type { DataTableColumn } from "flysoft-react-ui";
+
+const columns: DataTableColumn<User>[] = [
+  { header: "Nombre", value: (row) => row.name },
+  { header: "Email", value: (row) => row.email },
+  { actions: (row) => [
+    <Button key="edit" size="sm" variant="ghost" icon="fa-edit" onClick={() => edit(row)}>Editar</Button>,
+  ]},
+];
+
+<ListPattern<User>
+  title="Usuarios"
+  columns={columns}
+  rows={users}
+  searchParamName="buscar"
+  addButtonText="Nuevo"
+  onAdd={() => setShowForm(true)}
+  filtersNode={
+    <Filter paramName="rol" label="Rol" filterType="autocomplete"
+      options={[{ label: "Admin", value: "admin" }]} />
+  }
+  page={page} pages={pages} total={total}
+  isLoading={isLoading}
+/>
+​```
 ```
 
-### 3. AppLayoutContext
-Controls the global layout state (navbar, visual settings). usually handled internally by `AppLayout` but accessible if needed.
-- **Provider**: `AppLayoutProvider`
-- **Hook**: `useAppLayout()`
+---
 
-### 4. ThemeContext
-Manages the visual theme of the application.
-- **Provider**: `ThemeProvider`
-- **Hook**: `useTheme()`
-- **Features**: Switch between `light`, `dark`, `blue`, `green` themes or custom themes.
+## 4) Notes for library maintainers
+
+- `src/docs/**` is local demo/dev-only and is not part of public API.
+- Public API must be exported from `src/index.ts`.
+- See `AI_CONTEXT.md` for complete prop interfaces and detailed documentation.

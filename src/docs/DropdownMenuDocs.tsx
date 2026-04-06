@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, DropdownMenu, Button, Badge } from "../index";
+import { Card, DropdownMenu, Button, Badge, Checkbox } from "../index";
 
 interface BasicOption {
   label: string;
@@ -21,6 +21,7 @@ interface UserOption {
 
 const DropdownMenuDocs: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<BasicOption | null>(null);
+  const [isCompact, setIsCompact] = useState(false);
 
   // Opciones básicas con propiedad label
   const basicOptions: BasicOption[] = [
@@ -56,6 +57,13 @@ const DropdownMenuDocs: React.FC = () => {
     <div className="max-w-5xl mx-auto space-y-8">
       <Card title="DropdownMenu - Variantes y Ejemplos">
         <div className="space-y-10">
+          <div className="flex items-center gap-4 mb-4">
+            <Checkbox
+              label="Modo compacto"
+              checked={isCompact}
+              onChange={(e) => setIsCompact(e.target.checked)}
+            />
+          </div>
           <section>
             <h3
               className="text-lg font-semibold mb-4"
@@ -76,6 +84,7 @@ const DropdownMenuDocs: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <DropdownMenu<BasicOption>
+                  compact={isCompact}
                   options={basicOptions}
                   onOptionSelected={(item) => {
                     setSelectedItem(item);
@@ -111,6 +120,7 @@ const DropdownMenuDocs: React.FC = () => {
             </p>
             <div className="space-y-4">
               <DropdownMenu<ActionOption>
+                compact={isCompact}
                 options={optionsWithIcons}
                 onOptionSelected={(item) => {
                   console.log("Opción seleccionada:", item);
@@ -141,6 +151,7 @@ const DropdownMenuDocs: React.FC = () => {
             </p>
             <div className="space-y-4">
               <DropdownMenu<ActionOption>
+                compact={isCompact}
                 options={complexOptions}
                 onOptionSelected={(item) => {
                   console.log("Opción compleja seleccionada:", item);
@@ -195,6 +206,7 @@ const DropdownMenuDocs: React.FC = () => {
             </p>
             <div className="space-y-4">
               <DropdownMenu<UserOption>
+                compact={isCompact}
                 options={userOptions}
                 onOptionSelected={(item) => {
                   console.log("Usuario seleccionado:", item);
@@ -230,6 +242,7 @@ const DropdownMenuDocs: React.FC = () => {
                     Con replaceOnSingleOption=false (por defecto):
                   </p>
                   <DropdownMenu<BasicOption>
+                    compact={isCompact}
                     options={[{ label: "Única acción", id: "single" }]}
                     onOptionSelected={(item) => {
                       console.log("Opción seleccionada:", item);
@@ -244,6 +257,7 @@ const DropdownMenuDocs: React.FC = () => {
                     Con replaceOnSingleOption=true:
                   </p>
                   <DropdownMenu<BasicOption>
+                    compact={isCompact}
                     options={[{ label: "Única acción", id: "single" }]}
                     onOptionSelected={(item) => {
                       console.log("Opción seleccionada:", item);
@@ -273,6 +287,7 @@ const DropdownMenuDocs: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-4 flex-wrap">
                 <DropdownMenu<BasicOption>
+                  compact={isCompact}
                   options={basicOptions}
                   onOptionSelected={(item) => {
                     console.log("Opción seleccionada:", item);
@@ -284,6 +299,7 @@ const DropdownMenuDocs: React.FC = () => {
                   }
                 />
                 <DropdownMenu<BasicOption>
+                  compact={isCompact}
                   options={basicOptions}
                   onOptionSelected={(item) => {
                     console.log("Opción seleccionada:", item);
@@ -295,6 +311,7 @@ const DropdownMenuDocs: React.FC = () => {
                   }
                 />
                 <DropdownMenu<BasicOption>
+                  compact={isCompact}
                   options={basicOptions}
                   onOptionSelected={(item) => {
                     console.log("Opción seleccionada:", item);
@@ -332,6 +349,7 @@ const DropdownMenuDocs: React.FC = () => {
               <div className="flex items-center gap-8 flex-wrap">
                 <div className="flex items-center gap-2">
                   <DropdownMenu<BasicOption>
+                    compact={isCompact}
                     options={basicOptions}
                     onOptionSelected={(item) => setSelectedItem(item)}
                     openOnHover={true}
@@ -343,6 +361,7 @@ const DropdownMenuDocs: React.FC = () => {
 
                 <div className="flex items-center gap-2">
                   <DropdownMenu<BasicOption>
+                    compact={isCompact}
                     options={basicOptions}
                     onOptionSelected={(item) => setSelectedItem(item)}
                     openOnHover={true}
@@ -377,6 +396,7 @@ const DropdownMenuDocs: React.FC = () => {
               <div className="flex flex-col gap-4">
                 <div className="flex justify-center">
                   <DropdownMenu<BasicOption>
+                    compact={isCompact}
                     options={basicOptions}
                     onOptionSelected={(item) => {
                       console.log("Opción seleccionada:", item);
@@ -388,6 +408,7 @@ const DropdownMenuDocs: React.FC = () => {
                   style={{ minHeight: "400px" }}
                 >
                   <DropdownMenu<BasicOption>
+                    compact={isCompact}
                     options={basicOptions}
                     onOptionSelected={(item) => {
                       console.log("Opción seleccionada:", item);
@@ -456,6 +477,7 @@ const DropdownMenuDocs: React.FC = () => {
                         </td>
                         <td className="px-4 py-2 text-right">
                           <DropdownMenu<ActionOption>
+                            compact={isCompact}
                             options={optionsWithIcons}
                             onOptionSelected={(item) => {
                               console.log(

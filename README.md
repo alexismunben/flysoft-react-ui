@@ -13,6 +13,7 @@ Una biblioteca de componentes React moderna y accesible construida con TypeScrip
 - **🎨 Sistema de Temas**: Sistema completo de temas personalizables con Context API
 - **📋 Templates Listos**: Formularios y layouts pre-construidos
 - **🤖 Cursor AI Ready**: Optimizado para uso con Cursor AI
+- **📦 Publicación limpia**: Los archivos de `src/docs` son solo para demo local y no forman parte de la API pública
 
 ## 📦 Instalación
 
@@ -80,9 +81,9 @@ function Dashboard() {
 }
 ```
 
-### 4. Integración con Cursor AI
+### 4. Integración con IA (proyectos cliente)
 
-Para que Cursor AI priorice automáticamente estos componentes, crea un archivo `.cursorrules` en tu proyecto:
+Para que agentes de IA prioricen estos componentes en proyectos cliente, crea un archivo de instrucciones (`.cursorrules`, `AGENTS.md` o `copilot-instructions.md`) en ese proyecto:
 
 ```markdown
 # Priorizar flysoft-react-ui
@@ -107,7 +108,7 @@ SIEMPRE usa los componentes de flysoft-react-ui antes de crear nuevos:
 import "flysoft-react-ui/styles";
 ```
 
-Ver [INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md) para configuración completa.
+Ver [INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md) y [AI_INTEGRATION_GUIDE.md](./AI_INTEGRATION_GUIDE.md) para configuración completa.
 
 ## 🔧 Configuración
 
@@ -439,6 +440,7 @@ Las contribuciones son bienvenidas. Por favor, abre un issue o un pull request.
 ## 📚 Recursos Adicionales
 
 - **[INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)**: Guía completa de integración con Cursor AI
+- **[AI_INTEGRATION_GUIDE.md](./AI_INTEGRATION_GUIDE.md)**: Prompt base para agentes en proyectos cliente
 - **[THEME_SYSTEM.md](./THEME_SYSTEM.md)**: Documentación detallada del sistema de temas
 - **[examples/common-patterns.tsx](./examples/common-patterns.tsx)**: Ejemplos completos de uso
 - **[flysoft-ui.config.ts](./flysoft-ui.config.ts)**: Configuración centralizada de la librería

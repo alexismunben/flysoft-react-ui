@@ -24,6 +24,7 @@ export interface MenuProps<T = { label: string }> {
      * Clases adicionales para cada opción del menú.
      */
     itemClassName?: string;
+    compact?: boolean;
 }
 
 export const Menu = <T = { label: string },>({
@@ -34,6 +35,7 @@ export const Menu = <T = { label: string },>({
     className,
     style,
     itemClassName,
+    compact = false,
 }: MenuProps<T>) => {
     const labelGetter = useCallback(
         (item: T): string => {
@@ -49,7 +51,7 @@ export const Menu = <T = { label: string },>({
     };
 
     const mergedClassName = twMerge(
-        "bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-sm)] py-1 min-w-[160px] font-[var(--font-default)] inline-block",
+        `bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-sm)] ${compact ? "py-0.5 min-w-[120px]" : "py-1 min-w-[160px]"} font-[var(--font-default)] inline-block`,
         className
     );
 
@@ -70,7 +72,7 @@ export const Menu = <T = { label: string },>({
                         key={key}
                         onClick={() => handleOptionClick(option)}
                         className={twMerge(
-                            "px-4 py-2 text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] cursor-pointer transition-colors flex items-center",
+                            `${compact ? "px-2 py-1" : "px-4 py-2"} text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] cursor-pointer transition-colors flex items-center`,
                             itemClassName
                         )}
                     >

@@ -16,12 +16,14 @@ export interface DropdownPanelProps {
    * Por defecto es false.
    */
   openOnHover?: boolean;
+  compact?: boolean;
 }
 
 export const DropdownPanel = ({
   renderNode,
   children,
   openOnHover = false,
+  compact = false,
 }: DropdownPanelProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState<"top" | "bottom">("bottom");
@@ -161,7 +163,7 @@ export const DropdownPanel = ({
 
     // Asegurar que el menú no se salga de la pantalla horizontalmente
     let leftPosition = triggerRect.left;
-    const menuMinWidth = 160;
+    const menuMinWidth = compact ? 120 : 160;
     const viewportWidth = window.innerWidth;
 
     // Si el menú se sale por la derecha, ajustar la posición
@@ -198,7 +200,7 @@ export const DropdownPanel = ({
     }
     // scrollUpdate se usa intencionalmente para forzar el recálculo en scroll
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, menuPosition, scrollUpdate]);
+  }, [isOpen, menuPosition, scrollUpdate, compact]);
 
   return (
     <div
@@ -212,7 +214,7 @@ export const DropdownPanel = ({
         {renderNode ? (
           renderNode
         ) : (
-          <Button variant="ghost" icon="fa-ellipsis-h" />
+          <Button variant="ghost" icon="fa-ellipsis-h" size={compact ? "sm" : undefined} />
         )}
       </div>
 
@@ -225,7 +227,7 @@ export const DropdownPanel = ({
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onClick={(e) => e.stopPropagation()}
-                className="fixed z-[2000] bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-lg)] py-1 min-w-[160px] font-[var(--font-default)]"
+                className={`fixed z-[2000] bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-lg)] ${compact ? "py-0.5 min-w-[120px]" : "py-1 min-w-[160px]"} font-[var(--font-default)]`}
                 style={menuStyles}
               >
                 {children}

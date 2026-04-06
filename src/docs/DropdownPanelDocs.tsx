@@ -1,11 +1,20 @@
-import React from "react";
-import { Card, DropdownPanel, Button } from "../index";
+import React, { useState } from "react";
+import { Card, DropdownPanel, Button, Checkbox } from "../index";
 
 const DropdownPanelDocs: React.FC = () => {
+  const [isCompact, setIsCompact] = useState(false);
+
   return (
     <div className="max-w-5xl mx-auto space-y-8">
       <Card title="DropdownPanel - Panel Flotante Genérico">
         <div className="space-y-10">
+          <div className="flex items-center gap-4 mb-4">
+            <Checkbox
+              label="Modo compacto"
+              checked={isCompact}
+              onChange={(e) => setIsCompact(e.target.checked)}
+            />
+          </div>
           <section>
             <h3
               className="text-lg font-semibold mb-4"
@@ -23,7 +32,7 @@ const DropdownPanelDocs: React.FC = () => {
             </p>
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <DropdownPanel>
+                <DropdownPanel compact={isCompact}>
                   <div className="p-4 w-64">
                     <h4 className="font-bold mb-2">Contenido del panel</h4>
                     <p className="text-sm">
@@ -55,6 +64,7 @@ const DropdownPanelDocs: React.FC = () => {
             </p>
             <div className="space-y-4">
               <DropdownPanel
+                compact={isCompact}
                 renderNode={
                   <Button variant="primary" icon="fa-filter">
                     Filtros Avanzados
@@ -102,7 +112,7 @@ const DropdownPanelDocs: React.FC = () => {
             </p>
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <DropdownPanel openOnHover={true}>
+                <DropdownPanel compact={isCompact} openOnHover={true}>
                   <div className="p-4 w-64">
                     <h4 className="font-bold mb-2">Panel con Hover</h4>
                     <p className="text-sm">

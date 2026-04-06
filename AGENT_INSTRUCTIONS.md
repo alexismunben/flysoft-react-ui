@@ -370,6 +370,120 @@ npm run lint
 - **Templates**: `templates/new-component-template.tsx`
 - **Ejemplos**: `examples/common-patterns.tsx`
 - **Guía de Integración**: `INTEGRATION_GUIDE.md`
+- **Documentación completa de API**: `AI_CONTEXT.md`
+- **Instrucciones para proyectos consumidores**: `CONSUMER_AI_RULES.md`
+
+## 📦 Catálogo Completo de Componentes Exportados
+
+### Form Controls (11 componentes)
+
+| Componente | Props clave | Descripción |
+|------------|-------------|-------------|
+| `Button` | variant, size, color, icon, loading, bg, textColor | Botón con variantes, colores personalizados y efecto ripple |
+| `LinkButton` | to, target, variant, size, color, icon | Botón como enlace (React Router o `<a>`) |
+| `Input` | label, error, icon, iconPosition, size, onIconClick, readOnly | Campo de entrada con ref forwarding |
+| `AutocompleteInput<T,K>` | options, value, onChange, multiple, getOptionLabel, getOptionValue | Dropdown con búsqueda y selección múltiple |
+| `SearchSelectInput<T,K>` | onSearchPromiseFn, onSingleSearchPromiseFn, dialogTitle | Selección async en modal dialog |
+| `DatePicker` | value (Dayjs), onChange, startWeekOn | Calendario standalone |
+| `DateInput` | value, onChange, format | Input con DatePicker dropdown |
+| `Checkbox` | label, labelPosition, error, size, readOnly | Checkbox con ref forwarding |
+| `RadioButtonGroup` | options, value, onChange, direction, gap, size | Selección única de grupo |
+| `CurrencyInput` | value (number), onChange | Input numérico formato moneda (es-AR) |
+| `Pagination` | page, pages, total, isLoading, fieldName | Paginación basada en URL |
+
+### Layout Components (12 componentes)
+
+| Componente | Props clave | Descripción |
+|------------|-------------|-------------|
+| `Card` | title, subtitle, headerActions, footer, variant, compact | Contenedor con header/footer |
+| `AppLayout` | navbar, leftDrawer, children, contentFooter | Layout principal con navbar y sidebar |
+| `Collection` | gap, direction, wrap | Contenedor flex |
+| `DataField` | label, value, inline, align, link | Par label+valor para vistas de detalle |
+| `TabsGroup` | tabs, paramName, headerNode, onChangeTab | Contenedor de pestañas |
+| `TabPanel` | tabId | Panel individual de pestaña |
+| `DataTable<T>` | columns, rows, isLoading, maxRows, compact, locale | Tabla de datos con formateo y skeleton |
+| `Accordion` | title, icon, rightNode, defaultOpen, variant, onToggle | Sección colapsable |
+| `Menu<T>` | options, onOptionSelected, getOptionLabel, renderOption | Lista de menú simple |
+| `DropdownMenu<T>` | options, onOptionSelected, renderNode, openOnHover | Dropdown portal con posicionamiento auto |
+| `DropdownPanel` | children, renderNode, openOnHover | Dropdown portal con contenido libre |
+| `Filter` | filterType, paramName, label, value, onChange | Filtro versátil (text/number/date/autocomplete/search/searchSelect) |
+
+### Utility Components (10 componentes)
+
+| Componente | Props clave | Descripción |
+|------------|-------------|-------------|
+| `Badge` | variant, size, rounded, icon, bg, textColor, onClick | Etiqueta de estado/categoría |
+| `Avatar` | text, image, size, bgColor, textColor | Imagen de perfil con fallback a iniciales |
+| `RoadMap` | stages (RoadMapStage[]) | Visualización de etapas/progreso |
+| `Dialog` | isOpen, title, children, footer, onClose, closeOnOverlayClick, compact | Ventana modal |
+| `Loader` | isLoading, text, keepContentWhileLoading, contentLoadingNode | Indicador de carga con overlay |
+| `FiltersDialog` | filters (FilterConfig[]) | Diálogo agrupando múltiples filtros |
+| `Snackbar` | id, message, variant, duration, onClose | Notificación toast (uso interno) |
+| `SnackbarContainer` | position, maxSnackbars | Contenedor de notificaciones |
+| `Skeleton` | className | Placeholder de carga con animación pulse |
+| `ThemeSwitcher` | (sin props) | Toggle de tema autocontenido |
+
+### Contexts (5)
+
+| Context | Provider | Hook | Descripción |
+|---------|----------|------|-------------|
+| Theme | `ThemeProvider` | `useTheme()` | Gestión de temas con CSS variables y localStorage |
+| Auth | `AuthProvider` | `useContext(AuthContext)` | Autenticación con validación y refresh de tokens |
+| CRUD | `CrudProvider<T>` | `useCrud<T>()` | Operaciones CRUD con paginación y sync URL |
+| Snackbar | `SnackbarProvider` | `useSnackbar()` | Notificaciones toast |
+| AppLayout | `AppLayoutProvider` | `useAppLayout()` | Combina Theme + Snackbar + Layout |
+
+### Hooks (7)
+
+| Hook | Retorno | Descripción |
+|------|---------|-------------|
+| `useThemeOverride` | applyOverride, revertOverride, revertAllOverrides | Override granular de CSS variables |
+| `useTemporaryOverride` | applyTemporaryOverride | Override temporal con auto-revert |
+| `useGlobalThemeStyles` | void | Aplica tema a body/html |
+| `useBreakpoint` | breakpoint, isMobile, isTablet, isDesktop | Detección de breakpoint responsive |
+| `useElementScroll` | scrollY, scrollDirection | Tracking de scroll con RAF |
+| `useAsyncRequest` | execute, isLoading, setLoading | Operaciones async con snackbar |
+| `useEnum` | getArray, getInstance | Enum a array para selects |
+
+### Services
+
+| Servicio | Métodos | Descripción |
+|----------|---------|-------------|
+| `apiClient` | get, post, put, del, getFile, downloadFile, uploadFile, openFile | Cliente HTTP singleton con token Bearer |
+| `createApiClient` | — | Crea instancia aislada |
+| `setApiClientTokenProvider` | — | Configura provider de token global |
+
+### Helpers (9)
+
+| Función | Descripción |
+|---------|-------------|
+| `currencyFormat(n)` | Formato moneda es-AR: `1234.56` → `"1.234,56"` |
+| `getErrorMessage(error)` | Extrae mensaje de AxiosError |
+| `getInitialLetters(text)` | `"Juan Pérez"` → `"JP"` |
+| `getQueryString(params, newParams)` | Merge de params URL |
+| `objectToQueryString(obj)` | Objeto a query string |
+| `queryStringToObject(str)` | Query string a objeto |
+| `nameValueArrayToObject(arr)` | Array {name,value} a objeto |
+| `promiseMapper(promise, mapper)` | Mapea resultados paginados/array/single |
+| `RegularExpressions` | Patrones: .email, .dateString, .password(config) |
+
+### Templates (6)
+
+| Template | Props principales |
+|----------|-------------------|
+| `LoginForm` | onSubmit({email, password}), loading, error |
+| `RegistrationForm` | onSubmit({firstName, lastName, email, password, confirmPassword}), loading, error |
+| `ContactForm` | onSubmit({name, email, subject, message}), loading, success, error |
+| `DashboardLayout` | title, stats (DashboardStat[]), actions, children |
+| `SidebarLayout` | title, menuItems (MenuItem[]), user (User), onLogout, children |
+| `FormPattern` | title, fields (FormField[]), onSubmit, gridCols, submitText, loading, error, success |
+
+### Interfaces
+
+| Interface | Campos |
+|-----------|--------|
+| `NameValueInterface<T>` | name: string, value: T, extras?: any |
+| `PaginationInterface<T>` | list: T[], limit: number, page: number, pages: number, total: number |
 
 ## 🎯 Objetivos de Mantenimiento
 
@@ -378,6 +492,12 @@ npm run lint
 3. **Compatibilidad**: Mantener retrocompatibilidad
 4. **Automatización**: Automatizar actualizaciones de documentación
 5. **Calidad**: Mantener alta calidad de código y documentación
+
+### Al agregar/modificar componentes, actualizar TAMBIÉN:
+- `AI_CONTEXT.md` — Documentación completa de props e interfaces
+- `CONSUMER_AI_RULES.md` — Referencia para proyectos consumidores
+- `AI_INTEGRATION_GUIDE.md` — Prompt copy-paste para AI agents
+- `CLAUDE.md` — Instrucciones para Claude Code
 
 ---
 

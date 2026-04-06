@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Dialog, Button, Input, Badge } from "../index";
+import { Card, Dialog, Button, Input, Badge, Checkbox } from "../index";
 
 const DialogDocs: React.FC = () => {
   const [isOpenBasic, setIsOpenBasic] = useState(false);
@@ -8,11 +8,19 @@ const DialogDocs: React.FC = () => {
   const [isOpenNoOverlay, setIsOpenNoOverlay] = useState(false);
   const [isOpenCustom, setIsOpenCustom] = useState(false);
   const [isOpenCompact, setIsOpenCompact] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
       <Card title="Dialog - Variantes y Ejemplos">
         <div className="space-y-10">
+          <div className="flex items-center gap-4 mb-4">
+            <Checkbox
+              label="Modo compacto"
+              checked={isCompact}
+              onChange={(e) => setIsCompact(e.target.checked)}
+            />
+          </div>
           <section>
             <h3
               className="text-lg font-semibold mb-4"
@@ -39,6 +47,7 @@ const DialogDocs: React.FC = () => {
               </Button>
               <Dialog
                 isOpen={isOpenBasic}
+                compact={isCompact}
                 title="Dialog Básico"
                 footer={
                   <>
@@ -97,7 +106,7 @@ const DialogDocs: React.FC = () => {
               </Button>
               <Dialog
                 isOpen={isOpenCompact}
-                compact={true}
+                compact={isCompact}
                 title="Dialog Modo Compacto"
                 footer={
                   <>
@@ -160,6 +169,7 @@ const DialogDocs: React.FC = () => {
               </Button>
               <Dialog
                 isOpen={isOpenForm}
+                compact={isCompact}
                 title="Editar Usuario"
                 footer={
                   <>
@@ -227,6 +237,7 @@ const DialogDocs: React.FC = () => {
               </Button>
               <Dialog
                 isOpen={isOpenConfirm}
+                compact={isCompact}
                 title={
                   <div className="flex items-center gap-2">
                     <i className="fal fa-exclamation-triangle text-[var(--color-danger)]" />
@@ -293,6 +304,7 @@ const DialogDocs: React.FC = () => {
               </Button>
               <Dialog
                 isOpen={isOpenNoOverlay}
+                compact={isCompact}
                 title="Dialog Protegido"
                 footer={
                   <>
@@ -351,6 +363,7 @@ const DialogDocs: React.FC = () => {
               </Button>
               <Dialog
                 isOpen={isOpenCustom}
+                compact={isCompact}
                 title={
                   <div className="flex items-center gap-2">
                     <i className="fal fa-info-circle text-[var(--color-primary)]" />
