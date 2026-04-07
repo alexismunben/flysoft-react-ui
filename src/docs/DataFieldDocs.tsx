@@ -97,12 +97,12 @@ const DataFieldDocs: React.FC = () => {
                   className="text-sm mb-2"
                   style={{ color: "var(--flysoft-text-secondary)" }}
                 >
-                  Campo con link (modo vertical)
+                  Link a ruta interna (usa react-router Link)
                 </p>
                 <DataField
                   label="Perfil"
                   value="Ver perfil completo"
-                  link="https://example.com/profile"
+                  link="/usuarios/123/perfil"
                 />
               </div>
               <div>
@@ -110,13 +110,40 @@ const DataFieldDocs: React.FC = () => {
                   className="text-sm mb-2"
                   style={{ color: "var(--flysoft-text-secondary)" }}
                 >
-                  Campo con link (modo inline)
+                  Link a URL externa (abre en nueva pestaña)
                 </p>
                 <DataField
                   label="Documento"
                   value="Ver documento"
-                  inline={true}
                   link="https://example.com/document.pdf"
+                />
+              </div>
+              <div>
+                <p
+                  className="text-sm mb-2"
+                  style={{ color: "var(--flysoft-text-secondary)" }}
+                >
+                  Link a ruta interna (modo inline)
+                </p>
+                <DataField
+                  label="Detalle"
+                  value="Ver orden #1024"
+                  inline={true}
+                  link="/ordenes/1024"
+                />
+              </div>
+              <div>
+                <p
+                  className="text-sm mb-2"
+                  style={{ color: "var(--flysoft-text-secondary)" }}
+                >
+                  Link a URL externa (modo inline)
+                </p>
+                <DataField
+                  label="Referencia"
+                  value="Ver en sitio externo"
+                  inline={true}
+                  link="https://example.com/referencia"
                 />
               </div>
             </div>

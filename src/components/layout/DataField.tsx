@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "../form-controls";
+import { LinkButton } from "../form-controls";
 
 export interface DataFieldProps {
   label?: string;
@@ -22,12 +22,6 @@ export const DataField: React.FC<DataFieldProps> = ({
   className = "",
   labelClassName = "",
 }) => {
-  const handleLinkClick = () => {
-    if (link) {
-      window.open(link, "_blank", "noopener,noreferrer");
-    }
-  };
-
   const alignClasses = {
     left: "text-left",
     right: "text-right",
@@ -63,11 +57,11 @@ export const DataField: React.FC<DataFieldProps> = ({
           {label && <span className={baseLabelClasses}>{label}:</span>}
           <span className={baseValueClasses}>{value}</span>
           {link && (
-            <Button
+            <LinkButton
+              to={link}
               size="sm"
               variant="ghost"
               icon="fa-arrow-right"
-              onClick={handleLinkClick}
               aria-label="Abrir enlace"
             />
           )}
@@ -83,11 +77,11 @@ export const DataField: React.FC<DataFieldProps> = ({
       <div className={`flex items-center gap-2 ${justifyClasses[align]}`}>
         <div className={baseValueClasses}>{value}</div>
         {link && (
-          <Button
+          <LinkButton
+            to={link}
             size="sm"
             variant="ghost"
             icon="fa-arrow-right"
-            onClick={handleLinkClick}
             aria-label="Abrir enlace"
           />
         )}

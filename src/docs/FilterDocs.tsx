@@ -205,6 +205,17 @@ const FilterDocs: React.FC = () => {
                   />
                   <Filter
                     compact={isCompact}
+                    paramName="prioridad"
+                    label="Prioridad"
+                    filterType="autocomplete"
+                    options={[
+                      { label: "Alta", value: "alta" },
+                      { label: "Media", value: "media" },
+                      { label: "Baja", value: "baja" },
+                    ]}
+                  />
+                  <Filter
+                    compact={isCompact}
                     paramName="estado"
                     label="Estado"
                     filterType="autocomplete"

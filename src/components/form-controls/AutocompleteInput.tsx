@@ -119,7 +119,7 @@ const AutocompleteInputInner = React.forwardRef<
 
     const inputValue = isRegisterMode
       ? displayValue
-      : (multiple ? displayValue : (typeof value === "string" ? value : (typeof internalValue === "string" ? internalValue : "")));
+      : (multiple ? displayValue : (typeof internalValue === "string" ? internalValue : ""));
 
     const selectedValuesArray = React.useMemo(() => {
       const currentVal = isRegisterMode && hiddenInputRef.current
