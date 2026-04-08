@@ -74,7 +74,7 @@ export const DataField: React.FC<DataFieldProps> = ({
   return (
     <div className={baseContainerClasses} title={title}>
       {label && <div className={baseLabelClasses}>{label}</div>}
-      <div className={`flex items-center gap-2 ${justifyClasses[align]}`}>
+      <div className={`flex items-center gap-2 ${justifyClasses[align]}${link ? " -mt-1" : ""}`}>
         <div className={baseValueClasses}>{value}</div>
         {link && (
           <LinkButton
