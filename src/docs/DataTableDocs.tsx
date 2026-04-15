@@ -314,6 +314,99 @@ const DataTableDocs: React.FC = () => {
     },
   ];
 
+  const fixedColumn: DataTableColumn<Product> = {
+    header: "Producto",
+    value: "name",
+    align: "left",
+    width: "260px",
+  };
+
+  const horizontalScrollColumns: DataTableColumn<Product>[] = [
+    {
+      header: "ID",
+      value: "id",
+      align: "center",
+      width: "110px",
+      type: "numeric",
+    },
+    {
+      header: "Categoría",
+      value: "category",
+      align: "left",
+      width: "170px",
+    },
+    {
+      header: "Precio",
+      value: "price",
+      align: "right",
+      width: "140px",
+      type: "currency",
+    },
+    {
+      header: "Stock",
+      value: "stock",
+      align: "right",
+      width: "130px",
+      type: "numeric",
+    },
+    {
+      header: "Fecha Alta",
+      value: "createdAt",
+      align: "center",
+      width: "160px",
+      type: "date",
+    },
+    {
+      header: "Estado",
+      value: (row) => (
+        <Badge
+          variant={row.stock > 0 ? "success" : "danger"}
+          icon={row.stock > 0 ? "fa-check-circle" : "fa-times-circle"}
+        >
+          {row.stock > 0 ? "Disponible" : "Sin stock"}
+        </Badge>
+      ),
+      align: "center",
+      width: "170px",
+    },
+    {
+      header: "Precio + IVA",
+      value: (row) => row.price * 1.21,
+      align: "right",
+      width: "160px",
+      type: "currency",
+    },
+    {
+      header: "Margen Est.",
+      value: (row) => row.price * 0.28,
+      align: "right",
+      width: "150px",
+      type: "currency",
+    },
+    {
+      header: "Valor Stock",
+      value: (row) => row.stock * row.price,
+      align: "right",
+      width: "170px",
+      type: "currency",
+    },
+    {
+      header: "Última Acción",
+      value: (row) => (
+        <Button
+          size="sm"
+          variant="ghost"
+          icon="fa-search"
+          onClick={() => console.log("Ver producto", row.id)}
+        >
+          Ver detalle
+        </Button>
+      ),
+      align: "center",
+      width: "190px",
+    },
+  ];
+
   return (
     <div className="max-w-5xl mx-auto space-y-8">
       <Card title="DataTable - Variantes y Ejemplos">
@@ -406,6 +499,32 @@ const DataTableDocs: React.FC = () => {
             </p>
             <Card>
               <DataTable columns={headerCustomColumns} rows={products} compact={isCompact} />
+            </Card>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Tabla extensa con columna fija y scroll horizontal
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Ejemplo de grilla con muchas columnas para forzar overflow
+              horizontal. La columna <code>fixedColumn</code> permanece fija a
+              la izquierda mientras el resto de columnas se desplaza
+              horizontalmente.
+            </p>
+            <Card>
+              <DataTable
+                fixedColumn={fixedColumn}
+                columns={horizontalScrollColumns}
+                rows={allProducts}
+                compact={isCompact}
+              />
             </Card>
           </section>
 
@@ -726,6 +845,18 @@ const DataTableDocs: React.FC = () => {
                     <td className="p-3 text-sm">T[]</td>
                     <td className="p-3 text-sm">
                       Array de objetos que representan las filas de la tabla
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <td className="p-3">
+                      <code className="text-sm text-[var(--color-primary)]">
+                        fixedColumn
+                      </code>
+                    </td>
+                    <td className="p-3 text-sm">DataTableColumn&lt;T&gt;</td>
+                    <td className="p-3 text-sm">
+                      Columna opcional que permanece fija a la izquierda mientras
+                      el resto hace scroll horizontal
                     </td>
                   </tr>
                   <tr className="border-b border-[var(--color-border-default)]">

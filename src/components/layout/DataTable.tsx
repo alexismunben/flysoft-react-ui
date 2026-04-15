@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { DropdownMenu } from "./DropdownMenu";
 
@@ -27,6 +27,7 @@ export interface DataTableColumn<T> {
 
 export interface DataTableProps<T> {
   columns: DataTableColumn<T>[];
+  fixedColumn?: DataTableColumn<T>;
   rows: T[];
   className?: string;
   maxRows?: number; // Máximo número de filas visibles antes de activar scroll
@@ -47,6 +48,7 @@ export interface DataTableProps<T> {
 
 export const DataTable = <T,>({
   columns,
+  fixedColumn,
   rows,
   className = "",
   maxRows,
@@ -61,6 +63,158 @@ export const DataTable = <T,>({
   cellClassName = "",
   compact = false,
 }: DataTableProps<T>) => {
+  const horizontalScrollRef = useRef<HTMLDivElement>(null);
+  const customScrollbarTrackRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isThumbDragging, setIsThumbDragging] = useState(false);
+  const dragStartX = useRef(0);
+  const dragStartScrollLeft = useRef(0);
+  const thumbDragOffsetX = useRef(0);
+  const [showCustomScrollbar, setShowCustomScrollbar] = useState(false);
+  const [scrollbarThumbWidth, setScrollbarThumbWidth] = useState(0);
+  const [scrollbarThumbLeft, setScrollbarThumbLeft] = useState(0);
+
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (
+      event.button !== 0 ||
+      !event.shiftKey ||
+      !horizontalScrollRef.current
+    ) {
+      return;
+    }
+
+    setIsDragging(true);
+    dragStartX.current = event.clientX;
+    dragStartScrollLeft.current = horizontalScrollRef.current.scrollLeft;
+    event.preventDefault();
+  };
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDragging || !horizontalScrollRef.current) return;
+
+    const deltaX = event.clientX - dragStartX.current;
+    horizontalScrollRef.current.scrollLeft = dragStartScrollLeft.current - deltaX;
+    event.preventDefault();
+  };
+
+  const handleMouseUpOrLeave = () => {
+    if (isDragging) {
+      setIsDragging(false);
+    }
+  };
+
+  const updateCustomScrollbar = () => {
+    const container = horizontalScrollRef.current;
+    if (!container) return;
+
+    const { scrollWidth, clientWidth, scrollLeft } = container;
+    const trackWidth = customScrollbarTrackRef.current?.clientWidth ?? clientWidth;
+    const hasOverflow = scrollWidth > clientWidth;
+    setShowCustomScrollbar(hasOverflow);
+
+    if (!hasOverflow) {
+      setScrollbarThumbLeft(0);
+      setScrollbarThumbWidth(0);
+      return;
+    }
+
+    const thumbWidth = Math.min(
+      Math.max((clientWidth / scrollWidth) * trackWidth, 40),
+      trackWidth,
+    );
+    const maxThumbTravel = Math.max(trackWidth - thumbWidth, 0);
+    const maxScrollLeft = Math.max(scrollWidth - clientWidth, 1);
+    const thumbLeft = (scrollLeft / maxScrollLeft) * maxThumbTravel;
+
+    setScrollbarThumbWidth(thumbWidth);
+    setScrollbarThumbLeft(thumbLeft);
+  };
+
+  React.useEffect(() => {
+    updateCustomScrollbar();
+    const container = horizontalScrollRef.current;
+    if (!container) return;
+
+    const handleResize = () => updateCustomScrollbar();
+
+    container.addEventListener("scroll", updateCustomScrollbar, { passive: true });
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      container.removeEventListener("scroll", updateCustomScrollbar);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [columns, fixedColumn, rows, isLoading, loadingRows, compact]);
+
+  const handleCustomScrollbarTrackClick = (
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => {
+    if (isThumbDragging) return;
+
+    const container = horizontalScrollRef.current;
+    if (!container) return;
+
+    const trackRect = event.currentTarget.getBoundingClientRect();
+    const clickX = event.clientX - trackRect.left;
+    const thumbCenterX = scrollbarThumbWidth / 2;
+    const targetThumbLeft = Math.min(
+      Math.max(clickX - thumbCenterX, 0),
+      trackRect.width - scrollbarThumbWidth,
+    );
+    const maxThumbTravel = Math.max(trackRect.width - scrollbarThumbWidth, 1);
+    const scrollRatio = targetThumbLeft / maxThumbTravel;
+    const maxScrollLeft = Math.max(container.scrollWidth - container.clientWidth, 0);
+    container.scrollLeft = scrollRatio * maxScrollLeft;
+  };
+
+  const handleCustomScrollbarThumbMouseDown = (
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => {
+    const track = customScrollbarTrackRef.current;
+    if (!track) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    setIsThumbDragging(true);
+    const trackRect = track.getBoundingClientRect();
+    thumbDragOffsetX.current =
+      event.clientX - (trackRect.left + scrollbarThumbLeft);
+  };
+
+  React.useEffect(() => {
+    if (!isThumbDragging) return;
+
+    const handleMouseMove = (event: MouseEvent) => {
+      const container = horizontalScrollRef.current;
+      const track = customScrollbarTrackRef.current;
+      if (!container || !track) return;
+
+      const trackRect = track.getBoundingClientRect();
+      const maxThumbTravel = Math.max(trackRect.width - scrollbarThumbWidth, 0);
+      const targetThumbLeft = Math.min(
+        Math.max(event.clientX - trackRect.left - thumbDragOffsetX.current, 0),
+        maxThumbTravel,
+      );
+      const maxScrollLeft = Math.max(container.scrollWidth - container.clientWidth, 0);
+      const scrollRatio =
+        maxThumbTravel > 0 ? targetThumbLeft / maxThumbTravel : 0;
+
+      container.scrollLeft = scrollRatio * maxScrollLeft;
+    };
+
+    const handleMouseUp = () => setIsThumbDragging(false);
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isThumbDragging, scrollbarThumbWidth]);
+
+  const allColumns = fixedColumn ? [fixedColumn, ...columns] : columns;
+
   // Calcular si necesitamos scroll
   const displayRows = isLoading ? loadingRows : rows.length;
   const needsScroll = maxRows !== undefined && displayRows > maxRows;
@@ -72,7 +226,7 @@ export const DataTable = <T,>({
   const cellPadding = compact ? "px-2 py-1" : "px-4 py-3";
 
   // Verificar si alguna columna tiene footer
-  const hasFooter = columns.some((column) => column.footer !== undefined);
+  const hasFooter = allColumns.some((column) => column.footer !== undefined);
   const getCellValue = (
     column: DataTableColumn<T>,
     row: T,
@@ -212,12 +366,39 @@ export const DataTable = <T,>({
   );
 
   return (
-    <div className={`overflow-x-auto ${className}`}>
+    <div
+      className={twMerge(
+        "relative",
+        className,
+      )}
+    >
+      <style>{`
+        .datatable-horizontal-scrollbar-hidden::-webkit-scrollbar {
+          width: 0;
+          height: 0;
+          display: none;
+        }
+      `}</style>
       <div
-        className={needsScroll ? "relative overflow-y-auto" : ""}
-        style={needsScroll && maxHeight ? { maxHeight: maxHeight } : undefined}
+        ref={horizontalScrollRef}
+        className={twMerge(
+          "overflow-x-auto datatable-horizontal-scrollbar-hidden",
+          isDragging ? "select-none cursor-grabbing" : "",
+        )}
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUpOrLeave}
+        onMouseLeave={handleMouseUpOrLeave}
       >
-        <table className="w-full border-collapse font-[var(--font-default)]">
+        <div
+          className={needsScroll ? "relative overflow-y-auto" : ""}
+          style={needsScroll && maxHeight ? { maxHeight: maxHeight } : undefined}
+        >
+          <table className="w-full border-collapse font-[var(--font-default)]">
           <thead className={needsScroll ? "sticky top-0 z-10" : ""}>
             <tr
               className={twMerge(
@@ -225,10 +406,11 @@ export const DataTable = <T,>({
                 headerClassName,
               )}
             >
-              {columns.map((column, index) => {
+              {allColumns.map((column, index) => {
                 const headerActions = column.headerActions?.();
                 const hasHeaderActions =
                   headerActions && headerActions.length > 0;
+                const isFixedColumn = !!fixedColumn && index === 0;
 
                 const headerBgClasses = headerClassName
                   .split(/\s+/)
@@ -243,6 +425,7 @@ export const DataTable = <T,>({
                       "text-sm font-semibold",
                       headerBgClasses || "bg-[var(--color-bg-secondary)]",
                       getAlignmentClass(column.align, column.type),
+                      isFixedColumn ? "sticky left-0 z-20" : "",
                       hasHeaderActions ? "relative" : "",
                       headerCellClassName,
                     )}
@@ -280,13 +463,17 @@ export const DataTable = <T,>({
                     key={`skeleton-${rowIndex}`}
                     className="border-b border-[var(--color-border-default)] text-[var(--color-text-primary)]"
                   >
-                    {columns.map((column, colIndex) => (
+                    {allColumns.map((column, colIndex) => {
+                      const isFixedColumn = !!fixedColumn && colIndex === 0;
+
+                      return (
                       <td
                         key={colIndex}
                         className={twMerge(
                           cellPadding,
                           "text-sm",
                           getAlignmentClass(column.align, column.type),
+                          isFixedColumn ? "sticky left-0 z-10 bg-[var(--color-bg-default)]" : "",
                         )}
                         style={{
                           ...(column.width ? { width: column.width } : {}),
@@ -294,7 +481,8 @@ export const DataTable = <T,>({
                       >
                         <SkeletonCell />
                       </td>
-                    ))}
+                      );
+                    })}
                   </tr>
                 ))
               : rows.map((row, rowIndex) => (
@@ -305,12 +493,13 @@ export const DataTable = <T,>({
                       rowClassName?.(row),
                     )}
                   >
-                    {columns.map((column, colIndex) => {
+                    {allColumns.map((column, colIndex) => {
                       const cellValue = getCellValue(column, row);
                       const formattedValue = formatValue(
                         cellValue as string | number | React.ReactNode,
                         column.type,
                       );
+                      const isFixedColumn = !!fixedColumn && colIndex === 0;
                       const tooltip = column.tooltip
                         ? column.tooltip(row)
                         : undefined;
@@ -324,6 +513,9 @@ export const DataTable = <T,>({
                             cellPadding,
                             "text-sm",
                             getAlignmentClass(column.align, column.type),
+                            isFixedColumn
+                              ? "sticky left-0 z-10 bg-[var(--color-bg-default)] group-hover/row:bg-[var(--color-bg-secondary)]"
+                              : "",
                             typeof cellClassName === "function"
                               ? cellClassName(row, column)
                               : cellClassName,
@@ -371,11 +563,12 @@ export const DataTable = <T,>({
                   footerClassName,
                 )}
               >
-                {columns.map((column, index) => {
+                {allColumns.map((column, index) => {
                   const footerBgClasses = footerClassName
                     .split(/\s+/)
                     .filter((cls) => cls.split(":").pop()?.startsWith("bg-"))
                     .join(" ");
+                  const isFixedColumn = !!fixedColumn && index === 0;
 
                   return (
                     <td
@@ -385,6 +578,7 @@ export const DataTable = <T,>({
                         "text-sm font-semibold",
                         footerBgClasses || "bg-[var(--color-bg-secondary)]",
                         getAlignmentClass(column.align, column.type),
+                        isFixedColumn ? "sticky left-0 z-20" : "",
                         footerCellClassName,
                       )}
                       style={{
@@ -398,8 +592,27 @@ export const DataTable = <T,>({
               </tr>
             </tfoot>
           )}
-        </table>
+          </table>
+        </div>
       </div>
+      {showCustomScrollbar && (
+        <div className="mt-2 px-1">
+          <div
+            ref={customScrollbarTrackRef}
+            className="relative h-2 rounded-full bg-[var(--color-border-default)]/40"
+            onMouseDown={handleCustomScrollbarTrackClick}
+          >
+            <div
+              className="absolute top-0 h-2 rounded-full bg-[var(--color-text-secondary)]/50 cursor-pointer"
+              style={{
+                width: `${scrollbarThumbWidth}px`,
+                transform: `translateX(${scrollbarThumbLeft}px)`,
+              }}
+              onMouseDown={handleCustomScrollbarThumbMouseDown}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
