@@ -90,7 +90,7 @@ This project uses `flysoft-react-ui` as the default UI library.
 - `Badge` — Props: variant, size, rounded, icon, iconPosition, bg, textColor, onClick
 - `Avatar` — Props: text (for initials), image, bgColor, textColor, size
 - `RoadMap` — Stage visualization. Props: stages ({name, description?, icon?, variant?, bg?, disabled?}[])
-- `Dialog` — Modal. Props: isOpen, title, children, footer, onClose, closeOnOverlayClick, compact
+- `Dialog` — Modal. Props: isOpen, title, children, footer, onClose, closeOnOverlayClick, compact, bodyWidth
 - `Loader` — Loading indicator. Props: isLoading, text, keepContentWhileLoading, contentLoadingNode, overlayClassName
 - `FiltersDialog` — Groups multiple filters in dialog. Props: filters (FilterConfig[])
 - `Snackbar` — (Used internally) Toast notification

@@ -466,6 +466,7 @@ Ventana modal con overlay, escape-to-close y scroll lock.
 | `onClose` | `() => void` | — | Callback para cerrar |
 | `closeOnOverlayClick` | `boolean` | `false` | Cerrar al clickear overlay |
 | `compact` | `boolean` | `false` | Padding reducido |
+| `bodyWidth` | `string \| number` | — | Ancho personalizado (ej: `"800px"`, `"80vw"`, `600`). Si no se especifica usa `max-w-lg` |
 
 ```tsx
 <Dialog isOpen={show} title="Confirmar" onClose={() => setShow(false)}

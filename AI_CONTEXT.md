@@ -744,6 +744,7 @@ interface DialogProps {
   onClose?: () => void;
   closeOnOverlayClick?: boolean; // default: false
   compact?: boolean;             // default: false
+  bodyWidth?: string | number;   // Custom dialog width (e.g. "800px", "80vw", 600). Default: max-w-lg
 }
 ```
 

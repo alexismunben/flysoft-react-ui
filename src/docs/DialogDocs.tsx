@@ -8,6 +8,7 @@ const DialogDocs: React.FC = () => {
   const [isOpenNoOverlay, setIsOpenNoOverlay] = useState(false);
   const [isOpenCustom, setIsOpenCustom] = useState(false);
   const [isOpenCompact, setIsOpenCompact] = useState(false);
+  const [isOpenWide, setIsOpenWide] = useState(false);
   const [isCompact, setIsCompact] = useState(false);
 
   return (
@@ -408,6 +409,73 @@ const DialogDocs: React.FC = () => {
                       children y acciones.
                     </p>
                   </div>
+                </div>
+              </Dialog>
+            </div>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Ancho personalizado del cuerpo
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              El prop <code>bodyWidth</code> permite especificar el ancho del
+              cuerpo del dialog. Acepta un número (interpretado como píxeles) o
+              un string con cualquier unidad CSS válida (<code>px</code>,{" "}
+              <code>rem</code>, <code>%</code>, <code>vw</code>, etc.). Por
+              defecto el dialog usa <code>max-w-lg</code> (~512px).
+            </p>
+            <div className="space-y-4">
+              <Button
+                variant="primary"
+                icon="fa-arrows-h"
+                onClick={() => setIsOpenWide(true)}
+              >
+                Abrir Dialog Ancho (800px)
+              </Button>
+              <Dialog
+                isOpen={isOpenWide}
+                compact={isCompact}
+                title="Dialog con Ancho Personalizado"
+                bodyWidth="800px"
+                footer={
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsOpenWide(false)}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      variant="primary"
+                      onClick={() => setIsOpenWide(false)}
+                    >
+                      Aceptar
+                    </Button>
+                  </>
+                }
+                onClose={() => setIsOpenWide(false)}
+              >
+                <div className="space-y-3">
+                  <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                    Este dialog tiene un ancho fijo de 800px definido mediante{" "}
+                    <code>bodyWidth=&quot;800px&quot;</code>. Es útil cuando
+                    necesitas mostrar contenido más ancho como tablas,
+                    formularios con múltiples columnas o vistas previas.
+                  </p>
+                  <p style={{ color: "var(--flysoft-text-secondary)" }}>
+                    También podés usar otras unidades:{" "}
+                    <code>bodyWidth=&quot;80vw&quot;</code> para ancho
+                    responsivo, <code>bodyWidth={"{600}"}</code> equivale a{" "}
+                    <code>&quot;600px&quot;</code>, etc. El ancho máximo siempre
+                    respeta el viewport.
+                  </p>
                 </div>
               </Dialog>
             </div>

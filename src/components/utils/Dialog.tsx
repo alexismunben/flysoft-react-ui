@@ -9,6 +9,7 @@ export interface DialogProps {
   onClose?: () => void;
   closeOnOverlayClick?: boolean;
   compact?: boolean;
+  bodyWidth?: string | number;
 }
 
 export const Dialog: React.FC<DialogProps> = ({
@@ -19,6 +20,7 @@ export const Dialog: React.FC<DialogProps> = ({
   onClose,
   closeOnOverlayClick = false,
   compact = false,
+  bodyWidth,
 }) => {
   // Prevenir scroll del body cuando el dialog está abierto
   useEffect(() => {
@@ -75,9 +77,18 @@ export const Dialog: React.FC<DialogProps> = ({
 
       {/* Dialog Container */}
       <div
-        className="relative w-auto max-w-lg min-w-[400px] bg-[var(--color-bg-default)] rounded-lg shadow-[var(--shadow-xl)] border border-[var(--color-border-default)] font-[var(--font-default)] max-h-[90vh] flex flex-col"
+        className={`relative bg-[var(--color-bg-default)] rounded-lg shadow-[var(--shadow-xl)] border border-[var(--color-border-default)] font-[var(--font-default)] max-h-[90vh] flex flex-col${bodyWidth ? "" : " w-auto max-w-lg min-w-[400px]"}`}
         onClick={(e) => e.stopPropagation()}
-        style={{ overflow: "visible" }}
+        style={{
+          overflow: "visible",
+          width:
+            bodyWidth !== undefined
+              ? typeof bodyWidth === "number"
+                ? `${bodyWidth}px`
+                : bodyWidth
+              : undefined,
+          maxWidth: bodyWidth !== undefined ? "calc(100vw - 2rem)" : undefined,
+        }}
       >
         {/* Header */}
         <div

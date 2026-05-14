@@ -415,7 +415,7 @@ npm run lint
 | `Badge` | variant, size, rounded, icon, bg, textColor, onClick | Etiqueta de estado/categoría |
 | `Avatar` | text, image, size, bgColor, textColor | Imagen de perfil con fallback a iniciales |
 | `RoadMap` | stages (RoadMapStage[]) | Visualización de etapas/progreso |
-| `Dialog` | isOpen, title, children, footer, onClose, closeOnOverlayClick, compact | Ventana modal |
+| `Dialog` | isOpen, title, children, footer, onClose, closeOnOverlayClick, compact, bodyWidth | Ventana modal |
 | `Loader` | isLoading, text, keepContentWhileLoading, contentLoadingNode | Indicador de carga con overlay |
 | `FiltersDialog` | filters (FilterConfig[]) | Diálogo agrupando múltiples filtros |
 | `Snackbar` | id, message, variant, duration, onClose | Notificación toast (uso interno) |
