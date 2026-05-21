@@ -93,10 +93,15 @@ export const Avatar: React.FC<AvatarProps> = ({
   const initials = getInitialLetters(text);
   const showImage = image && !imageError;
 
-  const sizeClasses = {
-    sm: "w-8 h-8 text-xs",
-    md: "w-10 h-10 text-sm",
-    lg: "w-12 h-12 text-base",
+  const sizeVarBySize: Record<"sm" | "md" | "lg", string> = {
+    sm: "var(--flysoft-density-control-height-sm)",
+    md: "var(--flysoft-density-control-height-md)",
+    lg: "var(--flysoft-density-control-height-lg)",
+  };
+  const fontVarBySize: Record<"sm" | "md" | "lg", string> = {
+    sm: "var(--flysoft-density-font-xs)",
+    md: "var(--flysoft-density-font-sm)",
+    lg: "var(--flysoft-density-font-base)",
   };
 
   const baseClasses = `
@@ -108,17 +113,21 @@ export const Avatar: React.FC<AvatarProps> = ({
     font-[var(--font-default)]
     overflow-hidden
     flex-shrink-0
-    ${sizeClasses[size]}
     ${className}
   `;
 
-  // Inline styles for colors (only if no image or image failed to load)
-  const inlineStyles: React.CSSProperties = showImage
-    ? {}
-    : {
-        backgroundColor: getColorValue(bgColor) || bgColor || "#4b5563",
-        color: getColorValue(textColor) || textColor || "#ffffff",
-      };
+  // Inline styles: tamaño y tipografía leen de la densidad activa.
+  const inlineStyles: React.CSSProperties = {
+    width: sizeVarBySize[size],
+    height: sizeVarBySize[size],
+    fontSize: fontVarBySize[size],
+    ...(showImage
+      ? {}
+      : {
+          backgroundColor: getColorValue(bgColor) || bgColor || "#4b5563",
+          color: getColorValue(textColor) || textColor || "#ffffff",
+        }),
+  };
 
   return (
     <div

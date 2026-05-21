@@ -12,6 +12,26 @@ import type { SearchSelectOption } from "../form-controls/SearchSelectInput";
 import type { PaginationInterface } from "../../interfaces";
 import { DataField } from "./DataField";
 import { normalizeIconClass } from "../utils/iconUtils";
+import { compactDensity } from "../../contexts/presets";
+
+const compactDensityOverride: React.CSSProperties = {
+  "--flysoft-density-padding-x-sm": compactDensity.paddingX.sm,
+  "--flysoft-density-padding-x-md": compactDensity.paddingX.md,
+  "--flysoft-density-padding-x-lg": compactDensity.paddingX.lg,
+  "--flysoft-density-padding-y-sm": compactDensity.paddingY.sm,
+  "--flysoft-density-padding-y-md": compactDensity.paddingY.md,
+  "--flysoft-density-padding-y-lg": compactDensity.paddingY.lg,
+  "--flysoft-density-container-padding-x": compactDensity.containerPaddingX,
+  "--flysoft-density-container-padding-y": compactDensity.containerPaddingY,
+  "--flysoft-density-gap-sm": compactDensity.gap.sm,
+  "--flysoft-density-gap-md": compactDensity.gap.md,
+  "--flysoft-density-gap-lg": compactDensity.gap.lg,
+  "--flysoft-density-font-xs": compactDensity.fontXs,
+  "--flysoft-density-font-sm": compactDensity.fontSm,
+  "--flysoft-density-font-base": compactDensity.fontBase,
+  "--flysoft-density-font-lg": compactDensity.fontLg,
+  "--flysoft-density-font-xl": compactDensity.fontXl,
+} as React.CSSProperties;
 
 export interface StaticOption {
   text: string;
@@ -726,15 +746,23 @@ export const Filter: React.FC<FilterProps> = (props) => {
     return null;
   }
 
-  // Contenedor tipo badge con diseño similar al Input
-  // Altura ajustada para coincidir con input sm: py-1.5 (6px arriba y abajo) + text-sm (14px línea) = ~26px total
+  // Contenedor tipo badge: padding, tipografía, radio y altura leen de las
+  // variables de densidad. min-height + box-sizing aseguran que matchee al
+  // Input size="sm" del filtro search.
   const badgeContainer = (
     <div
-      className={`inline-flex items-center gap-2 ${compact ? "px-2 py-1 h-[1.8rem]" : "px-3 py-1.5 h-[2.1rem]"} rounded-lg border border-[var(--color-border-default)] bg-[var(--color-bg-default)] text-[var(--color-text-primary)] font-[var(--font-default)] cursor-pointer text-sm transition-colors`}
+      className="inline-flex items-center gap-2 px-[var(--flysoft-density-padding-x-sm)] py-[var(--flysoft-density-padding-y-sm)] rounded-[var(--flysoft-density-input-radius)] border border-[var(--color-border-default)] bg-[var(--color-bg-default)] text-[var(--color-text-primary)] font-[var(--font-default)] cursor-pointer transition-colors box-border"
+      style={{
+        fontSize: "var(--flysoft-density-font-sm)",
+        minHeight: "var(--flysoft-density-control-height-sm)",
+      }}
       onClick={handleTogglePanel}
     >
       {/* Valor a la izquierda (o vacío si no tiene valor) */}
-      <span className="text-sm min-w-[1rem]">
+      <span
+        className="min-w-[1rem]"
+        style={{ fontSize: "var(--flysoft-density-font-sm)" }}
+      >
         {getDisplayValue() || "\u00A0"}
       </span>
 
@@ -778,6 +806,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
         className={`relative inline-block ${
           disabled ? "opacity-50 pointer-events-none" : ""
         }`}
+        style={compact ? compactDensityOverride : undefined}
       >
         <DataField
           label={label}
@@ -793,10 +822,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
           createPortal(
             <div
               ref={panelRef}
-              className={`fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] ${compact ? "p-2" : "p-4"}`}
+              className="fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-lg)]"
               style={{
                 top: `${panelPosition.top}px`,
                 left: `${panelPosition.left}px`,
+                ...(compact ? compactDensityOverride : {}),
               }}
             >
               <div className="space-y-3">
@@ -806,11 +836,12 @@ export const Filter: React.FC<FilterProps> = (props) => {
                     {staticOptions.map((option) => (
                       <li
                         key={option.value}
-                        className={`px-3 py-2 cursor-pointer flex items-center justify-start text-left gap-2 text-sm rounded transition-colors ${
+                        className={`px-[var(--flysoft-density-padding-x-sm)] py-[var(--flysoft-density-padding-y-md)] cursor-pointer flex items-center justify-start text-left gap-2 rounded transition-colors ${
                           currentValue === option.value
                             ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
                             : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
                         }`}
+                        style={{ fontSize: "var(--flysoft-density-font-sm)" }}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           handleStaticOptionSelect(option);
@@ -874,6 +905,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
         className={`relative inline-block ${
           disabled ? "opacity-50 pointer-events-none" : ""
         }`}
+        style={compact ? compactDensityOverride : undefined}
       >
         <DataField
           label={label}
@@ -889,10 +921,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
           createPortal(
             <div
               ref={panelRef}
-              className={`fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] ${compact ? "p-2" : "p-4"}`}
+              className="fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-lg)]"
               style={{
                 top: `${panelPosition.top}px`,
                 left: `${panelPosition.left}px`,
+                ...(compact ? compactDensityOverride : {}),
               }}
             >
               <div className="space-y-3">
@@ -902,11 +935,12 @@ export const Filter: React.FC<FilterProps> = (props) => {
                     {staticOptions.map((option) => (
                       <li
                         key={option.value}
-                        className={`px-3 py-2 cursor-pointer flex items-center justify-start text-left gap-2 text-sm rounded transition-colors ${
+                        className={`px-[var(--flysoft-density-padding-x-sm)] py-[var(--flysoft-density-padding-y-md)] cursor-pointer flex items-center justify-start text-left gap-2 rounded transition-colors ${
                           currentValue === option.value
                             ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
                             : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
                         }`}
+                        style={{ fontSize: "var(--flysoft-density-font-sm)" }}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           handleStaticOptionSelect(option);
@@ -956,6 +990,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
         className={`relative inline-block ${
           disabled ? "opacity-50 pointer-events-none" : ""
         }`}
+        style={compact ? compactDensityOverride : undefined}
       >
         <DataField
           label={label}
@@ -971,10 +1006,11 @@ export const Filter: React.FC<FilterProps> = (props) => {
           createPortal(
             <div
               ref={panelRef}
-              className={`fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] ${compact ? "p-2" : "p-4"}`}
+              className="fixed z-[2001] w-fit rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-default)] shadow-[var(--shadow-lg)] px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-lg)]"
               style={{
                 top: `${panelPosition.top}px`,
                 left: `${panelPosition.left}px`,
+                ...(compact ? compactDensityOverride : {}),
               }}
             >
               <div className="space-y-3">
@@ -984,11 +1020,12 @@ export const Filter: React.FC<FilterProps> = (props) => {
                     {staticOptions.map((option) => (
                       <li
                         key={option.value}
-                        className={`px-3 py-2 cursor-pointer flex items-center justify-start text-left gap-2 text-sm rounded transition-colors ${
+                        className={`px-[var(--flysoft-density-padding-x-sm)] py-[var(--flysoft-density-padding-y-md)] cursor-pointer flex items-center justify-start text-left gap-2 rounded transition-colors ${
                           currentValue === option.value
                             ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
                             : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
                         }`}
+                        style={{ fontSize: "var(--flysoft-density-font-sm)" }}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           handleStaticOptionSelect(option);
@@ -1040,6 +1077,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
         className={`relative inline-block ${
           disabled ? "opacity-50 pointer-events-none" : ""
         }`}
+        style={compact ? compactDensityOverride : undefined}
       >
         <DataField
           label={label}
@@ -1056,7 +1094,6 @@ export const Filter: React.FC<FilterProps> = (props) => {
                 onIconClick={handleSearchIconClick}
                 placeholder="Buscar..."
                 size="sm"
-                className={compact ? "!py-1 !h-[1.8rem]" : ""}
                 disabled={disabled}
               />
             </div>
@@ -1074,6 +1111,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
       className={`relative inline-block ${
         disabled ? "opacity-50 pointer-events-none" : ""
       }`}
+      style={compact ? compactDensityOverride : undefined}
     >
       <DataField
         label={label}
@@ -1102,11 +1140,12 @@ export const Filter: React.FC<FilterProps> = (props) => {
                   {staticOptions.map((option) => (
                     <li
                       key={option.value}
-                      className={`px-3 py-2 cursor-pointer flex items-center justify-start text-left gap-2 text-sm rounded transition-colors ${
+                      className={`px-[var(--flysoft-density-padding-x-sm)] py-[var(--flysoft-density-padding-y-md)] cursor-pointer flex items-center justify-start text-left gap-2 rounded transition-colors ${
                         urlValue === option.value
                           ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)]"
                           : "text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
                       }`}
+                      style={{ fontSize: "var(--flysoft-density-font-sm)" }}
                       onMouseDown={(e) => {
                         e.preventDefault();
                         handleStaticOptionSelect(option);

@@ -5,6 +5,7 @@ import "./index.css";
 import { DocsMenu } from "./docs/DocsMenu";
 import DocsRouter from "./docs/DocsRouter";
 import { AuthDocs } from "./docs/AuthDocs.tsx/AuthDocs";
+import { DensityToggle } from "./docs/DensityToggle";
 import packageJson from "../package.json";
 
 function HomeContent() {
@@ -63,6 +64,7 @@ function App() {
       forceInitialTheme={false}
       initialNavbar={{
         navBarLeftNode: <>LEFT NODE</>,
+        navBarRightNode: <DensityToggle />,
         fullWidthNavbar: false,
         className: "bg-gray-300 pl-0 lg:pl-8",
       }}

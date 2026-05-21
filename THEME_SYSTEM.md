@@ -9,9 +9,10 @@ El sistema de temas personalizables de Flysoft React UI proporciona una solució
 - ✅ **Context API de React con TypeScript** - Gestión de estado robusta y tipada
 - ✅ **Variables CSS personalizables** - Prefijo `--flysoft-` para evitar conflictos
 - ✅ **Temas predefinidos** - Light, Dark, Blue y Green incluidos
+- ✅ **Densidad global** - Eje `comfortable` / `compact` / `dense` que ajusta padding, gaps, tipografía y alturas de controles
 - ✅ **Hook personalizado para override** - Personalización granular sin cambiar el tema completo
 - ✅ **Integración con Tailwind CSS** - Compatibilidad total con clases de Tailwind
-- ✅ **Persistencia en localStorage** - Los temas se mantienen entre sesiones
+- ✅ **Persistencia en localStorage** - Los temas y la densidad se mantienen entre sesiones
 - ✅ **Sistema de fallbacks** - Valores por defecto para casos de error
 
 ## Estructura de Archivos
@@ -214,6 +215,67 @@ function MyComponent() {
 --flysoft-font-color-default /* Color de fuente por defecto */
 ```
 
+### Densidad
+
+Estas variables se inyectan según el valor de `density` activo en el `ThemeProvider`
+(o el último valor seteado vía `useTheme().setDensity(...)`). Los presets disponibles
+son `comfortable` (default), `compact` y `dense`.
+
+```css
+/* Padding horizontal/vertical por tamaño de control */
+--flysoft-density-padding-x-sm
+--flysoft-density-padding-x-md
+--flysoft-density-padding-x-lg
+--flysoft-density-padding-y-sm
+--flysoft-density-padding-y-md
+--flysoft-density-padding-y-lg
+
+/* Gaps entre elementos (Collection, header actions, etc.) */
+--flysoft-density-gap-sm
+--flysoft-density-gap-md
+--flysoft-density-gap-lg
+
+/* Escala tipográfica */
+--flysoft-density-font-xs
+--flysoft-density-font-sm
+--flysoft-density-font-base
+--flysoft-density-font-lg
+--flysoft-density-font-xl
+
+/* Alturas de controles (Button, Input, AutocompleteInput, etc.) */
+--flysoft-density-control-height-sm
+--flysoft-density-control-height-md
+--flysoft-density-control-height-lg
+
+/* DataTable */
+--flysoft-density-datatable-row
+--flysoft-density-datatable-header
+
+/* Gap por defecto entre Cards apiladas */
+--flysoft-density-card-gap
+```
+
+El elemento `<html>` y el wrapper `.flysoft-theme-reset` reciben además los
+atributos `data-density="comfortable|compact|dense"`, lo que permite escribir
+selectores CSS específicos por densidad si fuera necesario.
+
+#### Uso del eje de densidad
+
+```tsx
+// 1) Setear densidad inicial al montar la app (opt-in, no rompe consumers)
+<ThemeProvider initialTheme="light" density="dense">
+  <App />
+</ThemeProvider>
+
+// 2) Cambiarla en runtime
+const { density, setDensity } = useTheme();
+setDensity("compact");
+```
+
+> Los componentes mantienen sus props locales (`compact`, `size`) como override.
+> Si una Card recibe `compact`, sigue forzando paddings reducidos sin importar
+> la densidad global.
+
 ## Integración con Tailwind CSS
 
 El sistema es completamente compatible con Tailwind CSS. Puedes usar las variables CSS en combinación con las clases de Tailwind:
@@ -288,10 +350,18 @@ function App() {
 ### ThemeProvider Props
 
 ```tsx
+type Density = "comfortable" | "compact" | "dense";
+
 interface ThemeProviderProps {
   children: ReactNode;
-  initialTheme?: string | Theme; // Tema inicial (default: 'light')
-  storageKey?: string; // Clave para localStorage (default: 'flysoft-theme')
+  initialTheme?: string | Theme;          // Tema inicial (default: 'light')
+  storageKey?: string;                    // Clave para localStorage (default: 'flysoft-theme')
+  forceInitialTheme?: boolean;            // Ignora el tema guardado y fuerza initialTheme
+  onThemeChange?: (theme: Theme) => void; // Callback al cambiar de tema
+  density?: Density;                      // Densidad inicial (default: 'comfortable')
+  densityStorageKey?: string;             // Clave para persistir densidad (default: 'flysoft-density')
+  forceInitialDensity?: boolean;          // Ignora la densidad guardada y fuerza la prop
+  onDensityChange?: (density: Density) => void;
 }
 ```
 
@@ -299,12 +369,15 @@ interface ThemeProviderProps {
 
 ```tsx
 interface ThemeContextType {
-  theme: Theme; // Tema actual
-  setTheme: (theme: Theme | string) => void; // Función para cambiar tema
-  currentThemeName: string; // Nombre del tema actual
-  availableThemes: string[]; // Temas disponibles
-  resetToDefault: () => void; // Resetear al tema por defecto
-  isDark: boolean; // Si el tema actual es oscuro
+  theme: Theme;                                  // Tema actual
+  setTheme: (theme: Theme | string) => void;     // Cambiar tema
+  updateTheme: (updates: Partial<Theme> | ((prev: Theme) => Theme)) => void;
+  currentThemeName: string;                      // Nombre del tema actual
+  availableThemes: string[];                     // Temas disponibles
+  resetToDefault: () => void;                    // Resetear al tema por defecto
+  isDark: boolean;                               // Si el tema actual es oscuro
+  density: Density;                              // Densidad activa
+  setDensity: (density: Density) => void;        // Cambiar densidad globalmente
 }
 ```
 

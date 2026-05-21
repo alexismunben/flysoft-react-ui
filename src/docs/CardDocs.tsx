@@ -220,8 +220,14 @@ const CardDocs: React.FC = () => {
               className="mb-4 text-sm"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              Usa la prop <code>compact</code> para reducir los paddings de la
-              tarjeta. Además, puedes usar las props{" "}
+              La prop <code>compact</code> actúa como <strong>override local
+              de densidad</strong>: fuerza el preset <code>compact</code> para
+              los paddings, gaps y tipografía de esta Card y sus descendientes
+              que consuman las variables <code>--flysoft-density-*</code>,
+              independientemente de la densidad global del{" "}
+              <code>ThemeProvider</code>. Esto permite tener una card densa
+              dentro de una app con densidad global <code>comfortable</code>{" "}
+              sin tocar los componentes hijos. Además, podés usar{" "}
               <code>headerClassName</code>, <code>contentClassName</code> y{" "}
               <code>footerClassName</code> para personalizar cada sección.
             </p>
@@ -630,8 +636,11 @@ const CardDocs: React.FC = () => {
                       className="px-4 py-2 text-sm"
                       style={{ color: "var(--flysoft-text-secondary)" }}
                     >
-                      Si es true, reduce los paddings internos de la tarjeta.
-                      Por defecto es false.
+                      Override local de densidad. Si es true, fuerza el preset
+                      <code>compact</code> para paddings, gaps y tipografía de
+                      esta Card y descendientes que consuman las variables{" "}
+                      <code>--flysoft-density-*</code>. Por defecto es false
+                      (hereda la densidad global del ThemeProvider).
                     </td>
                   </tr>
                 </tbody>

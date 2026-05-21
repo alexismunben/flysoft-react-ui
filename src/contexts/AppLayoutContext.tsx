@@ -8,7 +8,7 @@ import React, {
   type SetStateAction,
 } from "react";
 import { ThemeProvider, useTheme } from "./ThemeContext";
-import type { Theme, ThemeContextType } from "./types";
+import type { Density, Theme, ThemeContextType } from "./types";
 import { AppLayout } from "../components/layout/AppLayout";
 import { SnackbarProvider } from "./SnackbarContext";
 import { SnackbarContainer } from "../components/utils/SnackbarContainer";
@@ -55,6 +55,11 @@ interface AppLayoutProviderProps {
   initialTheme?: string | Theme;
   storageKey?: string;
   forceInitialTheme?: boolean;
+  // Density props (propagadas al ThemeProvider interno)
+  density?: Density;
+  densityStorageKey?: string;
+  forceInitialDensity?: boolean;
+  onDensityChange?: (density: Density) => void;
   // Layout initial props
   initialNavbar?: NavbarInterface;
   initialLeftDrawer?: LeftDrawerInterface;
@@ -207,6 +212,10 @@ export const AppLayoutProvider: React.FC<AppLayoutProviderProps> = ({
   initialTheme = "light",
   storageKey = "flysoft-theme",
   forceInitialTheme = false,
+  density,
+  densityStorageKey,
+  forceInitialDensity,
+  onDensityChange,
   initialNavbar,
   initialLeftDrawer,
   initialContentFooter,
@@ -217,6 +226,10 @@ export const AppLayoutProvider: React.FC<AppLayoutProviderProps> = ({
       initialTheme={initialTheme}
       storageKey={storageKey}
       forceInitialTheme={forceInitialTheme}
+      density={density}
+      densityStorageKey={densityStorageKey}
+      forceInitialDensity={forceInitialDensity}
+      onDensityChange={onDensityChange}
     >
       <SnackbarProvider>
         <AppLayoutProviderInner

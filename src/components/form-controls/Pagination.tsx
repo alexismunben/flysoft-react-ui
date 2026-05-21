@@ -39,7 +39,10 @@ export const Pagination: React.FC<PaginationProps> = ({
   const hasPages = pages > 1;
 
   return (
-    <div className="flex items-center gap-2">
+    <div
+      className="flex items-center"
+      style={{ gap: "var(--flysoft-density-gap-sm)" }}
+    >
       <div>
         <Button
           variant="ghost"
@@ -61,7 +64,8 @@ export const Pagination: React.FC<PaginationProps> = ({
         />
       </div>
       <div
-        className={`text-xs h-[32px] min-w-[100px] text-center flex flex-col justify-center`}
+        className="h-[32px] min-w-[100px] text-center flex flex-col justify-center"
+        style={{ fontSize: "var(--flysoft-density-font-xs)" }}
       >
         {isLoading ? (
           <>

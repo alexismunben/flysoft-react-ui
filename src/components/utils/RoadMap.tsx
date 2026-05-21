@@ -226,15 +226,21 @@ export const RoadMap: React.FC<RoadMapProps> = ({
               `}
             >
               <h3
-                className="text-sm font-semibold font-[var(--font-default)] mb-0.5"
-                style={{ color: "var(--color-text-primary)" }}
+                className="font-semibold font-[var(--font-default)] mb-0.5"
+                style={{
+                  color: "var(--color-text-primary)",
+                  fontSize: "var(--flysoft-density-font-sm)",
+                }}
               >
                 {stage.name}
               </h3>
               {stage.description && (
                 <p
-                  className="text-xs font-[var(--font-default)]"
-                  style={{ color: "var(--color-text-secondary)" }}
+                  className="font-[var(--font-default)]"
+                  style={{
+                    color: "var(--color-text-secondary)",
+                    fontSize: "var(--flysoft-density-font-xs)",
+                  }}
                 >
                   {stage.description}
                 </p>

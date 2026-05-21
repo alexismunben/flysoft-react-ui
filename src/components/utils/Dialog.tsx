@@ -1,5 +1,25 @@
 import React, { useEffect } from "react";
 import { normalizeIconClass } from "./iconUtils";
+import { compactDensity } from "../../contexts/presets";
+
+const compactDensityOverride: React.CSSProperties = {
+  "--flysoft-density-padding-x-sm": compactDensity.paddingX.sm,
+  "--flysoft-density-padding-x-md": compactDensity.paddingX.md,
+  "--flysoft-density-padding-x-lg": compactDensity.paddingX.lg,
+  "--flysoft-density-padding-y-sm": compactDensity.paddingY.sm,
+  "--flysoft-density-padding-y-md": compactDensity.paddingY.md,
+  "--flysoft-density-padding-y-lg": compactDensity.paddingY.lg,
+  "--flysoft-density-container-padding-x": compactDensity.containerPaddingX,
+  "--flysoft-density-container-padding-y": compactDensity.containerPaddingY,
+  "--flysoft-density-gap-sm": compactDensity.gap.sm,
+  "--flysoft-density-gap-md": compactDensity.gap.md,
+  "--flysoft-density-gap-lg": compactDensity.gap.lg,
+  "--flysoft-density-font-xs": compactDensity.fontXs,
+  "--flysoft-density-font-sm": compactDensity.fontSm,
+  "--flysoft-density-font-base": compactDensity.fontBase,
+  "--flysoft-density-font-lg": compactDensity.fontLg,
+  "--flysoft-density-font-xl": compactDensity.fontXl,
+} as React.CSSProperties;
 
 export interface DialogProps {
   isOpen: boolean;
@@ -78,6 +98,7 @@ export const Dialog: React.FC<DialogProps> = ({
       {/* Dialog Container */}
       <div
         className={`relative bg-[var(--color-bg-default)] rounded-lg shadow-[var(--shadow-xl)] border border-[var(--color-border-default)] font-[var(--font-default)] max-h-[90vh] flex flex-col${bodyWidth ? "" : " w-auto max-w-lg min-w-[400px]"}`}
+        data-density-override={compact ? "compact" : undefined}
         onClick={(e) => e.stopPropagation()}
         style={{
           overflow: "visible",
@@ -88,15 +109,17 @@ export const Dialog: React.FC<DialogProps> = ({
                 : bodyWidth
               : undefined,
           maxWidth: bodyWidth !== undefined ? "calc(100vw - 2rem)" : undefined,
+          ...(compact ? compactDensityOverride : {}),
         }}
       >
         {/* Header */}
         <div
-          className={`flex items-center justify-between ${compact ? "px-4 py-2" : "px-6 py-4"} border-b border-[var(--color-border-default)] flex-shrink-0`}
+          className="flex items-center justify-between px-[var(--flysoft-density-container-padding-x)] py-[var(--flysoft-density-container-padding-y)] border-b border-[var(--color-border-default)] flex-shrink-0"
         >
           <h2
             id="dialog-title"
-            className="text-lg font-semibold text-[var(--color-text-primary)]"
+            className="font-semibold text-[var(--color-text-primary)]"
+            style={{ fontSize: "var(--flysoft-density-font-lg)" }}
           >
             {title}
           </h2>
@@ -113,7 +136,7 @@ export const Dialog: React.FC<DialogProps> = ({
 
         {/* Body */}
         <div
-          className={`${compact ? "px-4 py-3" : "px-6 py-4"} flex-1 text-[var(--color-text-primary)] min-w-0`}
+          className="px-[var(--flysoft-density-container-padding-x)] py-[var(--flysoft-density-container-padding-y)] flex-1 text-[var(--color-text-primary)] min-w-0"
           style={{
             overflowY: "auto",
             overflowX: "visible",
@@ -126,7 +149,7 @@ export const Dialog: React.FC<DialogProps> = ({
         {/* Footer */}
         {footer && (
           <div
-            className={`${compact ? "px-4 py-2" : "px-6 py-4"} border-t border-[var(--color-border-default)] flex items-center justify-end gap-2 flex-shrink-0 flex-wrap`}
+            className="px-[var(--flysoft-density-container-padding-x)] py-[var(--flysoft-density-container-padding-y)] border-t border-[var(--color-border-default)] flex items-center justify-end gap-2 flex-shrink-0 flex-wrap"
           >
             {footer}
           </div>

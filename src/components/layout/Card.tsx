@@ -1,5 +1,6 @@
 import React from "react";
 import { twMerge } from "tailwind-merge";
+import { compactDensity } from "../../contexts/presets";
 
 export interface CardProps {
   title?: string | React.ReactNode;
@@ -20,8 +21,32 @@ export interface CardProps {
   headerClassName?: string;
   contentClassName?: string;
   footerClassName?: string;
+  /**
+   * Override local de densidad: cuando es true, fuerza el preset "compact" para los
+   * paddings, gaps y tipografía DE ESTA CARD (y sus hijos que consuman las variables
+   * --flysoft-density-*), independientemente de la densidad global del ThemeProvider.
+   */
   compact?: boolean;
 }
+
+const compactDensityOverride: React.CSSProperties = {
+  "--flysoft-density-padding-x-sm": compactDensity.paddingX.sm,
+  "--flysoft-density-padding-x-md": compactDensity.paddingX.md,
+  "--flysoft-density-padding-x-lg": compactDensity.paddingX.lg,
+  "--flysoft-density-padding-y-sm": compactDensity.paddingY.sm,
+  "--flysoft-density-padding-y-md": compactDensity.paddingY.md,
+  "--flysoft-density-padding-y-lg": compactDensity.paddingY.lg,
+  "--flysoft-density-container-padding-x": compactDensity.containerPaddingX,
+  "--flysoft-density-container-padding-y": compactDensity.containerPaddingY,
+  "--flysoft-density-gap-sm": compactDensity.gap.sm,
+  "--flysoft-density-gap-md": compactDensity.gap.md,
+  "--flysoft-density-gap-lg": compactDensity.gap.lg,
+  "--flysoft-density-font-xs": compactDensity.fontXs,
+  "--flysoft-density-font-sm": compactDensity.fontSm,
+  "--flysoft-density-font-base": compactDensity.fontBase,
+  "--flysoft-density-font-lg": compactDensity.fontLg,
+  "--flysoft-density-font-xl": compactDensity.fontXl,
+} as React.CSSProperties;
 
 export const Card: React.FC<CardProps> = ({
   title,
@@ -95,28 +120,38 @@ export const Card: React.FC<CardProps> = ({
     return isHovered ? 1 : 0;
   };
 
+  const containerStyle = compact ? compactDensityOverride : undefined;
+
   return (
     <div
       className={`${classes} relative`}
+      data-density-override={compact ? "compact" : undefined}
+      style={containerStyle}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {(title || subtitle || headerActions) && (
         <div
           className={twMerge(
-            compact ? "px-4 pt-2" : "px-6 pt-4",
+            "px-[var(--flysoft-density-container-padding-x)] pt-[var(--flysoft-density-container-padding-y)]",
             headerClassName,
           )}
         >
           <div className="flex items-center justify-between">
             <div>
               {title && (
-                <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+                <h3
+                  className="font-semibold text-[var(--color-text-primary)]"
+                  style={{ fontSize: "var(--flysoft-density-font-lg)" }}
+                >
                   {title}
                 </h3>
               )}
               {subtitle && (
-                <div className="text-sm text-[var(--color-text-secondary)] mt-1">
+                <div
+                  className="text-[var(--color-text-secondary)] mt-1"
+                  style={{ fontSize: "var(--flysoft-density-font-sm)" }}
+                >
                   {subtitle}
                 </div>
               )}
@@ -138,7 +173,7 @@ export const Card: React.FC<CardProps> = ({
       {children && (
         <div
           className={twMerge(
-            compact ? "px-4 py-4" : "px-6 py-4",
+            "px-[var(--flysoft-density-container-padding-x)] py-[var(--flysoft-density-container-padding-y)]",
             contentClassName,
           )}
         >
@@ -148,8 +183,7 @@ export const Card: React.FC<CardProps> = ({
       {footer && (
         <div
           className={twMerge(
-            compact ? "px-4 pb-2" : "px-6 pb-4",
-            "flex items-center justify-end",
+            "px-[var(--flysoft-density-container-padding-x)] pb-[var(--flysoft-density-container-padding-y)] flex items-center justify-end",
             footerClassName,
           )}
         >

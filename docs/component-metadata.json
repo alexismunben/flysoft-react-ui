@@ -250,6 +250,13 @@
           "type": "ReactNode",
           "required": true,
           "description": "Contenido principal de la tarjeta"
+        },
+        {
+          "name": "compact",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": "Override local de densidad: fuerza el preset compact en las variables --flysoft-density-* dentro de esta Card y sus descendientes (paddings, gaps, tipografía). No depende de la densidad global del ThemeProvider."
         }
       ],
       "variants": [
@@ -287,6 +294,12 @@
           "description": "Tarjeta con contenido en el footer",
           "code": "<Card title=\"Mi Tarjeta\" footer={<div>Footer</div>}>Contenido</Card>",
           "category": "advanced"
+        },
+        {
+          "name": "Tarjeta compacta (override de densidad)",
+          "description": "Card que fuerza el preset compact para sí misma y sus descendientes",
+          "code": "<Card title=\"Datos personales\" compact><Collection direction=\"row\" wrap gap=\"md\"><DataField label=\"CUIL\" value=\"20-17990271-1\" size=\"sm\" /><DataField label=\"Edad\" value={59} size=\"sm\" /></Collection></Card>",
+          "category": "advanced"
         }
       ],
       "useCases": [
@@ -297,6 +310,169 @@
         "Paneles de configuración"
       ],
       "icon": "fa-id-card"
+    },
+    {
+      "name": "DataField",
+      "category": "layout",
+      "description": "Campo de visualización label + value con soporte de densidad. Útil para pantallas con muchos datos (perfiles, vistas de detalle, registros)",
+      "filePath": "src/components/layout/DataField.tsx",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "description": "Etiqueta del campo (arriba en stack, izquierda en inline)"
+        },
+        {
+          "name": "value",
+          "type": "string | number | ReactNode",
+          "required": false,
+          "description": "Valor a mostrar"
+        },
+        {
+          "name": "inline",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": "Si es true, muestra label y value en la misma línea"
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md'",
+          "required": false,
+          "defaultValue": "md",
+          "description": "Override local de tipografía. 'sm' baja un nivel completo (label = font-xs, value = font-sm). Útil para listas densas dentro de cards no-densas."
+        },
+        {
+          "name": "gap",
+          "type": "'tight' | 'sm' | 'md'",
+          "required": false,
+          "defaultValue": "md",
+          "description": "Separación entre label y value en modo stack. 'tight' = 0, 'sm'/'md' leen --flysoft-density-gap-sm."
+        },
+        {
+          "name": "hideColon",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": "Oculta el ':' después del label en modo inline"
+        },
+        {
+          "name": "align",
+          "type": "'left' | 'right' | 'center'",
+          "required": false,
+          "defaultValue": "left",
+          "description": "Alineación horizontal del contenido"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": false,
+          "description": "Tooltip que aparece al hacer hover"
+        },
+        {
+          "name": "link",
+          "type": "string",
+          "required": false,
+          "description": "URL: si está presente, se renderiza un botón con flecha"
+        }
+      ],
+      "variants": [],
+      "examples": [
+        {
+          "name": "Campo básico vertical",
+          "description": "Modo stack (default), label sobre value",
+          "code": "<DataField label=\"Nombre\" value=\"Juan Pérez\" />",
+          "category": "basic"
+        },
+        {
+          "name": "Campo inline",
+          "description": "Label y value en la misma línea",
+          "code": "<DataField label=\"Email\" value=\"juan@example.com\" inline />",
+          "category": "basic"
+        },
+        {
+          "name": "Tamaño compacto",
+          "description": "Fuente reducida para listas densas",
+          "code": "<DataField label=\"CUIL\" value=\"20-17990271-1\" size=\"sm\" />",
+          "category": "advanced"
+        }
+      ],
+      "useCases": [
+        "Perfiles de usuario",
+        "Vistas de detalle de registros",
+        "Pantallas con mucha información",
+        "Facturación, datos personales"
+      ],
+      "icon": "fa-info-circle"
+    },
+    {
+      "name": "Collection",
+      "category": "layout",
+      "description": "Wrapper flex vertical u horizontal con gap semántico ligado a la densidad. Permite override local de densidad para crear secciones densas.",
+      "filePath": "src/components/layout/Collection.tsx",
+      "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "Items a apilar"
+        },
+        {
+          "name": "gap",
+          "type": "'tight' | 'sm' | 'md' | 'lg' | string",
+          "required": false,
+          "defaultValue": "md",
+          "description": "Presets leen --flysoft-density-gap-*. Acepta string CSS arbitrario (ej. '0.5rem', '8px')."
+        },
+        {
+          "name": "direction",
+          "type": "'column' | 'row'",
+          "required": false,
+          "defaultValue": "column",
+          "description": "Dirección del flex"
+        },
+        {
+          "name": "wrap",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "false",
+          "description": "Si los items pueden saltar de línea"
+        },
+        {
+          "name": "density",
+          "type": "'comfortable' | 'compact' | 'dense'",
+          "required": false,
+          "description": "Override local de densidad: redefine --flysoft-density-* para esta Collection y sus descendientes"
+        }
+      ],
+      "variants": [],
+      "examples": [
+        {
+          "name": "Vertical básico",
+          "description": "Apila items verticalmente con gap default",
+          "code": "<Collection><DataField label=\"A\" value=\"1\" /><DataField label=\"B\" value=\"2\" /></Collection>",
+          "category": "basic"
+        },
+        {
+          "name": "Horizontal con wrap",
+          "description": "Útil para tags, badges o datos breves",
+          "code": "<Collection direction=\"row\" wrap gap=\"sm\"><Badge>A</Badge><Badge>B</Badge></Collection>",
+          "category": "advanced"
+        },
+        {
+          "name": "Sección densa dentro de layout cómodo",
+          "description": "Override local de densidad sin tocar el ThemeProvider",
+          "code": "<Collection density=\"dense\"><DataField label=\"CUIL\" value=\"...\" /><DataField label=\"Edad\" value={59} /></Collection>",
+          "category": "advanced"
+        }
+      ],
+      "useCases": [
+        "Listas de DataField",
+        "Filas de badges/tags",
+        "Layouts compactos en pantallas de detalle"
+      ],
+      "icon": "fa-layer-group"
     },
     {
       "name": "Badge",
@@ -702,6 +878,13 @@
       "components": ["ThemeSwitcher", "ThemeProvider"],
       "useCases": ["User Preferences", "Dark Mode", "Custom Themes"],
       "example": "ThemeExample"
+    },
+    {
+      "name": "Global Density",
+      "description": "Eje global comfortable/compact/dense que ajusta padding, gaps, tipografía y alturas de controles vía variables CSS --flysoft-density-*",
+      "components": ["ThemeProvider"],
+      "useCases": ["Data-heavy CRUDs", "Admin dashboards", "Information-dense screens"],
+      "example": "ThemeSwitcherDocs"
     }
   ],
   "keywords": [

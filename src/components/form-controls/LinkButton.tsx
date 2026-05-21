@@ -114,16 +114,27 @@ export const LinkButton: React.FC<LinkButtonProps> = ({
   // Determinar si necesitamos usar estilos inline para colores del sistema
   const needsInlineStyles = !bg && color !== "primary";
 
-  const sizeClasses = {
-    sm: `${children ? "px-3 py-1.5" : "p-1.5"} text-sm`,
-    md: `${children ? "px-4 py-2" : "p-2"} text-base`,
-    lg: `${children ? "px-6 py-3" : "p-3"} text-lg`,
+  const paddingBySize = {
+    sm: children
+      ? "px-[var(--flysoft-density-padding-x-sm)] py-[var(--flysoft-density-padding-y-sm)]"
+      : "p-[var(--flysoft-density-padding-y-sm)]",
+    md: children
+      ? "px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-md)]"
+      : "p-[var(--flysoft-density-padding-y-md)]",
+    lg: children
+      ? "px-[var(--flysoft-density-padding-x-lg)] py-[var(--flysoft-density-padding-y-lg)]"
+      : "p-[var(--flysoft-density-padding-y-lg)]",
+  };
+  const fontVarBySize: Record<"sm" | "md" | "lg", string> = {
+    sm: "var(--flysoft-density-font-sm)",
+    md: "var(--flysoft-density-font-base)",
+    lg: "var(--flysoft-density-font-lg)",
   };
 
   // Clases adicionales para variant outline cuando hay bg personalizado
   const outlineClasses = bg && variant === "outline" ? "border" : "";
 
-  const classes = `${baseClasses} ${variantClasses} ${sizeClasses[size]} ${outlineClasses} ${className}`;
+  const classes = `${baseClasses} ${variantClasses} ${paddingBySize[size]} ${outlineClasses} ${className}`;
 
   // Función para obtener el valor de una variable CSS
   const getCSSVariable = (varName: string): string => {
@@ -240,6 +251,7 @@ export const LinkButton: React.FC<LinkButtonProps> = ({
   // Combinar estilos inline - agregar outline: none para asegurar que no aparezca
   const combinedStyles: React.CSSProperties = {
     ...inlineStyles,
+    fontSize: fontVarBySize[size],
     outline: "none",
     outlineWidth: "0",
     outlineStyle: "none",

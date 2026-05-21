@@ -253,7 +253,7 @@ Contenedor con header, contenido, footer y variantes.
 | `headerActions` | `ReactNode` | — | Acciones en el header (botones, etc.) |
 | `footer` | `ReactNode` | — | Contenido del footer |
 | `variant` | `"default" \| "elevated" \| "outlined"` | `"default"` | Estilo visual |
-| `compact` | `boolean` | `false` | Padding reducido |
+| `compact` | `boolean` | `false` | Override local de densidad: fuerza preset compact en `--flysoft-density-*` para esta Card y descendientes |
 | `alwaysDisplayHeaderActions` | `boolean` | `false` | Mostrar siempre (no solo en hover) |
 | `headerClassName` | `string` | — | Clases CSS del header |
 | `contentClassName` | `string` | — | Clases CSS del contenido |
@@ -276,7 +276,7 @@ Tabla de datos con formateo automático, acciones por fila y loading skeleton.
 | `isLoading` | `boolean` | `false` | Muestra skeleton rows |
 | `loadingRows` | `number` | `5` | Cantidad de skeleton rows |
 | `maxRows` | `number` | — | Activa scroll con header sticky |
-| `compact` | `boolean` | `false` | Padding reducido |
+| `compact` | `boolean` | `false` | Override local de densidad: fuerza preset compact en `--flysoft-density-*` dentro de la tabla y los DropdownMenu de acciones |
 | `locale` | `string` | `"es-AR"` | Locale para formateo de números |
 | `rowClassName` | `(row: T) => string` | — | Clases CSS por fila |
 
@@ -358,7 +358,52 @@ Layout principal con navbar responsive y sidebar drawer.
 **NavbarInterface**: `{ navBarLeftNode?, navBarRightNode?, fullWidthNavbar?, height? ("64px"), className? }`
 **LeftDrawerInterface**: `{ headerNode?, contentNode?, footerNode?, className?, width? ("256px") }`
 
-### Collection, DataField, Menu, DropdownMenu, DropdownPanel
+### Collection
+
+Wrapper flex con gap semántico ligado a densidad.
+
+| Prop | Tipo | Default | Descripción |
+|------|------|---------|-------------|
+| `gap` | `"tight" \| "sm" \| "md" \| "lg" \| string` | `"md"` | Presets leen `--flysoft-density-gap-*`; string acepta valor CSS arbitrario |
+| `direction` | `"column" \| "row"` | `"column"` | Dirección del flex |
+| `wrap` | `boolean` | `false` | Habilita wrap |
+| `density` | `"comfortable" \| "compact" \| "dense"` | — | Override local: redefine `--flysoft-density-*` para esta Collection y descendientes |
+
+```tsx
+<Collection direction="row" wrap gap="sm">
+  <Badge>Activo</Badge><Badge color="info">Verificado</Badge>
+</Collection>
+
+// Sección densa dentro de layout cómodo
+<Collection density="dense">
+  <DataField label="CUIL" value="..." />
+  <DataField label="Edad" value={59} />
+</Collection>
+```
+
+### DataField
+
+Campo label + value, density-aware.
+
+| Prop | Tipo | Default | Descripción |
+|------|------|---------|-------------|
+| `label` | `string` | — | Etiqueta |
+| `value` | `string \| number \| ReactNode` | — | Valor a mostrar |
+| `inline` | `boolean` | `false` | Label y value en la misma línea |
+| `size` | `"sm" \| "md"` | `"md"` | `sm` baja un nivel completo de tipografía |
+| `gap` | `"tight" \| "sm" \| "md"` | `"md"` | Separación label/value en modo stack |
+| `hideColon` | `boolean` | `false` | Oculta `:` después del label en inline |
+| `align` | `"left" \| "right" \| "center"` | `"left"` | Alineación |
+| `title` | `string` | — | Tooltip |
+| `link` | `string` | — | URL; agrega botón con flecha |
+
+```tsx
+<DataField label="Nombre" value="Juan Pérez" />
+<DataField label="CUIL" value="20-17990271-1" size="sm" />
+<DataField label="Estado" value="Activo" inline hideColon />
+```
+
+### Menu, DropdownMenu, DropdownPanel
 
 Ver sección correspondiente en `AI_CONTEXT.md` para props completos.
 
@@ -391,7 +436,7 @@ Ventana modal con overlay, escape-to-close y scroll lock.
 | `footer` | `ReactNode` | — | Botones del footer |
 | `onClose` | `() => void` | — | Callback para cerrar |
 | `closeOnOverlayClick` | `boolean` | `false` | Cerrar al clickear overlay |
-| `compact` | `boolean` | `false` | Padding reducido |
+| `compact` | `boolean` | `false` | Override local de densidad: fuerza preset compact en `--flysoft-density-*` dentro del Dialog |
 | `bodyWidth` | `string \| number` | — | Ancho personalizado (ej: `"800px"`, `"80vw"`, `600`). Si no se especifica usa `max-w-lg` |
 
 ```tsx
@@ -457,12 +502,45 @@ Ver sección correspondiente en `AI_CONTEXT.md` para props completos.
 ### ThemeProvider + useTheme()
 
 ```tsx
+// Densidad por defecto (comfortable)
 <ThemeProvider initialTheme="light">{/* app */}</ThemeProvider>
 
-const { theme, setTheme, isDark, currentThemeName, availableThemes, resetToDefault } = useTheme();
+// Apps con mucha información en pantalla (CRUDs, dashboards)
+<ThemeProvider initialTheme="light" density="dense">{/* app */}</ThemeProvider>
+
+const {
+  theme, setTheme, isDark, currentThemeName, availableThemes, resetToDefault,
+  density, setDensity,
+} = useTheme();
 ```
 
 Temas disponibles: `"light"`, `"dark"`, `"blue"`, `"green"`.
+Densidades disponibles: `"comfortable"` (default), `"compact"`, `"dense"`.
+
+La densidad ajusta padding, gaps, tipografía y alturas de controles globalmente
+vía variables CSS `--flysoft-density-*`. Los props locales `compact` y `size`
+siguen funcionando como override.
+
+**Componentes density-aware** (consumen `--flysoft-density-*` automáticamente):
+**Toda la librería**. Card, DataField, Collection, Button, LinkButton, Input,
+AutocompleteInput, SearchSelectInput, DateInput, CurrencyInput, DatePicker,
+DataTable, Dialog, Filter (incluye los paneles flotantes que se abren al
+hacer click), FiltersDialog, Accordion, Menu, DropdownMenu, DropdownPanel,
+TabsGroup, Badge, Checkbox, RadioButtonGroup, Pagination, Avatar, RoadMap,
+Snackbar, Skeleton, Loader. El default `comfortable` preserva el aspecto
+previo de cada componente, así que cambiar a este sistema no rompe
+consumidores existentes hasta que activan `density="compact"` o
+`density="dense"`.
+
+**Tipografía global**: dentro del wrapper `.flysoft-theme-reset` (cualquier
+ThemeProvider/AppLayoutProvider lo crea), `h1`-`h6`, `p`, `small` y los
+elementos que heredan font-size (span, div) escalan con la densidad activa.
+Specificity baja → cualquier clase de Tailwind (`text-lg`, etc.) o `style`
+inline la pisa.
+
+**Componentes con prop `compact` como override local** (fuerzan preset compact
+dentro de sí y descendientes, ignorando la densidad global): Card, DataTable,
+Dialog, Filter, Accordion, Menu, DropdownMenu, DropdownPanel, TabsGroup.
 
 ### AuthProvider + AuthContext
 
@@ -510,10 +588,18 @@ showSnackbar("Error", "danger", { duration: 5000 });
 
 ### AppLayoutProvider + useAppLayout()
 
-Combina ThemeProvider + SnackbarProvider + AppLayout en un solo provider.
+Combina ThemeProvider + SnackbarProvider + AppLayout en un solo provider. Acepta las mismas props de densidad que `ThemeProvider` (`density`, `densityStorageKey`, `forceInitialDensity`, `onDensityChange`) y las propaga automáticamente.
 
 ```tsx
-const { setNavBarLeftNode, setNavbarRightNode, setLeftDrawer, setTheme, isDark } = useAppLayout();
+<AppLayoutProvider initialTheme="light" density="dense" initialNavbar={{ fullWidthNavbar: true }}>
+  {/* routes */}
+</AppLayoutProvider>
+
+const {
+  setNavBarLeftNode, setNavbarRightNode, setLeftDrawer,
+  setTheme, isDark,
+  density, setDensity,
+} = useAppLayout();
 ```
 
 ### useAsyncRequest

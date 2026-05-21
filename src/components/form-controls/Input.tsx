@@ -41,7 +41,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
     const baseClasses = `
-    w-full border rounded-lg transition-colors focus:outline-none
+    w-full border rounded-[var(--flysoft-density-input-radius)] transition-colors focus:outline-none
     disabled:opacity-50 disabled:cursor-not-allowed
     font-[var(--font-default)] text-[var(--color-text-primary)]
     flysoft-input-reset box-border
@@ -51,10 +51,21 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       ? `border-transparent bg-transparent focus:ring-0`
       : `focus:ring-1 bg-[var(--color-bg-default)]`;
 
-    const sizeClasses = {
-      sm: `${readOnly ? "p-0" : "px-3 py-1.5"} text-sm`,
-      md: `${readOnly ? "p-0" : "px-4 py-2"} text-base`,
-      lg: `${readOnly ? "p-0" : "px-6 py-3"} text-lg`,
+    const paddingBySize = {
+      sm: readOnly
+        ? "p-0"
+        : "px-[var(--flysoft-density-padding-x-sm)] py-[var(--flysoft-density-padding-y-sm)]",
+      md: readOnly
+        ? "p-0"
+        : "px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-md)]",
+      lg: readOnly
+        ? "p-0"
+        : "px-[var(--flysoft-density-padding-x-lg)] py-[var(--flysoft-density-padding-y-lg)]",
+    };
+    const fontVarBySize: Record<"sm" | "md" | "lg", string> = {
+      sm: "var(--flysoft-density-font-sm)",
+      md: "var(--flysoft-density-font-base)",
+      lg: "var(--flysoft-density-font-lg)",
     };
 
     const stateClasses = readOnly
@@ -63,27 +74,51 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         ? `border-[var(--color-border-error)] focus:border-[var(--color-border-error)] focus:ring-[var(--color-border-error)]`
         : `border-[var(--color-border-default)] focus:border-[var(--color-border-focus)] focus:ring-[var(--color-border-focus)]`;
 
-    const inputClasses = `${baseClasses} ${readOnlyClasses} ${sizeClasses[size]} ${stateClasses} ${className}`;
+    // Padding-x del input según size (lo necesitamos para posicionar el icono).
+    const paddingXVarBySize: Record<"sm" | "md" | "lg", string> = {
+      sm: "var(--flysoft-density-padding-x-sm)",
+      md: "var(--flysoft-density-padding-x-md)",
+      lg: "var(--flysoft-density-padding-x-lg)",
+    };
 
-    const iconSizeClasses =
-      size === "sm" ? "text-xs" : size === "md" ? "text-sm" : "text-base";
+    const inputClasses = `${baseClasses} ${readOnlyClasses} ${paddingBySize[size]} ${stateClasses} ${className}`;
 
-    const iconPositionClasses =
-      size === "sm"
-        ? iconPosition === "left" ? "left-2.5" : "right-2.5"
-        : iconPosition === "left" ? "left-3" : "right-3";
+    // El input + icono comparte: el icono se posiciona al borde del padding-x,
+    // y el padding-left/right del input se ajusta dejando una separación
+    // proporcional (gap-sm) entre icono y texto. Así, en densidades chicas el
+    // icono queda más cerca del texto en lugar de mantener gap fijo.
+    const inputPaddingLeftWithIcon =
+      icon && iconPosition === "left" && !readOnly
+        ? `calc(${paddingXVarBySize[size]} + 1em + var(--flysoft-density-gap-sm))`
+        : undefined;
+    const inputPaddingRightWithIcon =
+      icon && iconPosition === "right" && !readOnly
+        ? `calc(${paddingXVarBySize[size]} + 1em + var(--flysoft-density-gap-sm))`
+        : undefined;
+
+    const inputFontStyle: React.CSSProperties = {
+      fontSize: fontVarBySize[size],
+      minHeight: `var(--flysoft-density-control-height-${size})`,
+      ...(inputPaddingLeftWithIcon ? { paddingLeft: inputPaddingLeftWithIcon } : {}),
+      ...(inputPaddingRightWithIcon ? { paddingRight: inputPaddingRightWithIcon } : {}),
+    };
 
     const renderIcon = () => {
       if (!icon || readOnly) return null;
 
-      const iconElement = (
+      // Icono: tamaño escala con el font del input (1em). Posición al borde del padding-x.
+      const iconStyle: React.CSSProperties = {
+        fontSize: fontVarBySize[size],
+        [iconPosition === "left" ? "left" : "right"]: paddingXVarBySize[size],
+      };
+
+      return (
         <i
-          className={`${normalizeIconClass(icon)} ${iconSizeClasses} text-[var(--color-text-muted)] absolute top-1/2 -translate-y-1/2 flex items-center justify-center ${iconPositionClasses} ${onIconClick && !readOnly ? "cursor-pointer hover:text-[var(--color-primary)] transition-colors" : ""}`}
+          className={`${normalizeIconClass(icon)} text-[var(--color-text-muted)] absolute top-1/2 -translate-y-1/2 flex items-center justify-center ${onIconClick && !readOnly ? "cursor-pointer hover:text-[var(--color-primary)] transition-colors" : ""}`}
+          style={iconStyle}
           onClick={readOnly ? undefined : onIconClick}
         />
       );
-
-      return iconElement;
     };
 
     return (
@@ -91,7 +126,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm text-[var(--color-primary)] mb-1 font-[var(--font-default)]"
+            className="block text-[var(--color-primary)] mb-1 font-[var(--font-default)]"
+            style={{ fontSize: "var(--flysoft-density-font-sm)" }}
           >
             {label}
           </label>
@@ -101,9 +137,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             id={inputId}
-            className={`${inputClasses} ${
-              icon && iconPosition === "left" && !readOnly ? (size === "sm" ? "pl-7" : "pl-10") : ""
-            } ${icon && iconPosition === "right" && !readOnly ? (size === "sm" ? "pr-7" : "pr-10") : ""}`}
+            className={inputClasses}
+            style={inputFontStyle}
             autoComplete="off"
             readOnly={readOnly}
             {...props}
@@ -111,7 +146,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {icon && iconPosition === "right" && renderIcon()}
         </div>
         {error && (
-          <p className="mt-1 text-sm text-[var(--color-danger)] font-[var(--font-default)]">
+          <p
+            className="mt-1 text-[var(--color-danger)] font-[var(--font-default)]"
+            style={{ fontSize: "var(--flysoft-density-font-sm)" }}
+          >
             {error}
           </p>
         )}

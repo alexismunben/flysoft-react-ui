@@ -93,9 +93,12 @@ const DialogDocs: React.FC = () => {
               className="mb-4 text-sm"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              El prop <code>compact</code> reduce los paddings del header, body
-              y footer, permitiendo mostrar más contenido en menos espacio.
-              Ideal para formularios densos.
+              El prop <code>compact</code> actúa como <strong>override local de
+              densidad</strong>: fuerza el preset compact en las variables{" "}
+              <code>--flysoft-density-*</code> dentro del Dialog (paddings,
+              tipografía del título, gaps), independientemente de la densidad
+              global del <code>ThemeProvider</code>. Ideal para formularios
+              densos sin tener que cambiar la densidad de toda la app.
             </p>
             <div className="space-y-4">
               <Button

@@ -1,6 +1,28 @@
 import React, { useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { DropdownMenu } from "./DropdownMenu";
+import { compactDensity } from "../../contexts/presets";
+
+const compactDensityOverride: React.CSSProperties = {
+  "--flysoft-density-padding-x-sm": compactDensity.paddingX.sm,
+  "--flysoft-density-padding-x-md": compactDensity.paddingX.md,
+  "--flysoft-density-padding-x-lg": compactDensity.paddingX.lg,
+  "--flysoft-density-padding-y-sm": compactDensity.paddingY.sm,
+  "--flysoft-density-padding-y-md": compactDensity.paddingY.md,
+  "--flysoft-density-padding-y-lg": compactDensity.paddingY.lg,
+  "--flysoft-density-container-padding-x": compactDensity.containerPaddingX,
+  "--flysoft-density-container-padding-y": compactDensity.containerPaddingY,
+  "--flysoft-density-gap-sm": compactDensity.gap.sm,
+  "--flysoft-density-gap-md": compactDensity.gap.md,
+  "--flysoft-density-gap-lg": compactDensity.gap.lg,
+  "--flysoft-density-font-xs": compactDensity.fontXs,
+  "--flysoft-density-font-sm": compactDensity.fontSm,
+  "--flysoft-density-font-base": compactDensity.fontBase,
+  "--flysoft-density-font-lg": compactDensity.fontLg,
+  "--flysoft-density-font-xl": compactDensity.fontXl,
+  "--flysoft-density-datatable-row": compactDensity.dataTableRow,
+  "--flysoft-density-datatable-header": compactDensity.dataTableHeader,
+} as React.CSSProperties;
 
 interface ActionItem {
   id: string | number;
@@ -219,11 +241,19 @@ export const DataTable = <T,>({
   const displayRows = isLoading ? loadingRows : rows.length;
   const needsScroll = maxRows !== undefined && displayRows > maxRows;
 
-  // Altura aproximada de una fila (px-4 py-3 = ~48px por fila, compact es menos)
-  const rowHeight = compact ? 32 : 48;
-  const maxHeight = maxRows ? `${maxRows * rowHeight}px` : undefined;
+  // Altura máxima calculada con CSS calc para que respete la densidad activa.
+  const maxHeight = maxRows
+    ? `calc(var(--flysoft-density-datatable-row) * ${maxRows})`
+    : undefined;
 
-  const cellPadding = compact ? "px-2 py-1" : "px-4 py-3";
+  // Padding de celda: lee de las variables de densidad. En modo compact, el
+  // wrapping container (más abajo) ya redefine las variables al preset compact.
+  // (En comfortable: px-4 py-3, equivalente al diseño previo.)
+  const cellPadding =
+    "px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-lg)]";
+  const cellFontStyle: React.CSSProperties = {
+    fontSize: "var(--flysoft-density-font-sm)",
+  };
 
   // Verificar si alguna columna tiene footer
   const hasFooter = allColumns.some((column) => column.footer !== undefined);
@@ -371,6 +401,8 @@ export const DataTable = <T,>({
         "relative",
         className,
       )}
+      data-density-override={compact ? "compact" : undefined}
+      style={compact ? compactDensityOverride : undefined}
     >
       <style>{`
         .datatable-horizontal-scrollbar-hidden::-webkit-scrollbar {
@@ -422,7 +454,7 @@ export const DataTable = <T,>({
                     key={index}
                     className={twMerge(
                       cellPadding,
-                      "text-sm font-semibold",
+                      "font-semibold",
                       headerBgClasses || "bg-[var(--color-bg-secondary)]",
                       getAlignmentClass(column.align, column.type),
                       isFixedColumn ? "sticky left-0 z-20" : "",
@@ -430,6 +462,7 @@ export const DataTable = <T,>({
                       headerCellClassName,
                     )}
                     style={{
+                      ...cellFontStyle,
                       ...(column.width ? { width: column.width } : {}),
                     }}
                   >
@@ -471,11 +504,11 @@ export const DataTable = <T,>({
                         key={colIndex}
                         className={twMerge(
                           cellPadding,
-                          "text-sm",
                           getAlignmentClass(column.align, column.type),
                           isFixedColumn ? "sticky left-0 z-10 bg-[var(--color-bg-default)]" : "",
                         )}
                         style={{
+                          ...cellFontStyle,
                           ...(column.width ? { width: column.width } : {}),
                         }}
                       >
@@ -511,7 +544,6 @@ export const DataTable = <T,>({
                           key={colIndex}
                           className={twMerge(
                             cellPadding,
-                            "text-sm",
                             getAlignmentClass(column.align, column.type),
                             isFixedColumn
                               ? "sticky left-0 z-10 bg-[var(--color-bg-default)] group-hover/row:bg-[var(--color-bg-secondary)]"
@@ -521,6 +553,7 @@ export const DataTable = <T,>({
                               : cellClassName,
                           )}
                           style={{
+                            ...cellFontStyle,
                             ...(column.width ? { width: column.width } : {}),
                           }}
                           title={
@@ -575,13 +608,14 @@ export const DataTable = <T,>({
                       key={index}
                       className={twMerge(
                         cellPadding,
-                        "text-sm font-semibold",
+                        "font-semibold",
                         footerBgClasses || "bg-[var(--color-bg-secondary)]",
                         getAlignmentClass(column.align, column.type),
                         isFixedColumn ? "sticky left-0 z-20" : "",
                         footerCellClassName,
                       )}
                       style={{
+                        ...cellFontStyle,
                         ...(column.width ? { width: column.width } : {}),
                       }}
                     >

@@ -1,5 +1,23 @@
 import React, { useState, useEffect, useMemo, createContext, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
+import { compactDensity } from "../../contexts/presets";
+
+const compactDensityOverride: React.CSSProperties = {
+  "--flysoft-density-padding-x-sm": compactDensity.paddingX.sm,
+  "--flysoft-density-padding-x-md": compactDensity.paddingX.md,
+  "--flysoft-density-padding-x-lg": compactDensity.paddingX.lg,
+  "--flysoft-density-padding-y-sm": compactDensity.paddingY.sm,
+  "--flysoft-density-padding-y-md": compactDensity.paddingY.md,
+  "--flysoft-density-padding-y-lg": compactDensity.paddingY.lg,
+  "--flysoft-density-gap-sm": compactDensity.gap.sm,
+  "--flysoft-density-gap-md": compactDensity.gap.md,
+  "--flysoft-density-gap-lg": compactDensity.gap.lg,
+  "--flysoft-density-font-xs": compactDensity.fontXs,
+  "--flysoft-density-font-sm": compactDensity.fontSm,
+  "--flysoft-density-font-base": compactDensity.fontBase,
+  "--flysoft-density-font-lg": compactDensity.fontLg,
+  "--flysoft-density-font-xl": compactDensity.fontXl,
+} as React.CSSProperties;
 
 export interface Tab {
   id: string | number;
@@ -81,7 +99,11 @@ export const TabsGroup: React.FC<TabsGroupProps> = ({
 
   return (
     <TabsContext.Provider value={contextValue}>
-      <div className="w-full font-[var(--font-default)]">
+      <div
+        className="w-full font-[var(--font-default)]"
+        data-density-override={compact ? "compact" : undefined}
+        style={compact ? compactDensityOverride : undefined}
+      >
         {/* Header con tabs y headerNode */}
         <div className="flex items-center justify-between border-b border-[var(--color-border-default)]">
           {/* Tabs alineados a la izquierda */}
@@ -93,7 +115,7 @@ export const TabsGroup: React.FC<TabsGroupProps> = ({
                   key={tab.id}
                   onClick={() => handleTabClick(tab.id)}
                   className={`
-                    ${compact ? "px-3 py-1" : "px-4 py-2"} text-sm font-medium transition-colors cursor-pointer
+                    px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-md)] font-medium transition-colors cursor-pointer
                     border-b-2 -mb-[1px]
                     ${
                       isActive
@@ -101,6 +123,7 @@ export const TabsGroup: React.FC<TabsGroupProps> = ({
                         : "text-[var(--color-text-secondary)] border-transparent hover:text-[var(--color-text-primary)] hover:border-[var(--color-border-default)]"
                     }
                   `}
+                  style={{ fontSize: "var(--flysoft-density-font-sm)" }}
                   aria-selected={isActive}
                   role="tab"
                 >
@@ -109,7 +132,7 @@ export const TabsGroup: React.FC<TabsGroupProps> = ({
               );
             })}
           </div>
-          
+
           {/* HeaderNode alineado a la derecha */}
           {headerNode && (
             <div className="flex items-center">
@@ -119,7 +142,9 @@ export const TabsGroup: React.FC<TabsGroupProps> = ({
         </div>
 
         {/* Contenido de los tabs */}
-        <div className={compact ? "mt-2" : "mt-4"}>
+        <div
+          style={{ marginTop: "var(--flysoft-density-gap-md)" }}
+        >
           {children}
         </div>
       </div>

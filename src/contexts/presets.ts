@@ -1,4 +1,70 @@
-import type { Theme } from "./types";
+import type { DensityTokens, Theme } from "./types";
+
+export const comfortableDensity: DensityTokens = {
+  paddingX: { sm: "0.75rem", md: "1rem", lg: "1.5rem" },
+  paddingY: { sm: "0.375rem", md: "0.5rem", lg: "0.75rem" },
+  containerPaddingX: "1.5rem", // 24px — matches Card px-6 actual
+  containerPaddingY: "1rem", // 16px — matches Card pt-4/py-4 actual
+  gap: { sm: "0.5rem", md: "1rem", lg: "1.5rem" },
+  fontXs: "0.75rem",
+  fontSm: "0.875rem",
+  fontBase: "1rem",
+  fontLg: "1.125rem",
+  fontXl: "1.25rem",
+  controlHeight: { sm: "2rem", md: "2.5rem", lg: "3rem" },
+  // Checkbox/Radio indicator: matches w-4/w-5/w-6 actual (16/20/24px).
+  controlIndicator: { sm: "1rem", md: "1.25rem", lg: "1.5rem" },
+  inputRadius: "0.5rem", // rounded-lg actual
+  dataTableRow: "3rem",
+  dataTableHeader: "3rem",
+  cardGap: "1rem",
+};
+
+export const compactDensity: DensityTokens = {
+  paddingX: { sm: "0.5rem", md: "0.75rem", lg: "1rem" },
+  paddingY: { sm: "0.25rem", md: "0.375rem", lg: "0.5rem" },
+  containerPaddingX: "1rem", // 16px — matches Card compact px-4 actual
+  containerPaddingY: "0.5rem", // 8px — matches Card compact pt-2/pb-2 actual
+  gap: { sm: "0.375rem", md: "0.75rem", lg: "1rem" },
+  fontXs: "0.6875rem",
+  fontSm: "0.8125rem",
+  fontBase: "0.875rem",
+  fontLg: "1rem",
+  fontXl: "1.125rem",
+  controlHeight: { sm: "1.75rem", md: "2.125rem", lg: "2.5rem" },
+  // Indicators un poco más chicos que comfortable: 14/18/22px.
+  controlIndicator: { sm: "0.875rem", md: "1.125rem", lg: "1.375rem" },
+  inputRadius: "0.375rem", // rounded-md
+  dataTableRow: "2.25rem",
+  dataTableHeader: "2.25rem",
+  cardGap: "0.75rem",
+};
+
+export const denseDensity: DensityTokens = {
+  paddingX: { sm: "0.375rem", md: "0.5rem", lg: "0.75rem" },
+  paddingY: { sm: "0.125rem", md: "0.25rem", lg: "0.375rem" },
+  containerPaddingX: "0.75rem", // 12px
+  containerPaddingY: "0.375rem", // 6px
+  gap: { sm: "0.25rem", md: "0.5rem", lg: "0.75rem" },
+  fontXs: "0.625rem",
+  fontSm: "0.75rem",
+  fontBase: "0.8125rem",
+  fontLg: "0.9375rem",
+  fontXl: "1rem",
+  controlHeight: { sm: "1.5rem", md: "1.75rem", lg: "2.125rem" },
+  // Indicators bien chicos en dense: 12/16/20px.
+  controlIndicator: { sm: "0.75rem", md: "1rem", lg: "1.25rem" },
+  inputRadius: "0.25rem", // rounded
+  dataTableRow: "1.75rem",
+  dataTableHeader: "1.75rem",
+  cardGap: "0.5rem",
+};
+
+export const densityPresets: Record<"comfortable" | "compact" | "dense", DensityTokens> = {
+  comfortable: comfortableDensity,
+  compact: compactDensity,
+  dense: denseDensity,
+};
 
 export const lightTheme: Theme = {
   name: "light",
@@ -75,6 +141,8 @@ export const lightTheme: Theme = {
     sizeDefault: "16px",
     colorDefault: "#111827",
   },
+  density: "comfortable",
+  densityTokens: comfortableDensity,
 };
 
 export const darkTheme: Theme = {
@@ -152,6 +220,8 @@ export const darkTheme: Theme = {
     sizeDefault: "16px",
     colorDefault: "#f9fafb",
   },
+  density: "comfortable",
+  densityTokens: comfortableDensity,
 };
 
 export const blueTheme: Theme = {
@@ -229,6 +299,8 @@ export const blueTheme: Theme = {
     sizeDefault: "16px",
     colorDefault: "#0f172a",
   },
+  density: "comfortable",
+  densityTokens: comfortableDensity,
 };
 
 export const greenTheme: Theme = {
@@ -306,6 +378,8 @@ export const greenTheme: Theme = {
     sizeDefault: "16px",
     colorDefault: "#111827",
   },
+  density: "comfortable",
+  densityTokens: comfortableDensity,
 };
 
 export const defaultTheme = lightTheme;

@@ -9,6 +9,7 @@ import BadgeDocs from "./BadgeDocs";
 import AvatarDocs from "./AvatarDocs";
 import RoadMapDocs from "./RoadMapDocs";
 import DataFieldDocs from "./DataFieldDocs";
+import CollectionDocs from "./CollectionDocs";
 import AutocompleteInputDocs from "./AutocompleteInputDocs";
 import SearchSelectInputDocs from "./SearchSelectInputDocs";
 import DatePickerDocs from "./DatePickerDocs";
@@ -60,6 +61,7 @@ export const DocsRouter: React.FC = () => {
       <Route path="currency-input" element={<CurrencyInputDocs />} />
       <Route path="theme" element={<ThemeSwitcherDocs />} />
       <Route path="datafield" element={<DataFieldDocs />} />
+      <Route path="collection" element={<CollectionDocs />} />
       <Route path="tabsgroup" element={<TabsGroupDocs />} />
       <Route path="dialog" element={<DialogDocs />} />
       <Route path="pagination" element={<PaginationDocs />} />

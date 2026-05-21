@@ -34,20 +34,19 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     const checkboxId =
       id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
 
-    const sizeClasses = {
-      sm: "w-4 h-4",
-      md: "w-5 h-5",
-      lg: "w-6 h-6",
+    const indicatorVarBySize: Record<"sm" | "md" | "lg", string> = {
+      sm: "var(--flysoft-density-control-indicator-sm)",
+      md: "var(--flysoft-density-control-indicator-md)",
+      lg: "var(--flysoft-density-control-indicator-lg)",
     };
 
-    const labelSizeClasses = {
-      sm: "text-sm",
-      md: "text-base",
-      lg: "text-lg",
+    const labelFontVarBySize: Record<"sm" | "md" | "lg", string> = {
+      sm: "var(--flysoft-density-font-sm)",
+      md: "var(--flysoft-density-font-base)",
+      lg: "var(--flysoft-density-font-lg)",
     };
 
     const checkboxClasses = `
-      ${sizeClasses[size]}
       rounded border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-0
       cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
       border-[var(--color-border-default)]
@@ -61,12 +60,13 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       ${className}
     `;
 
-    const checkboxStyle = error
-      ? { accentColor: "var(--color-danger)" }
-      : { accentColor: "var(--color-primary)" };
+    const checkboxStyle: React.CSSProperties = {
+      width: indicatorVarBySize[size],
+      height: indicatorVarBySize[size],
+      accentColor: error ? "var(--color-danger)" : "var(--color-primary)",
+    };
 
     const labelClasses = `
-      ${labelSizeClasses[size]}
       font-[var(--font-default)] cursor-pointer select-none
       ${props.disabled ? "opacity-50 cursor-not-allowed" : ""}
       ${
@@ -138,6 +138,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             <label
               htmlFor={readOnly ? undefined : checkboxId}
               className={labelClasses}
+              style={{ fontSize: labelFontVarBySize[size] }}
               onClick={handleLabelClick}
               onMouseDown={handleLabelMouseDown}
             >
@@ -146,7 +147,10 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           )}
         </div>
         {error && (
-          <p className="mt-1 text-sm text-[var(--color-danger)] font-[var(--font-default)]">
+          <p
+            className="mt-1 text-[var(--color-danger)] font-[var(--font-default)]"
+            style={{ fontSize: "var(--flysoft-density-font-sm)" }}
+          >
             {error}
           </p>
         )}

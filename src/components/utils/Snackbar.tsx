@@ -172,7 +172,8 @@ export const Snackbar: React.FC<SnackbarProps> = React.memo(
       >
         {/* Contenido del snackbar */}
         <div
-          className={`${config.bg} ${config.text} p-4 flex items-start gap-3 relative`}
+          className={`${config.bg} ${config.text} px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-md)] flex items-start gap-3 relative`}
+          style={{ fontSize: "var(--flysoft-density-font-sm)" }}
         >
           {/* Barra de progreso - dentro del contenido, pegada al borde superior */}
           {duration > 0 && (
@@ -189,9 +190,10 @@ export const Snackbar: React.FC<SnackbarProps> = React.memo(
 
           {/* Ícono */}
           {displayIcon && (
-            <div className="flex-shrink-0 -mt-0.5">
+            <div className="flex-shrink-0 mt-0.5">
               <i
-                className={`${normalizeIconClass(displayIcon)} text-base`}
+                className={normalizeIconClass(displayIcon)}
+                style={{ fontSize: "var(--flysoft-density-font-base)" }}
                 aria-hidden={!iconLabel}
                 aria-label={iconLabel}
               />
@@ -200,19 +202,20 @@ export const Snackbar: React.FC<SnackbarProps> = React.memo(
 
           {/* Mensaje */}
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium break-words max-w-full">
-              {message}
-            </p>
+            <p className="font-medium break-words max-w-full">{message}</p>
           </div>
 
           {/* Botón de cerrar */}
           <button
             onClick={handleClose}
-            className="flex-shrink-0 ml-2 text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
+            className="flex-shrink-0 ml-2 bg-transparent border-0 p-0 text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
             aria-label="Cerrar notificación"
             type="button"
           >
-            <i className={`${normalizeIconClass("fa-times")} text-sm`} />
+            <i
+              className={normalizeIconClass("fa-times")}
+              style={{ fontSize: "var(--flysoft-density-font-sm)" }}
+            />
           </button>
         </div>
       </div>

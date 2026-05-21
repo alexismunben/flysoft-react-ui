@@ -171,8 +171,12 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
   return (
     <div
-      className={`inline-flex flex-col rounded-lg border border-[var(--color-border-default)] 
-      bg-[var(--color-bg-default)] p-3 shadow-sm font-[var(--font-default)] text-sm ${className}`}
+      className={`inline-flex flex-col rounded-lg border border-[var(--color-border-default)]
+      bg-[var(--color-bg-default)] shadow-sm font-[var(--font-default)] ${className}`}
+      style={{
+        padding: "var(--flysoft-density-padding-y-lg)",
+        fontSize: "var(--flysoft-density-font-sm)",
+      }}
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1">

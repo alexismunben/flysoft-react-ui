@@ -167,6 +167,26 @@ function MyComponent() {
 - **Blue**: Variación azul profesional
 - **Green**: Variación verde natural
 
+### Densidad Global
+
+El `ThemeProvider` acepta una prop opcional `density` (`"comfortable"` | `"compact"` | `"dense"`)
+que ajusta paddings, gaps, tipografía y alturas de controles globalmente vía
+variables CSS `--flysoft-density-*`. Default: `"comfortable"`.
+
+```tsx
+// Útil para CRUDs, dashboards y pantallas con mucha información
+<ThemeProvider initialTheme="light" density="dense">
+  <App />
+</ThemeProvider>
+
+// Cambiar en runtime
+const { density, setDensity } = useTheme();
+setDensity("compact");
+```
+
+Los props locales `compact` y `size` de cada componente siguen funcionando como
+override por componente.
+
 ### Override de Variables CSS
 
 ```tsx

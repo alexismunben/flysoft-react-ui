@@ -40,7 +40,7 @@ export const SnackbarContainer: React.FC<SnackbarContainerProps> = ({
   return (
     <div
       className={`
-        fixed z-50 pointer-events-none
+        fixed z-[3000] pointer-events-none
         ${positionClasses[position]}
       `}
       aria-live="polite"

@@ -155,16 +155,16 @@ export const RadioButtonGroup = React.forwardRef<
       ${className}
     `;
 
-    const sizeClasses = {
-      sm: "w-4 h-4",
-      md: "w-5 h-5",
-      lg: "w-6 h-6",
+    const indicatorVarBySize: Record<"sm" | "md" | "lg", string> = {
+      sm: "var(--flysoft-density-control-indicator-sm)",
+      md: "var(--flysoft-density-control-indicator-md)",
+      lg: "var(--flysoft-density-control-indicator-lg)",
     };
 
-    const labelSizeClasses = {
-      sm: "text-sm",
-      md: "text-base",
-      lg: "text-lg",
+    const labelFontVarBySize: Record<"sm" | "md" | "lg", string> = {
+      sm: "var(--flysoft-density-font-sm)",
+      md: "var(--flysoft-density-font-base)",
+      lg: "var(--flysoft-density-font-lg)",
     };
 
     const handleOptionClick = (optionValue: string | number) => {
@@ -299,10 +299,11 @@ export const RadioButtonGroup = React.forwardRef<
 
             const radioId = `${name || "radio"}-${index}-${option.value}`;
 
+            // relative + position absolute para el dot interno: garantiza
+            // centrado exacto a cualquier tamaño (con flex/items-center hay
+            // sub-pixel rounding cuando el indicator es chico y tiene border).
             const radioClasses = `
-              ${sizeClasses[size]}
-              rounded-full border-2 transition-all duration-200
-              flex items-center justify-center
+              relative rounded-full border-2 transition-all duration-200
               ${
                 isSelected
                   ? "border-[var(--color-primary)]"
@@ -316,9 +317,12 @@ export const RadioButtonGroup = React.forwardRef<
               }
               focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--color-primary)]
             `;
+            const radioStyle: React.CSSProperties = {
+              width: indicatorVarBySize[size],
+              height: indicatorVarBySize[size],
+            };
 
             const labelClasses = `
-              ${labelSizeClasses[size]}
               font-[var(--font-default)] select-none
               ${isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
               text-[var(--color-text-primary)]
@@ -354,23 +358,14 @@ export const RadioButtonGroup = React.forwardRef<
                   }
                 }}
               >
-                <div className={radioClasses}>
+                <div className={radioClasses} style={radioStyle}>
                   {isSelected && (
                     <div
-                      className="rounded-full bg-white"
+                      className="rounded-full bg-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                       style={{
-                        width:
-                          size === "sm"
-                            ? "8px"
-                            : size === "md"
-                            ? "10px"
-                            : "12px",
-                        height:
-                          size === "sm"
-                            ? "8px"
-                            : size === "md"
-                            ? "10px"
-                            : "12px",
+                        // Dot interno: ~50% del indicator, escala con densidad
+                        width: `calc(${indicatorVarBySize[size]} * 0.5)`,
+                        height: `calc(${indicatorVarBySize[size]} * 0.5)`,
                       }}
                     />
                   )}
@@ -379,6 +374,7 @@ export const RadioButtonGroup = React.forwardRef<
                   <label
                     htmlFor={radioId}
                     className={labelClasses}
+                    style={{ fontSize: labelFontVarBySize[size] }}
                     onClick={(e) => {
                       e.preventDefault();
                       if (!isDisabled) {
@@ -396,7 +392,8 @@ export const RadioButtonGroup = React.forwardRef<
         {error && (
           <p
             id={name ? `${name}-error` : undefined}
-            className="mt-1 text-sm text-[var(--color-danger)] font-[var(--font-default)]"
+            className="mt-1 text-[var(--color-danger)] font-[var(--font-default)]"
+            style={{ fontSize: "var(--flysoft-density-font-sm)" }}
           >
             {error}
           </p>

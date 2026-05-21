@@ -22,7 +22,7 @@ import { Button, Input, Card, Badge, ThemeSwitcher } from "flysoft-react-ui";
 import "flysoft-react-ui/styles";
 ```
 
-### 3. Sistema de Temas
+### 3. Sistema de Temas y Densidad
 
 ```tsx
 import { ThemeProvider } from "flysoft-react-ui";
@@ -31,7 +31,41 @@ import { ThemeProvider } from "flysoft-react-ui";
 <ThemeProvider initialTheme="light">
   <App />
 </ThemeProvider>;
+
+// Para apps con mucha información en pantalla (CRUDs, dashboards, tableros operativos)
+<ThemeProvider initialTheme="light" density="dense">
+  <App />
+</ThemeProvider>;
 ```
+
+La prop `density` (`"comfortable" | "compact" | "dense"`, default `"comfortable"`)
+inyecta las variables CSS `--flysoft-density-*` que ajustan padding, gaps,
+tipografía y alturas de controles globalmente, sin necesidad de pasar
+`compact`/`size` componente por componente. También puede cambiarse en runtime
+con `useTheme().setDensity("dense")` y se persiste en localStorage.
+
+### Reglas al consumir densidad en un componente nuevo
+
+Si un componente que estás creando tiene padding, gap, tipografía o alturas
+ajustables, **leelas de las variables CSS de densidad** en lugar de hardcodear
+clases de Tailwind:
+
+```tsx
+// Correcto
+<div
+  style={{
+    paddingInline: "var(--flysoft-density-padding-x-md)",
+    paddingBlock: "var(--flysoft-density-padding-y-md)",
+    fontSize: "var(--flysoft-density-font-base)",
+  }}
+/>
+
+// Incorrecto (no respeta densidad global)
+<div className="px-4 py-2 text-base" />
+```
+
+Si el componente ya tenía `compact` o `size`, **conservalos** como override local
+que pisa la densidad global.
 
 ## 🔧 Reglas para Crear Nuevos Componentes
 
@@ -395,13 +429,13 @@ npm run lint
 
 | Componente | Props clave | Descripción |
 |------------|-------------|-------------|
-| `Card` | title, subtitle, headerActions, footer, variant, compact | Contenedor con header/footer |
+| `Card` | title, subtitle, headerActions, footer, variant, **compact (override local de densidad: fuerza preset compact en --flysoft-density-* dentro de la card y descendientes)** | Contenedor con header/footer |
 | `AppLayout` | navbar, leftDrawer, children, contentFooter | Layout principal con navbar y sidebar |
-| `Collection` | gap, direction, wrap | Contenedor flex |
-| `DataField` | label, value, inline, align, link | Par label+valor para vistas de detalle |
+| `Collection` | gap (`"tight" \| "sm" \| "md" \| "lg" \| string`), direction, wrap, **density (override local que redefine `--flysoft-density-*` para descendientes)** | Contenedor flex density-aware |
+| `DataField` | label, value, inline, align, link, **size (`"sm" \| "md"`, baja un nivel completo de tipografía)**, **gap (`"tight" \| "sm" \| "md"`)**, **hideColon** | Par label+valor density-aware para vistas de detalle |
 | `TabsGroup` | tabs, paramName, headerNode, onChangeTab | Contenedor de pestañas |
 | `TabPanel` | tabId | Panel individual de pestaña |
-| `DataTable<T>` | columns, rows, isLoading, maxRows, compact, locale | Tabla de datos con formateo y skeleton |
+| `DataTable<T>` | columns, rows, isLoading, maxRows, **compact (override local de densidad → fuerza preset compact en `--flysoft-density-*` dentro de la tabla y sus DropdownMenu)**, locale | Tabla de datos density-aware con formateo y skeleton |
 | `Accordion` | title, icon, rightNode, defaultOpen, variant, onToggle | Sección colapsable |
 | `Menu<T>` | options, onOptionSelected, getOptionLabel, renderOption | Lista de menú simple |
 | `DropdownMenu<T>` | options, onOptionSelected, renderNode, openOnHover | Dropdown portal con posicionamiento auto |
@@ -415,7 +449,7 @@ npm run lint
 | `Badge` | variant, size, rounded, icon, bg, textColor, onClick | Etiqueta de estado/categoría |
 | `Avatar` | text, image, size, bgColor, textColor | Imagen de perfil con fallback a iniciales |
 | `RoadMap` | stages (RoadMapStage[]) | Visualización de etapas/progreso |
-| `Dialog` | isOpen, title, children, footer, onClose, closeOnOverlayClick, compact, bodyWidth | Ventana modal |
+| `Dialog` | isOpen, title, children, footer, onClose, closeOnOverlayClick, **compact (override local de densidad)**, bodyWidth | Ventana modal density-aware |
 | `Loader` | isLoading, text, keepContentWhileLoading, contentLoadingNode | Indicador de carga con overlay |
 | `FiltersDialog` | filters (FilterConfig[]) | Diálogo agrupando múltiples filtros |
 | `Snackbar` | id, message, variant, duration, onClose | Notificación toast (uso interno) |

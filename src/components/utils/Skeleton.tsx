@@ -17,7 +17,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({ className }) => {
   return (
     <div
       className={twMerge(
-        "animate-pulse bg-[var(--color-bg-secondary)] rounded-md",
+        "animate-pulse bg-[var(--color-bg-secondary)] rounded-[var(--flysoft-density-input-radius)]",
         className,
       )}
     />

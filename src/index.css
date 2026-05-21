@@ -215,8 +215,55 @@
   --spacing-xl: var(--flysoft-spacing-xl);
 }
 
-/* 
-  Flysoft Layer - Encapsulates all library styles to prevent specificity 
+/*
+  Tipografía global density-aware: dentro del wrapper `.flysoft-theme-reset`
+  (que cualquier ThemeProvider/AppLayoutProvider crea), los headings y elementos
+  de texto escalan con la densidad activa.
+
+  Reglas de baja specificity para que cualquier override en componentes o
+  className personalizado las pise sin esfuerzo (font-size inline, text-* de
+  Tailwind, etc.).
+*/
+.flysoft-theme-reset h1 {
+  font-size: calc(var(--flysoft-density-font-xl) * 1.5);
+  line-height: 1.2;
+  font-weight: 700;
+}
+.flysoft-theme-reset h2 {
+  font-size: calc(var(--flysoft-density-font-xl) * 1.25);
+  line-height: 1.25;
+  font-weight: 700;
+}
+.flysoft-theme-reset h3 {
+  font-size: var(--flysoft-density-font-xl);
+  line-height: 1.3;
+  font-weight: 600;
+}
+.flysoft-theme-reset h4 {
+  font-size: var(--flysoft-density-font-lg);
+  line-height: 1.35;
+  font-weight: 600;
+}
+.flysoft-theme-reset h5 {
+  font-size: var(--flysoft-density-font-base);
+  line-height: 1.4;
+  font-weight: 600;
+}
+.flysoft-theme-reset h6 {
+  font-size: var(--flysoft-density-font-sm);
+  line-height: 1.4;
+  font-weight: 600;
+}
+.flysoft-theme-reset p {
+  font-size: var(--flysoft-density-font-base);
+  line-height: 1.5;
+}
+.flysoft-theme-reset small {
+  font-size: var(--flysoft-density-font-xs);
+}
+
+/*
+  Flysoft Layer - Encapsulates all library styles to prevent specificity
   conflicts with consuming projects.
 */
 @layer flysoft {

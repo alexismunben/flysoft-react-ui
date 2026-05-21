@@ -128,6 +128,15 @@ export const DocsMenu = () => {
             DataField
           </LinkButton>
           <LinkButton
+            to="/docs/collection"
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start"
+            color="secondary"
+          >
+            Collection
+          </LinkButton>
+          <LinkButton
             to="/docs/tabsgroup"
             variant="ghost"
             size="sm"

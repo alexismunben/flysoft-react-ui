@@ -6,7 +6,13 @@ export {
 } from "../hooks/useThemeOverride";
 
 // Types
-export type { Theme, ThemeContextType, ThemeOverride } from "./types";
+export type {
+  Theme,
+  ThemeContextType,
+  ThemeOverride,
+  Density,
+  DensityTokens,
+} from "./types";
 
 // Preset themes
 export {
@@ -16,6 +22,10 @@ export {
   greenTheme,
   defaultTheme,
   themes,
+  comfortableDensity,
+  compactDensity,
+  denseDensity,
+  densityPresets,
 } from "./presets";
 
 // Auth system exports

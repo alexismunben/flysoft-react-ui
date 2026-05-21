@@ -73,6 +73,37 @@ export interface Theme {
     sizeDefault: string;
     colorDefault: string;
   };
+  density?: Density;
+  densityTokens?: DensityTokens;
+}
+
+export type Density = "comfortable" | "compact" | "dense";
+
+export interface DensityTokens {
+  paddingX: { sm: string; md: string; lg: string };
+  paddingY: { sm: string; md: string; lg: string };
+  /** Padding horizontal para containers (Card, Dialog, Filter panel). */
+  containerPaddingX: string;
+  /** Padding vertical para containers (Card header/footer/content). */
+  containerPaddingY: string;
+  gap: { sm: string; md: string; lg: string };
+  fontXs: string;
+  fontSm: string;
+  fontBase: string;
+  fontLg: string;
+  fontXl: string;
+  controlHeight: { sm: string; md: string; lg: string };
+  /**
+   * Tamaño (ancho/alto) del indicator de Checkbox (cuadrado) y RadioButton
+   * (círculo). Se reduce en compact/dense para no abrumar visualmente cuando
+   * el resto de la UI es más chica.
+   */
+  controlIndicator: { sm: string; md: string; lg: string };
+  /** Border-radius para inputs, badges del filter, botones — escala con densidad. */
+  inputRadius: string;
+  dataTableRow: string;
+  dataTableHeader: string;
+  cardGap: string;
 }
 
 export interface ThemeContextType {
@@ -83,6 +114,8 @@ export interface ThemeContextType {
   availableThemes: string[];
   resetToDefault: () => void;
   isDark: boolean;
+  density: Density;
+  setDensity: (density: Density) => void;
 }
 
 export interface ThemeOverride {

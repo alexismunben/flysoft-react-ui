@@ -159,7 +159,7 @@ export const FiltersDialog: React.FC<FiltersDialogProps> = ({ filters }) => {
         closeOnOverlayClick={false}
       >
         <div className="space-y-4">
-          <Collection direction="column" gap="1rem">
+          <Collection direction="column" gap="md">
             {filters.map((filter) => (
               <Filter key={filter.paramName} {...getFilterProps(filter)} />
             ))}

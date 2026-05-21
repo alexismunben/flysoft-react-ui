@@ -709,10 +709,13 @@ const DataTableDocs: React.FC = () => {
               className="mb-4 text-sm"
               style={{ color: "var(--flysoft-text-secondary)" }}
             >
-              Usando la prop <code>compact</code> puedes reducir
-              significativamente el espacio que ocupa la tabla. Este modo
-              elimina los paddings superiores y reduce los horizontales, ideal
-              para mostrar grandes cantidades de datos en espacios reducidos.
+              La prop <code>compact</code> actúa como <strong>override local de
+              densidad</strong>: fuerza el preset compact en las variables{" "}
+              <code>--flysoft-density-*</code> dentro de esta DataTable (y los
+              DropdownMenu de acciones), independientemente de la densidad
+              global del <code>ThemeProvider</code>. Reduce padding de celdas,
+              tipografía y altura de fila. Para ver el efecto al toggle global
+              también, usá el selector de densidad del header.
             </p>
             <Card>
               <DataTable
@@ -1003,8 +1006,11 @@ const DataTableDocs: React.FC = () => {
                     </td>
                     <td className="p-3 text-sm">boolean</td>
                     <td className="p-3 text-sm">
-                      Si es true, reduce el padding de todas las celdas para una
-                      visualización más densa. Por defecto es false.
+                      Override local de densidad. Si es true, fuerza el preset
+                      compact en las variables{" "}
+                      <code>--flysoft-density-*</code> dentro de esta
+                      DataTable y sus DropdownMenu de acciones. Por defecto es
+                      false (hereda la densidad global).
                     </td>
                   </tr>
                 </tbody>

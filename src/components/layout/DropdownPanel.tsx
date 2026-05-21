@@ -7,6 +7,24 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import { Button } from "../form-controls/Button";
+import { compactDensity } from "../../contexts/presets";
+
+const compactDensityOverride: React.CSSProperties = {
+  "--flysoft-density-padding-x-sm": compactDensity.paddingX.sm,
+  "--flysoft-density-padding-x-md": compactDensity.paddingX.md,
+  "--flysoft-density-padding-x-lg": compactDensity.paddingX.lg,
+  "--flysoft-density-padding-y-sm": compactDensity.paddingY.sm,
+  "--flysoft-density-padding-y-md": compactDensity.paddingY.md,
+  "--flysoft-density-padding-y-lg": compactDensity.paddingY.lg,
+  "--flysoft-density-gap-sm": compactDensity.gap.sm,
+  "--flysoft-density-gap-md": compactDensity.gap.md,
+  "--flysoft-density-gap-lg": compactDensity.gap.lg,
+  "--flysoft-density-font-xs": compactDensity.fontXs,
+  "--flysoft-density-font-sm": compactDensity.fontSm,
+  "--flysoft-density-font-base": compactDensity.fontBase,
+  "--flysoft-density-font-lg": compactDensity.fontLg,
+  "--flysoft-density-font-xl": compactDensity.fontXl,
+} as React.CSSProperties;
 
 export interface DropdownPanelProps {
   renderNode?: React.ReactNode;
@@ -227,8 +245,12 @@ export const DropdownPanel = ({
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onClick={(e) => e.stopPropagation()}
-                className={`fixed z-[2000] bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-lg)] ${compact ? "py-0.5 min-w-[120px]" : "py-1 min-w-[160px]"} font-[var(--font-default)]`}
-                style={menuStyles}
+                className={`fixed z-[2000] bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-lg)] py-[var(--flysoft-density-padding-y-sm)] ${compact ? "min-w-[120px]" : "min-w-[160px]"} font-[var(--font-default)]`}
+                data-density-override={compact ? "compact" : undefined}
+                style={{
+                  ...menuStyles,
+                  ...(compact ? compactDensityOverride : {}),
+                }}
               >
                 {children}
               </div>,

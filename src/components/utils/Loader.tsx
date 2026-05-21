@@ -53,7 +53,10 @@ export const Loader: React.FC<LoaderProps> = ({
           }
         />
         {displayText && (
-          <span className="text-xs text-[var(--color-text-secondary)] font-[var(--font-default)]">
+          <span
+            className="text-[var(--color-text-secondary)] font-[var(--font-default)]"
+            style={{ fontSize: "var(--flysoft-density-font-xs)" }}
+          >
             {displayText}
           </span>
         )}
@@ -82,7 +85,7 @@ export const Loader: React.FC<LoaderProps> = ({
 
         {/* Loader centrado horizontal y verticalmente encima */}
         <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none px-4">
-          <div className="bg-[var(--color-bg-default)] rounded-lg p-6 shadow-lg border border-[var(--color-border-default)] pointer-events-auto w-full">
+          <div className="bg-[var(--color-bg-default)] rounded-[var(--flysoft-density-input-radius)] p-[var(--flysoft-density-container-padding-x)] shadow-lg border border-[var(--color-border-default)] pointer-events-auto w-full">
             <ProgressBar />
           </div>
         </div>
@@ -103,7 +106,7 @@ export const Loader: React.FC<LoaderProps> = ({
           <div
             className={`absolute inset-0 flex items-center justify-center z-10 pointer-events-auto px-4 ${overlayClasses}`}
           >
-            <div className="bg-[var(--color-bg-default)] rounded-lg p-6 shadow-lg border border-[var(--color-border-default)] w-full max-w-2xl">
+            <div className="bg-[var(--color-bg-default)] rounded-[var(--flysoft-density-input-radius)] p-[var(--flysoft-density-container-padding-x)] shadow-lg border border-[var(--color-border-default)] w-full max-w-2xl">
               <ProgressBar />
             </div>
           </div>
@@ -113,7 +116,7 @@ export const Loader: React.FC<LoaderProps> = ({
 
     // Si no tiene keepContentWhileLoading, ocultar children y mostrar solo loader básico
     return (
-      <div className="flex items-center justify-center p-6 w-full">
+      <div className="flex items-center justify-center p-[var(--flysoft-density-container-padding-x)] w-full">
         <div className="w-full max-w-2xl">
           <ProgressBar />
         </div>
@@ -123,7 +126,7 @@ export const Loader: React.FC<LoaderProps> = ({
 
   // Variante 3: Sin contentLoadingNode ni children - solo loader
   return (
-    <div className="flex items-center justify-center p-6 w-full">
+    <div className="flex items-center justify-center p-[var(--flysoft-density-container-padding-x)] w-full">
       <div className="w-full max-w-2xl">
         <ProgressBar />
       </div>

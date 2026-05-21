@@ -84,9 +84,14 @@ export const Badge: React.FC<BadgeProps> = ({
   };
 
   const sizeClasses = {
-    sm: "py-0.5 text-xs",
-    md: "py-0.5 text-sm",
-    lg: "py-1 text-base",
+    sm: "py-0.5",
+    md: "py-0.5",
+    lg: "py-1",
+  };
+  const fontVarBySize: Record<"sm" | "md" | "lg", string> = {
+    sm: "var(--flysoft-density-font-xs)",
+    md: "var(--flysoft-density-font-sm)",
+    lg: "var(--flysoft-density-font-base)",
   };
 
   // Padding horizontal: si hay icono, el badge no tiene padding, se aplica a los elementos internos
@@ -138,13 +143,16 @@ export const Badge: React.FC<BadgeProps> = ({
   // Si se proporciona bg personalizado, usar estilos inline; si no, usar las clases de variante
   const backgroundClasses = bg ? "" : variantClasses[variant];
 
-  // Estilos inline para colores personalizados
-  const inlineStyles: React.CSSProperties = bg
-    ? {
-        backgroundColor: getColorValue(bg) || bg,
-        color: getColorValue(textColor) || textColor || "#1f2937", // gray-800 por defecto
-      }
-    : {};
+  // Estilos inline para colores personalizados (siempre incluye fontSize por densidad)
+  const inlineStyles: React.CSSProperties = {
+    fontSize: fontVarBySize[size],
+    ...(bg
+      ? {
+          backgroundColor: getColorValue(bg) || bg,
+          color: getColorValue(textColor) || textColor || "#1f2937", // gray-800 por defecto
+        }
+      : {}),
+  };
 
   // Si hay onClick y no hay iconos, agregar cursor-pointer al badge completo
   const cursorClasses = onClick && !icon ? "cursor-pointer" : "";

@@ -1,5 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
 import { normalizeIconClass } from "../utils/iconUtils";
+import { compactDensity } from "../../contexts/presets";
+
+const compactDensityOverride: React.CSSProperties = {
+  "--flysoft-density-padding-x-sm": compactDensity.paddingX.sm,
+  "--flysoft-density-padding-x-md": compactDensity.paddingX.md,
+  "--flysoft-density-padding-x-lg": compactDensity.paddingX.lg,
+  "--flysoft-density-padding-y-sm": compactDensity.paddingY.sm,
+  "--flysoft-density-padding-y-md": compactDensity.paddingY.md,
+  "--flysoft-density-padding-y-lg": compactDensity.paddingY.lg,
+  "--flysoft-density-container-padding-x": compactDensity.containerPaddingX,
+  "--flysoft-density-container-padding-y": compactDensity.containerPaddingY,
+  "--flysoft-density-gap-sm": compactDensity.gap.sm,
+  "--flysoft-density-gap-md": compactDensity.gap.md,
+  "--flysoft-density-gap-lg": compactDensity.gap.lg,
+  "--flysoft-density-font-xs": compactDensity.fontXs,
+  "--flysoft-density-font-sm": compactDensity.fontSm,
+  "--flysoft-density-font-base": compactDensity.fontBase,
+  "--flysoft-density-font-lg": compactDensity.fontLg,
+  "--flysoft-density-font-xl": compactDensity.fontXl,
+} as React.CSSProperties;
 
 export interface AccordionProps {
   title: string | React.ReactNode;
@@ -95,13 +115,17 @@ export const Accordion: React.FC<AccordionProps> = ({
   };
 
   return (
-    <div className={`${classes} overflow-hidden`}>
+    <div
+      className={`${classes} overflow-hidden`}
+      data-density-override={compact ? "compact" : undefined}
+      style={compact ? compactDensityOverride : undefined}
+    >
       <button
         onClick={handleToggle}
-        className={`w-full flex items-center justify-between ${compact ? "px-2 py-1.5" : "px-4 py-3"} flysoft-button-reset bg-transparent border-none hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer`}
+        className="w-full flex items-center justify-between px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-lg)] flysoft-button-reset bg-transparent border-none hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
         aria-expanded={isOpen}
       >
-        <div className={`flex items-center ${compact ? "gap-2" : "gap-3"} flex-1 min-w-0`}>
+        <div className="flex items-center gap-3 flex-1 min-w-0">
           {icon && (
             <i
               className={`${normalizeIconClass(
@@ -136,7 +160,7 @@ export const Accordion: React.FC<AccordionProps> = ({
           maxHeight: `${contentHeight}px`,
         }}
       >
-        <div className={`${compact ? "px-2 py-1.5" : "px-4 py-3"} text-[var(--color-text-primary)]`}>
+        <div className="px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-lg)] text-[var(--color-text-primary)]">
           {children}
         </div>
       </div>

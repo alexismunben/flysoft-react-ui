@@ -1,5 +1,23 @@
 import React, { useCallback } from "react";
 import { twMerge } from "tailwind-merge";
+import { compactDensity } from "../../contexts/presets";
+
+const compactDensityOverride: React.CSSProperties = {
+  "--flysoft-density-padding-x-sm": compactDensity.paddingX.sm,
+  "--flysoft-density-padding-x-md": compactDensity.paddingX.md,
+  "--flysoft-density-padding-x-lg": compactDensity.paddingX.lg,
+  "--flysoft-density-padding-y-sm": compactDensity.paddingY.sm,
+  "--flysoft-density-padding-y-md": compactDensity.paddingY.md,
+  "--flysoft-density-padding-y-lg": compactDensity.paddingY.lg,
+  "--flysoft-density-gap-sm": compactDensity.gap.sm,
+  "--flysoft-density-gap-md": compactDensity.gap.md,
+  "--flysoft-density-gap-lg": compactDensity.gap.lg,
+  "--flysoft-density-font-xs": compactDensity.fontXs,
+  "--flysoft-density-font-sm": compactDensity.fontSm,
+  "--flysoft-density-font-base": compactDensity.fontBase,
+  "--flysoft-density-font-lg": compactDensity.fontLg,
+  "--flysoft-density-font-xl": compactDensity.fontXl,
+} as React.CSSProperties;
 
 export interface MenuProps<T = { label: string }> {
     options: T[];
@@ -51,14 +69,20 @@ export const Menu = <T = { label: string },>({
     };
 
     const mergedClassName = twMerge(
-        `bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-sm)] ${compact ? "py-0.5 min-w-[120px]" : "py-1 min-w-[160px]"} font-[var(--font-default)] inline-block`,
+        `bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded-md shadow-[var(--shadow-sm)] py-[var(--flysoft-density-padding-y-sm)] ${compact ? "min-w-[120px]" : "min-w-[160px]"} font-[var(--font-default)] inline-block`,
         className
     );
+
+    const mergedStyle: React.CSSProperties = {
+        ...(compact ? compactDensityOverride : {}),
+        ...style,
+    };
 
     return (
         <div
             className={mergedClassName}
-            style={style}
+            data-density-override={compact ? "compact" : undefined}
+            style={mergedStyle}
         >
             {options.map((option, index) => {
                 const key = String(
@@ -72,9 +96,10 @@ export const Menu = <T = { label: string },>({
                         key={key}
                         onClick={() => handleOptionClick(option)}
                         className={twMerge(
-                            `${compact ? "px-2 py-1" : "px-4 py-2"} text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] cursor-pointer transition-colors flex items-center`,
+                            "px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-md)] text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] cursor-pointer transition-colors flex items-center",
                             itemClassName
                         )}
+                        style={{ fontSize: "var(--flysoft-density-font-sm)" }}
                     >
                         {renderOption ? renderOption(option) : labelGetter(option)}
                     </div>

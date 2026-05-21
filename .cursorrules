@@ -22,8 +22,8 @@
 
 #### Sistema de Temas
 
-- `ThemeProvider` - Proveedor de contexto de temas
-- `useTheme` - Hook para acceder al tema actual
+- `ThemeProvider` - Proveedor de contexto de temas. Acepta `density="comfortable" | "compact" | "dense"` para ajustar padding/gap/tipografía/alturas de controles globalmente
+- `useTheme` - Hook para acceder al tema actual y a `density` / `setDensity`
 - `useThemeOverride` - Hook para override temporal de variables CSS
 
 ### Reglas de Uso:
@@ -86,7 +86,7 @@ import "flysoft-react-ui/styles";
 ### Configuración Requerida:
 
 1. **Importar estilos**: `import "flysoft-react-ui/styles";`
-2. **Usar ThemeProvider**: Envolver la app con `<ThemeProvider>`
+2. **Usar ThemeProvider**: Envolver la app con `<ThemeProvider>`. Para apps con mucha información en pantalla, considerar `<ThemeProvider density="dense">`.
 3. **Iconos FontAwesome 5**: Usar clases `fa fa-*` (ej: `fa-user`, `fa-envelope`)
 
 ### Variables CSS Disponibles:

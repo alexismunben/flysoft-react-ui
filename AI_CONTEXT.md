@@ -342,7 +342,12 @@ interface CardProps {
   headerClassName?: string;
   contentClassName?: string;
   footerClassName?: string;
-  compact?: boolean;             // Reduced padding. default: false
+  /**
+   * Override local de densidad: cuando es true, fuerza el preset "compact" en
+   * las variables --flysoft-density-* dentro de esta Card y sus descendientes
+   * (paddings, gaps, tipografía). No depende de la densidad global.
+   */
+  compact?: boolean;             // default: false
 }
 ```
 
@@ -352,6 +357,13 @@ interface CardProps {
 </Card>
 <Card variant="elevated" compact footer={<Button variant="primary">Guardar</Button>}>
   <Input label="Nombre" />
+</Card>
+// Card densa que afecta también a los DataField dentro
+<Card title="Datos personales" compact>
+  <Collection direction="row" wrap gap="md">
+    <DataField label="CUIL" value="20-17990271-1" size="sm" />
+    <DataField label="Edad" value={59} size="sm" />
+  </Collection>
 </Card>
 ```
 
@@ -405,21 +417,46 @@ interface LeftDrawerInterface {
 
 ### Collection
 
-Flex container for rendering lists of items.
+Flex container for rendering lists of items, density-aware.
 
 ```typescript
 interface CollectionProps {
   children: React.ReactNode;     // required
-  gap?: string;                  // CSS gap value. default: "1rem"
+  /**
+   * Presets semánticos ligados a densidad o cualquier valor CSS arbitrario.
+   * "tight" = 0, "sm"/"md"/"lg" leen --flysoft-density-gap-*.
+   */
+  gap?: "tight" | "sm" | "md" | "lg" | string;  // default: "md"
   direction?: "column" | "row";  // default: "column"
   wrap?: boolean;                // default: false
   className?: string;
+  /**
+   * Override local: redefine --flysoft-density-* para esta Collection y
+   * descendientes. Útil para tener una sección densa dentro de un layout cómodo.
+   */
+  density?: "comfortable" | "compact" | "dense";
 }
+```
+
+```tsx
+// Default
+<Collection><DataField label="A" value="1" /><DataField label="B" value="2" /></Collection>
+
+// Horizontal con wrap, gap chico
+<Collection direction="row" wrap gap="sm">
+  <Badge>Activo</Badge><Badge color="info">Verificado</Badge>
+</Collection>
+
+// Sección densa dentro de Card comfortable
+<Collection density="dense">
+  <DataField label="CUIL" value="..." />
+  <DataField label="Edad" value={59} />
+</Collection>
 ```
 
 ### DataField
 
-Label + value pair display for detail views.
+Label + value pair display for detail views. Density-aware.
 
 ```typescript
 interface DataFieldProps {
@@ -431,12 +468,25 @@ interface DataFieldProps {
   link?: string;                 // Opens URL in new tab
   className?: string;
   labelClassName?: string;
+  /**
+   * Override local de tipografía:
+   * - "md" (default): label = font-sm, value = font-base.
+   * - "sm": baja un nivel — label = font-xs, value = font-sm.
+   */
+  size?: "sm" | "md";
+  /** Separación entre label y value en modo stack. "tight" = 0. */
+  gap?: "tight" | "sm" | "md";  // default: "md"
+  /** Oculta el ":" después del label en modo inline. */
+  hideColon?: boolean;          // default: false
 }
 ```
 
 ```tsx
 <DataField label="Nombre" value="Juan Pérez" />
 <DataField label="Email" value="juan@email.com" link="mailto:juan@email.com" inline />
+// Modo compacto para listas densas
+<DataField label="CUIL" value="20-17990271-1" size="sm" />
+<DataField label="Estado" value="Activo" inline hideColon />
 ```
 
 ### TabsGroup / TabPanel
@@ -505,6 +555,12 @@ interface DataTableProps<T> {
   headerCellClassName?: string;
   footerCellClassName?: string;
   cellClassName?: string | ((row: T, column: DataTableColumn<T>) => string);
+  /**
+   * Override local de densidad: cuando es true, fuerza el preset "compact" en
+   * las variables --flysoft-density-* dentro de esta DataTable (paddings,
+   * tipografía, altura de fila). También se propaga a los DropdownMenu de
+   * acciones. Independiente de la densidad global del ThemeProvider.
+   */
   compact?: boolean;             // default: false
 }
 ```
@@ -743,6 +799,11 @@ interface DialogProps {
   footer?: React.ReactNode;
   onClose?: () => void;
   closeOnOverlayClick?: boolean; // default: false
+  /**
+   * Override local de densidad: cuando es true, fuerza el preset "compact" en
+   * --flysoft-density-* dentro del Dialog (paddings header/body/footer,
+   * tamaño del título, gaps). Independiente de la densidad global.
+   */
   compact?: boolean;             // default: false
   bodyWidth?: string | number;   // Custom dialog width (e.g. "800px", "80vw", 600). Default: max-w-lg
 }
@@ -872,13 +933,19 @@ Self-contained theme toggle. No props. Displays available themes with switch but
 Manages application theme with CSS variable injection, presets, and localStorage persistence.
 
 ```typescript
+type Density = "comfortable" | "compact" | "dense";
+
 // Provider props
 interface ThemeProviderProps {
   children: ReactNode;
-  initialTheme?: string | Theme;  // default: "light"
-  storageKey?: string;            // localStorage key. default: "flysoft-theme"
-  forceInitialTheme?: boolean;    // Ignore localStorage. default: false
+  initialTheme?: string | Theme;       // default: "light"
+  storageKey?: string;                 // localStorage key. default: "flysoft-theme"
+  forceInitialTheme?: boolean;         // Ignore localStorage. default: false
   onThemeChange?: (theme: Theme) => void;
+  density?: Density;                   // Global density. default: "comfortable"
+  densityStorageKey?: string;          // default: "flysoft-density"
+  forceInitialDensity?: boolean;       // default: false
+  onDensityChange?: (density: Density) => void;
 }
 
 // Hook return
@@ -890,21 +957,65 @@ interface ThemeContextType {
   availableThemes: string[];      // ["light", "dark", "blue", "green"]
   resetToDefault: () => void;
   isDark: boolean;
+  density: Density;
+  setDensity: (density: Density) => void;
 }
 ```
 
 ```tsx
-// App root
+// App root - default density
 <ThemeProvider initialTheme="light">
   <App />
 </ThemeProvider>
 
-// In components
-const { theme, setTheme, isDark } = useTheme();
+// App root - data-heavy app (CRUD admin, dashboards)
+<ThemeProvider initialTheme="light" density="dense">
+  <App />
+</ThemeProvider>
+
+// Runtime toggle
+const { theme, setTheme, isDark, density, setDensity } = useTheme();
 <Button onClick={() => setTheme(isDark ? "light" : "dark")}>Toggle Theme</Button>
+<Button onClick={() => setDensity(density === "dense" ? "comfortable" : "dense")}>
+  Toggle Density
+</Button>
 ```
 
 **Preset themes**: `lightTheme`, `darkTheme`, `blueTheme`, `greenTheme` (importable).
+**Density presets**: `comfortableDensity`, `compactDensity`, `denseDensity`, `densityPresets` (importable).
+
+**Density CSS variables** (inyectadas automáticamente según la densidad activa):
+`--flysoft-density-padding-x-{sm|md|lg}`, `--flysoft-density-padding-y-{sm|md|lg}`,
+`--flysoft-density-container-padding-{x|y}`,
+`--flysoft-density-gap-{sm|md|lg}`, `--flysoft-density-font-{xs|sm|base|lg|xl}`,
+`--flysoft-density-control-height-{sm|md|lg}`, `--flysoft-density-datatable-row`,
+`--flysoft-density-datatable-header`, `--flysoft-density-card-gap`.
+
+**Componentes que ya consumen densidad automáticamente** (sin necesidad de prop):
+Card, DataField, Collection, Button, LinkButton, Input, AutocompleteInput,
+SearchSelectInput, DateInput, CurrencyInput, DatePicker, DataTable, Dialog,
+Filter (incluye los paneles flotantes), FiltersDialog, Accordion, Menu,
+DropdownMenu, DropdownPanel, TabsGroup, Badge, Checkbox, RadioButtonGroup,
+Pagination, Avatar, RoadMap, Snackbar, Skeleton, Loader. **Toda la librería
+es density-aware.** El default `comfortable` preserva el aspecto previo de
+cada componente, así que los consumidores existentes no ven cambios visuales
+hasta que activan `density="compact"` o `density="dense"`.
+
+**Tipografía global**: dentro del wrapper `.flysoft-theme-reset` (cualquier
+ThemeProvider/AppLayoutProvider lo crea automáticamente), los headings y
+elementos de texto sin clase específica escalan con densidad:
+- `h1` = `font-xl × 1.5`, `h2` = `font-xl × 1.25`, `h3` = `font-xl`,
+  `h4` = `font-lg`, `h5` = `font-base`, `h6` = `font-sm`
+- `p` = `font-base`, `small` = `font-xs`
+- `span`/`div` heredan `font-base` del wrapper
+
+Las reglas son de baja specificity: cualquier `className` Tailwind (`text-lg`,
+`text-2xl`, etc.) o `style` inline las pisa.
+
+**Componentes con prop `compact` como override local de densidad** (fuerzan
+preset compact en `--flysoft-density-*` dentro de sí y descendientes,
+ignorando la densidad global): Card, DataTable, Dialog, Filter, Accordion,
+Menu, DropdownMenu, DropdownPanel, TabsGroup.
 
 ### AuthProvider / AuthContext
 
@@ -1062,6 +1173,11 @@ interface AppLayoutProviderProps {
   initialTheme?: string | Theme;
   storageKey?: string;
   forceInitialTheme?: boolean;
+  // Densidad global (propagada al ThemeProvider interno)
+  density?: "comfortable" | "compact" | "dense";  // default: "comfortable"
+  densityStorageKey?: string;                     // default: "flysoft-density"
+  forceInitialDensity?: boolean;
+  onDensityChange?: (density: "comfortable" | "compact" | "dense") => void;
   initialNavbar?: NavbarInterface;
   initialLeftDrawer?: LeftDrawerInterface;
   initialContentFooter?: ReactNode;
@@ -1085,6 +1201,7 @@ interface AppLayoutContextType extends ThemeContextType {
 ```tsx
 <AppLayoutProvider
   initialTheme="light"
+  density="dense"   // CRUDs / dashboards / pantallas con mucha info
   initialNavbar={{ navBarLeftNode: <h1>Mi App</h1>, fullWidthNavbar: true }}
   initialLeftDrawer={{ contentNode: <nav>...</nav> }}
 >

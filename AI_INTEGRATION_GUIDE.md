@@ -21,6 +21,19 @@ export function AppRoot() {
 }
 ```
 
+For data-heavy apps (admin panels, dashboards, CRUDs with lots of info per
+screen), set a tighter global `density`:
+
+```tsx
+<ThemeProvider initialTheme="light" density="dense">
+  {/* app */}
+</ThemeProvider>
+```
+
+Density is a global axis (`"comfortable"` | `"compact"` | `"dense"`) that
+adjusts padding, gaps, typography and control heights via CSS variables.
+Per-component overrides (`compact`, `size`) keep working on top of it.
+
 For full app layout with navbar, sidebar, and snackbars:
 
 ```tsx
@@ -31,6 +44,7 @@ export function AppRoot() {
   return (
     <AppLayoutProvider
       initialTheme="light"
+      density="dense" // optional: comfortable | compact | dense
       initialNavbar={{ navBarLeftNode: <h1>Mi App</h1>, fullWidthNavbar: true }}
     >
       {/* routes */}
@@ -73,12 +87,12 @@ This project uses `flysoft-react-ui` as the default UI library.
 - `Pagination` — URL-based pagination. Props: page, pages, total, isLoading, fieldName
 
 ### Layout & Data
-- `Card` — Props: title, subtitle, headerActions, footer, variant ("default"|"elevated"|"outlined"), compact, alwaysDisplayHeaderActions
+- `Card` — Props: title, subtitle, headerActions, footer, variant ("default"|"elevated"|"outlined"), compact (override local de densidad → fuerza preset compact en `--flysoft-density-*` dentro de la card y descendientes), alwaysDisplayHeaderActions
 - `AppLayout` — Main layout. Props: navbar (NavbarInterface), leftDrawer (LeftDrawerInterface), children
-- `Collection` — Flex container. Props: gap, direction, wrap
-- `DataField` — Label+value pair. Props: label, value, inline, align, link
+- `Collection` — Flex container density-aware. Props: gap ("tight"|"sm"|"md"|"lg"|string), direction, wrap, density ("comfortable"|"compact"|"dense", override local que redefine `--flysoft-density-*` para esta collection y descendientes)
+- `DataField` — Label+value pair density-aware. Props: label, value, inline, align, link, size ("sm"|"md", "sm" baja un nivel de tipografía), gap ("tight"|"sm"|"md", separación label/value en stack), hideColon (oculta `:` en modo inline)
 - `TabsGroup` + `TabPanel` — Tabbed interface. TabsGroup: tabs ({id,label}[]), paramName (URL sync). TabPanel: tabId
-- `DataTable<T>` — Data table. Props: columns (DataTableColumn<T>[]), rows, maxRows, isLoading, loadingRows, compact, locale
+- `DataTable<T>` — Data table density-aware. Props: columns (DataTableColumn<T>[]), rows, maxRows, isLoading, loadingRows, compact (override local de densidad → fuerza preset compact en `--flysoft-density-*` dentro de la tabla y sus DropdownMenu de acciones), locale
   - DataTableColumn: header, value (key or function), type ("text"|"numeric"|"currency"|"date"), actions, width, align, tooltip, footer
 - `Accordion` — Collapsible section. Props: title, icon, rightNode, defaultOpen, variant, onToggle
 - `Menu<T>` — Simple menu list. Props: options, onOptionSelected, getOptionLabel, renderOption
@@ -90,7 +104,7 @@ This project uses `flysoft-react-ui` as the default UI library.
 - `Badge` — Props: variant, size, rounded, icon, iconPosition, bg, textColor, onClick
 - `Avatar` — Props: text (for initials), image, bgColor, textColor, size
 - `RoadMap` — Stage visualization. Props: stages ({name, description?, icon?, variant?, bg?, disabled?}[])
-- `Dialog` — Modal. Props: isOpen, title, children, footer, onClose, closeOnOverlayClick, compact, bodyWidth
+- `Dialog` — Modal density-aware. Props: isOpen, title, children, footer, onClose, closeOnOverlayClick, compact (override local de densidad), bodyWidth
 - `Loader` — Loading indicator. Props: isLoading, text, keepContentWhileLoading, contentLoadingNode, overlayClassName
 - `FiltersDialog` — Groups multiple filters in dialog. Props: filters (FilterConfig[])
 - `Snackbar` — (Used internally) Toast notification
@@ -108,14 +122,14 @@ This project uses `flysoft-react-ui` as the default UI library.
 - `ListPattern<T>` — List page with Card + search + filters + pagination + DataTable. Props: title, columns, rows, searchParamName, onAdd, addButtonText, filtersNode, page, pages, total, isLoading, compact
 
 ### Contexts & Hooks
-- `ThemeProvider` — initialTheme, storageKey, forceInitialTheme, onThemeChange
-- `useTheme()` — Returns: theme, setTheme, updateTheme, currentThemeName, availableThemes, isDark, resetToDefault
+- `ThemeProvider` — initialTheme, storageKey, forceInitialTheme, onThemeChange, density ("comfortable" | "compact" | "dense"), densityStorageKey, forceInitialDensity, onDensityChange
+- `useTheme()` — Returns: theme, setTheme, updateTheme, currentThemeName, availableThemes, isDark, resetToDefault, density, setDensity
 - `AuthProvider` — getToken, getUserData, refreshToken, removeToken
 - `AuthContext` — user, login, logout, isAuthenticated, isLoading
 - `CrudProvider<T>` — getPromise, getItemPromise, postPromise, putPromise, deletePromise, urlParams, limit, pageParam
 - `useCrud<T>()` — Returns: list, item, isLoading, pagination, fetchItems, fetchItem, createItem, updateItem, deleteItem, params, page, pages, total
 - `SnackbarProvider` + `useSnackbar()` — showSnackbar(message, variant?, options?), removeSnackbar(id)
-- `AppLayoutProvider` — Combines Theme + Snackbar + AppLayout. useAppLayout() to set navbar/drawer dynamically
+- `AppLayoutProvider` — Combines Theme + Snackbar + AppLayout. Accepts density/densityStorageKey/forceInitialDensity/onDensityChange (propagated to ThemeProvider) in addition to theme props. useAppLayout() to set navbar/drawer dynamically
 - `useAsyncRequest(options)` — Returns: execute(fn), isLoading. Options: successMessage, errorMessage, onSuccess, onError
 - `useBreakpoint()` — Returns: breakpoint, windowSize, isMobile, isTablet, isDesktop
 - `useThemeOverride(options)` — Returns: applyOverride, revertOverride, revertAllOverrides
