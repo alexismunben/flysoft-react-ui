@@ -1039,6 +1039,35 @@ const LinkButtonDocs: React.FC = () => {
               </table>
             </div>
           </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Override de fondo y estilos con className
+            </h3>
+            <p
+              className="text-sm mb-4"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Igual que Button: usá <code>bg</code> / <code>textColor</code> para
+              el color, y cualquier <code>className</code> en conflicto pisa la
+              clase por defecto gracias a <code>twMerge</code>.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <LinkButton to="#" variant="primary" className="rounded-full">
+                rounded-full
+              </LinkButton>
+              <LinkButton
+                to="#"
+                variant="outline"
+                className="bg-[var(--color-bg-secondary)]"
+              >
+                bg por className
+              </LinkButton>
+            </div>
+          </section>
         </div>
       </Card>
     </div>

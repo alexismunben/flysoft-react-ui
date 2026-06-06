@@ -115,6 +115,11 @@ import "flysoft-react-ui/styles";
 - Importar los estilos de flysoft-react-ui
 - Seguir los patrones de uso documentados
 
+### Cambiar el fondo de form-controls y filtros:
+
+- Los form-controls (Input, CurrencyInput, DateInput, AutocompleteInput, SearchSelectInput, Button, etc.) combinan clases con `twMerge`: pasá un `className` con `bg-*` para pisar el fondo por defecto (`bg-[var(--color-bg-default)]`). Ej: `<Input className="bg-[var(--color-bg-secondary)]" />`.
+- El `Filter` usa su prop `bgColor` (no `className`): `<Filter filterType="text" paramName="q" bgColor="var(--color-bg-secondary)" />`. Cambia el badge y el input interno; el panel flotante queda con el fondo por defecto.
+
 ## Templates Disponibles:
 
 - `templates/forms/LoginForm.tsx`

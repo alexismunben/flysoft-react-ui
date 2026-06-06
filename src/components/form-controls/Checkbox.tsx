@@ -1,4 +1,5 @@
 import React from "react";
+import { twMerge } from "tailwind-merge";
 
 export interface CheckboxProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -46,19 +47,17 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       lg: "var(--flysoft-density-font-lg)",
     };
 
-    const checkboxClasses = `
-      rounded border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-0
+    const checkboxClasses = twMerge(
+      `rounded border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-0
       cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
       border-[var(--color-border-default)]
       checked:bg-[var(--color-primary)] checked:border-[var(--color-primary)]
-      focus:ring-[var(--color-primary)]
-      ${
-        error
-          ? "border-[var(--color-border-error)] checked:border-[var(--color-border-error)] checked:bg-[var(--color-danger)]"
-          : ""
-      }
-      ${className}
-    `;
+      focus:ring-[var(--color-primary)]`,
+      error
+        ? "border-[var(--color-border-error)] checked:border-[var(--color-border-error)] checked:bg-[var(--color-danger)]"
+        : "",
+      className,
+    );
 
     const checkboxStyle: React.CSSProperties = {
       width: indicatorVarBySize[size],

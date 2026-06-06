@@ -233,6 +233,64 @@ const InputDocs: React.FC = () => {
               className="text-lg font-semibold mb-4"
               style={{ color: "var(--flysoft-text-primary)" }}
             >
+              Fondo personalizado
+            </h3>
+            <p
+              className="text-sm mb-4"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Por defecto el fondo del Input es{" "}
+              <code>var(--color-bg-default)</code>. Cuando el campo va sobre una
+              superficie del mismo color, pasá un <code>bg-*</code> por{" "}
+              <code>className</code> para cambiarlo: las clases se combinan con{" "}
+              <code>twMerge</code>, así que tu <code>bg-*</code> pisa el fondo por
+              defecto de forma confiable.
+            </p>
+            <div
+              className="p-6 rounded-lg border"
+              style={{
+                background: "var(--color-bg-secondary)",
+                borderColor: "var(--color-border-default)",
+              }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Input
+                    label="Sin override"
+                    placeholder="fondo por defecto"
+                    icon="fa-tint"
+                  />
+                  <p
+                    className="text-sm"
+                    style={{ color: "var(--flysoft-text-secondary)" }}
+                  >
+                    el fondo blanco resalta sobre la superficie
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <Input
+                    label="Con override"
+                    placeholder="se integra al fondo"
+                    icon="fa-tint"
+                    className="bg-[var(--color-bg-secondary)]"
+                  />
+                  <p
+                    className="text-sm"
+                    style={{ color: "var(--flysoft-text-secondary)" }}
+                  >
+                    <code>className="bg-[var(--color-bg-secondary)]"</code> integra
+                    el campo a la superficie
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
               Formulario completo
             </h3>
             <Card

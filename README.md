@@ -392,6 +392,20 @@ Etiqueta pequeña para mostrar estados o categorías.
 
 ## 🎨 Personalización
 
+### Fondo de form-controls y filtros
+
+El fondo por defecto de los form-controls es `var(--color-bg-default)`. Cuando un control queda sobre una superficie del mismo color (por ej. dentro de una `Card` blanca) podés cambiarlo:
+
+```tsx
+// Form-controls: pasá un bg-* por className (se combinan con twMerge y pisan el default)
+<Input className="bg-[var(--color-bg-secondary)]" />
+<CurrencyInput className="bg-[#f5f5f5]" />
+<DateInput className="bg-[var(--color-bg-secondary)]" />
+
+// Filter: usá la prop bgColor (cambia el badge y el input interno)
+<Filter filterType="text" paramName="nombre" label="Nombre" bgColor="var(--color-bg-secondary)" />
+```
+
 ### Colores
 
 Puedes personalizar los colores sobrescribiendo las clases de Tailwind CSS:

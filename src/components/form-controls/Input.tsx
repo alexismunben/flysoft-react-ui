@@ -1,4 +1,5 @@
 import React from "react";
+import { twMerge } from "tailwind-merge";
 import { normalizeIconClass } from "../utils/iconUtils";
 
 export interface InputProps extends Omit<
@@ -81,7 +82,16 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       lg: "var(--flysoft-density-padding-x-lg)",
     };
 
-    const inputClasses = `${baseClasses} ${readOnlyClasses} ${paddingBySize[size]} ${stateClasses} ${className}`;
+    // twMerge para que las clases pasadas por `className` (por ej. un fondo
+    // como `bg-[#f5f5f5]`) overrideen de forma confiable las clases por defecto
+    // como `bg-[var(--color-bg-default)]` en lugar de quedar ambas en conflicto.
+    const inputClasses = twMerge(
+      baseClasses,
+      readOnlyClasses,
+      paddingBySize[size],
+      stateClasses,
+      className,
+    );
 
     // El input + icono comparte: el icono se posiciona al borde del padding-x,
     // y el padding-left/right del input se ajusta dejando una separación

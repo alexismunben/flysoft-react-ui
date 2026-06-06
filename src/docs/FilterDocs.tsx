@@ -847,6 +847,72 @@ const FilterDocs: React.FC = () => {
               </div>
             </Card>
           </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Fondo personalizado con bgColor
+            </h3>
+            <p
+              className="mb-4 text-sm"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              El badge y el input del filtro usan{" "}
+              <code className="px-1 py-0.5 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded text-xs">
+                var(--color-bg-default)
+              </code>{" "}
+              como fondo. Cuando el filtro va sobre una superficie del mismo color
+              (por ej. dentro de una Card), usá la prop{" "}
+              <code className="px-1 py-0.5 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded text-xs">
+                bgColor
+              </code>{" "}
+              para integrarlo. Acepta cualquier color CSS o variable del tema. El
+              panel flotante mantiene el fondo por defecto (es un popover).
+            </p>
+            <div
+              className="p-6 rounded-lg border"
+              style={{
+                background: "var(--color-bg-secondary)",
+                borderColor: "var(--color-border-default)",
+              }}
+            >
+              <Collection direction="row" wrap gap="md">
+                <Filter
+                  filterType="search"
+                  paramName="demo_bg_q1"
+                  label="Sin bgColor"
+                  compact={isCompact}
+                />
+                <Filter
+                  filterType="search"
+                  paramName="demo_bg_q2"
+                  label="Con bgColor"
+                  bgColor="var(--color-bg-secondary)"
+                  compact={isCompact}
+                />
+                <Filter
+                  filterType="text"
+                  paramName="demo_bg_t"
+                  label="Texto"
+                  bgColor="var(--color-bg-secondary)"
+                  compact={isCompact}
+                />
+              </Collection>
+              <p
+                className="text-sm mt-4"
+                style={{ color: "var(--flysoft-text-secondary)" }}
+              >
+                El primer filtro resalta en blanco sobre la superficie; los otros
+                dos usan{" "}
+                <code className="px-1 py-0.5 bg-[var(--color-bg-default)] border border-[var(--color-border-default)] rounded text-xs">
+                  bgColor="var(--color-bg-secondary)"
+                </code>{" "}
+                para integrarse.
+              </p>
+            </div>
+          </section>
         </div>
       </Card>
     </div>

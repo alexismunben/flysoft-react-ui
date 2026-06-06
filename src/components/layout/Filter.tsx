@@ -57,6 +57,14 @@ interface BaseFilterProps {
    */
   disabled?: boolean;
   compact?: boolean;
+  /**
+   * Color de fondo del filtro (badge e input interno). Útil cuando el filtro se
+   * coloca sobre una superficie del mismo color que el fondo por defecto (por ej.
+   * dentro de una Card blanca). Acepta cualquier valor CSS de color o una variable
+   * del tema, p. ej. `"#f5f5f5"` o `"var(--color-bg-secondary)"`.
+   * El panel flotante mantiene el fondo por defecto (es un popover).
+   */
+  bgColor?: string;
 }
 
 // Props específicas para cada tipo de filtro
@@ -128,8 +136,22 @@ export const Filter: React.FC<FilterProps> = (props) => {
     hideEmpty = false,
     disabled = false,
     compact = false,
+    bgColor,
   } = props;
   const filterType = props.filterType || "text";
+
+  // Estilo del contenedor: combina el override de densidad compacta con el
+  // override del color de fondo. Al setear `--color-bg-default` localmente, el
+  // badge y el Input interno (que leen esa variable) cambian de fondo juntos.
+  const containerStyle: React.CSSProperties | undefined =
+    compact || bgColor
+      ? {
+          ...(compact ? compactDensityOverride : {}),
+          ...(bgColor
+            ? ({ "--color-bg-default": bgColor } as React.CSSProperties)
+            : {}),
+        }
+      : undefined;
 
   // Calcular el ancho por defecto según el tipo de filtro
   const defaultInputWidth =
@@ -806,7 +828,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
         className={`relative inline-block ${
           disabled ? "opacity-50 pointer-events-none" : ""
         }`}
-        style={compact ? compactDensityOverride : undefined}
+        style={containerStyle}
       >
         <DataField
           label={label}
@@ -905,7 +927,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
         className={`relative inline-block ${
           disabled ? "opacity-50 pointer-events-none" : ""
         }`}
-        style={compact ? compactDensityOverride : undefined}
+        style={containerStyle}
       >
         <DataField
           label={label}
@@ -990,7 +1012,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
         className={`relative inline-block ${
           disabled ? "opacity-50 pointer-events-none" : ""
         }`}
-        style={compact ? compactDensityOverride : undefined}
+        style={containerStyle}
       >
         <DataField
           label={label}
@@ -1077,7 +1099,7 @@ export const Filter: React.FC<FilterProps> = (props) => {
         className={`relative inline-block ${
           disabled ? "opacity-50 pointer-events-none" : ""
         }`}
-        style={compact ? compactDensityOverride : undefined}
+        style={containerStyle}
       >
         <DataField
           label={label}

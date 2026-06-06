@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { twMerge } from "tailwind-merge";
 import { normalizeIconClass } from "../utils/iconUtils";
 
 // Función helper para convertir nombres de colores comunes a valores CSS válidos
@@ -134,7 +135,13 @@ export const LinkButton: React.FC<LinkButtonProps> = ({
   // Clases adicionales para variant outline cuando hay bg personalizado
   const outlineClasses = bg && variant === "outline" ? "border" : "";
 
-  const classes = `${baseClasses} ${variantClasses} ${paddingBySize[size]} ${outlineClasses} ${className}`;
+  const classes = twMerge(
+    baseClasses,
+    variantClasses,
+    paddingBySize[size],
+    outlineClasses,
+    className,
+  );
 
   // Función para obtener el valor de una variable CSS
   const getCSSVariable = (varName: string): string => {

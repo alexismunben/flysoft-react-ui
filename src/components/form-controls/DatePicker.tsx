@@ -1,4 +1,5 @@
 import React from "react";
+import { twMerge } from "tailwind-merge";
 import dayjs, { type Dayjs } from "dayjs";
 import { Button } from "./Button";
 
@@ -171,8 +172,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
   return (
     <div
-      className={`inline-flex flex-col rounded-lg border border-[var(--color-border-default)]
-      bg-[var(--color-bg-default)] shadow-sm font-[var(--font-default)] ${className}`}
+      className={twMerge(
+        `inline-flex flex-col rounded-lg border border-[var(--color-border-default)]
+      bg-[var(--color-bg-default)] shadow-sm font-[var(--font-default)]`,
+        className,
+      )}
       style={{
         padding: "var(--flysoft-density-padding-y-lg)",
         fontSize: "var(--flysoft-density-font-sm)",

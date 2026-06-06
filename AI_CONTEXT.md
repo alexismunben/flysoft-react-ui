@@ -686,11 +686,15 @@ interface BaseFilterProps {
   onChange?: (value: string | undefined) => void;
   hideEmpty?: boolean;           // default: false
   disabled?: boolean;            // default: false
+  compact?: boolean;             // default: false — fuerza densidad compacta local
+  bgColor?: string;              // Fondo del badge e input (no del panel flotante). Ej: "#f5f5f5" o "var(--color-bg-secondary)"
 }
 ```
 
 ```tsx
 <Filter filterType="text" paramName="nombre" label="Nombre" />
+// Fondo personalizado cuando el filtro va sobre una Card blanca:
+<Filter filterType="search" paramName="q" label="Buscar" bgColor="var(--color-bg-secondary)" />
 <Filter filterType="number" paramName="edad" label="Edad" min={0} max={120} />
 <Filter filterType="date" paramName="fecha" label="Fecha" />
 <Filter
@@ -1016,6 +1020,15 @@ Las reglas son de baja specificity: cualquier `className` Tailwind (`text-lg`,
 preset compact en `--flysoft-density-*` dentro de sí y descendientes,
 ignorando la densidad global): Card, DataTable, Dialog, Filter, Accordion,
 Menu, DropdownMenu, DropdownPanel, TabsGroup.
+
+**Override de fondo/estilos en form-controls vía `className`**: los form-controls
+(Input, CurrencyInput, DateInput, AutocompleteInput, SearchSelectInput, Button,
+LinkButton, Checkbox, RadioButtonGroup, DatePicker) combinan sus clases con
+`twMerge`, así que un `className` con clase en conflicto pisa la default de forma
+confiable. Para cambiar el fondo por defecto (`bg-[var(--color-bg-default)]`) —por
+ej. cuando el control va sobre una Card del mismo color— pasá un `bg-*`:
+`<Input className="bg-[var(--color-bg-secondary)]" />` o `<Input className="bg-[#f5f5f5]" />`.
+El `Filter` no toma `className` para esto; usa su prop `bgColor`.
 
 ### AuthProvider / AuthContext
 

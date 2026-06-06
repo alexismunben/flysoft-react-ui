@@ -425,6 +425,8 @@ npm run lint
 | `CurrencyInput` | value (number), onChange | Input numérico formato moneda (es-AR) |
 | `Pagination` | page, pages, total, isLoading, fieldName | Paginación basada en URL |
 
+> **Override de fondo/estilos vía `className`**: todos los form-controls combinan sus clases internas con `twMerge`. Un `className` con clase en conflicto pisa la default de forma confiable. Para cambiar el fondo por defecto (`bg-[var(--color-bg-default)]`) cuando el control va sobre una superficie del mismo color, pasá un `bg-*`: `<Input className="bg-[var(--color-bg-secondary)]" />`. El `Filter` usa su prop `bgColor` en lugar de `className` para esto.
+
 ### Layout Components (12 componentes)
 
 | Componente | Props clave | Descripción |
@@ -440,7 +442,7 @@ npm run lint
 | `Menu<T>` | options, onOptionSelected, getOptionLabel, renderOption | Lista de menú simple |
 | `DropdownMenu<T>` | options, onOptionSelected, renderNode, openOnHover | Dropdown portal con posicionamiento auto |
 | `DropdownPanel` | children, renderNode, openOnHover | Dropdown portal con contenido libre |
-| `Filter` | filterType, paramName, label, value, onChange | Filtro versátil (text/number/date/autocomplete/search/searchSelect) |
+| `Filter` | filterType, paramName, label, value, onChange, compact, **bgColor (fondo del badge/input vía `--color-bg-default` local)** | Filtro versátil (text/number/date/autocomplete/search/searchSelect) |
 
 ### Utility Components (10 componentes)
 

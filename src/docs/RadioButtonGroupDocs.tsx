@@ -395,6 +395,41 @@ const RadioButtonGroupDocs: React.FC = () => {
                 className="text-lg font-semibold mb-4"
                 style={{ color: "var(--flysoft-text-primary)" }}
               >
+                Fondo y estilos con className
+              </h3>
+              <p
+                className="text-sm mb-4"
+                style={{ color: "var(--flysoft-text-secondary)" }}
+              >
+                El <code>className</code> se aplica al contenedor del grupo y se
+                combina con <code>twMerge</code>, así que podés darle fondo, borde
+                y padding para presentarlo como un panel sobre una superficie del
+                mismo color.
+              </p>
+              <div
+                className="p-6 rounded-lg border"
+                style={{
+                  background: "var(--color-bg-secondary)",
+                  borderColor: "var(--color-border-default)",
+                }}
+              >
+                <RadioButtonGroup
+                  options={basicOptions}
+                  value={selectedValue1}
+                  onChange={(value: string | number) =>
+                    setSelectedValue1(value)
+                  }
+                  name="bg-group"
+                  className="bg-[var(--color-bg-default)] p-4 rounded-lg border border-[var(--color-border-default)]"
+                />
+              </div>
+            </section>
+
+            <section>
+              <h3
+                className="text-lg font-semibold mb-4"
+                style={{ color: "var(--flysoft-text-primary)" }}
+              >
                 Ejemplo de uso
               </h3>
               <FormExample />

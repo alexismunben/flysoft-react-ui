@@ -1,4 +1,5 @@
 import React from "react";
+import { twMerge } from "tailwind-merge";
 import { useFormContext } from "react-hook-form";
 
 export interface RadioOption {
@@ -150,10 +151,12 @@ export const RadioButtonGroup = React.forwardRef<
       horizontal: "flex-row flex-wrap",
     };
 
-    const containerClasses = `
-      flex ${directionClasses[direction]} ${gapClasses[gap]}
-      ${className}
-    `;
+    const containerClasses = twMerge(
+      "flex",
+      directionClasses[direction],
+      gapClasses[gap],
+      className,
+    );
 
     const indicatorVarBySize: Record<"sm" | "md" | "lg", string> = {
       sm: "var(--flysoft-density-control-indicator-sm)",

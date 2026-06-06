@@ -420,7 +420,11 @@ Componente de filtrado versátil con múltiples tipos.
 | `"search"` | (base) |
 | `"searchSelect"` | `onSearchPromiseFn`, `onSingleSearchPromiseFn`, `dialogTitle?` |
 
-**Props base**: `paramName?` (sync URL), `label?`, `value?`, `onChange?`, `hideEmpty?`, `disabled?`, `staticOptions?`, `inputWidth?`
+**Props base**: `paramName?` (sync URL), `label?`, `value?`, `onChange?`, `hideEmpty?`, `disabled?`, `compact?`, `staticOptions?`, `inputWidth?`, `bgColor?`
+
+> `bgColor?: string` — color de fondo del badge e input del filtro (no del panel flotante). Útil cuando el filtro va sobre una superficie del mismo color que el fondo por defecto (ej. dentro de una `Card` blanca). Acepta cualquier color CSS o variable del tema: `bgColor="var(--color-bg-secondary)"` o `bgColor="#f5f5f5"`.
+>
+> **Cambiar el fondo de los form-controls** (Input, CurrencyInput, DateInput, AutocompleteInput, SearchSelectInput, etc.): pasales un `className` con un `bg-*`; combinan clases con `twMerge`, así que pisa el fondo por defecto de forma confiable. Ej: `<Input className="bg-[var(--color-bg-secondary)]" />`.
 
 ---
 

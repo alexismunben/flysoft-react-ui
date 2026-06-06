@@ -347,6 +347,37 @@ const ButtonDocs: React.FC = () => {
               </div>
             </div>
           </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Override de fondo y estilos con className
+            </h3>
+            <p
+              className="text-sm mb-4"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Para el color de fondo del botón lo recomendado son las props{" "}
+              <code>bg</code> y <code>textColor</code>. Además, como las clases se
+              combinan con <code>twMerge</code>, cualquier <code>className</code>{" "}
+              en conflicto (un <code>bg-*</code>, <code>rounded-*</code>,{" "}
+              <code>shadow-*</code>, etc.) pisa la clase por defecto de forma
+              confiable.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button variant="primary" className="rounded-full">
+                rounded-full
+              </Button>
+              <Button
+                variant="outline"
+                className="bg-[var(--color-bg-secondary)]"
+              >
+                bg por className
+              </Button>
+            </div>
+          </section>
         </div>
       </Card>
     </div>

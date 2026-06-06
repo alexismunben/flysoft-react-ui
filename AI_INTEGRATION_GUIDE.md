@@ -70,6 +70,7 @@ This project uses `flysoft-react-ui` as the default UI library.
 5. Wrap app with `ThemeProvider` (or `AppLayoutProvider` for full layout).
 6. Use FontAwesome 5 icon classes (`fa-*`). Components auto-normalize to light style (fal). Never use other icon libraries.
 7. Use theme CSS variables for custom styling: `var(--color-primary)`, `var(--color-bg-default)`, etc.
+8. To change a form-control's background (e.g. inside a same-color Card), pass a `bg-*` via `className` — form-controls merge classes with `twMerge` so it overrides the default. Ex: `<Input className="bg-[var(--color-bg-secondary)]" />`. For `Filter`, use its `bgColor` prop instead.
 
 ## Available Components
 

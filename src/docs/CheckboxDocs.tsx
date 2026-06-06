@@ -200,6 +200,56 @@ const CheckboxDocs: React.FC = () => {
               </div>
             </Card>
           </section>
+
+          <section>
+            <h3
+              className="text-lg font-semibold mb-4"
+              style={{ color: "var(--flysoft-text-primary)" }}
+            >
+              Fondo personalizado
+            </h3>
+            <p
+              className="text-sm mb-4"
+              style={{ color: "var(--flysoft-text-secondary)" }}
+            >
+              Los form-controls combinan sus clases con <code>twMerge</code>, así
+              que un <code>className</code> con <code>bg-*</code> pisa el fondo por
+              defecto de la casilla de forma confiable. Útil cuando el checkbox va
+              sobre una superficie del mismo color.
+            </p>
+            <div
+              className="p-6 rounded-lg border"
+              style={{
+                background: "var(--color-bg-secondary)",
+                borderColor: "var(--color-border-default)",
+              }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Checkbox label="Sin override" />
+                  <p
+                    className="text-sm"
+                    style={{ color: "var(--flysoft-text-secondary)" }}
+                  >
+                    la casilla usa el fondo por defecto
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <Checkbox
+                    label="Con override"
+                    className="bg-[var(--color-bg-secondary)]"
+                  />
+                  <p
+                    className="text-sm"
+                    style={{ color: "var(--flysoft-text-secondary)" }}
+                  >
+                    <code>className="bg-[var(--color-bg-secondary)]"</code> integra
+                    la casilla a la superficie
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </Card>
     </div>
