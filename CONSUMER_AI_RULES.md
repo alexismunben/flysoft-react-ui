@@ -342,6 +342,8 @@ Sección colapsable con animación suave.
 | `rightNode` | `ReactNode` | — | Contenido a la derecha del título |
 | `defaultOpen` | `boolean` | `false` | Abierto inicialmente |
 | `variant` | `"default" \| "elevated" \| "outlined"` | `"default"` | Estilo visual |
+| `headerClassName` | `string` | — | Clases para el header (botón) |
+| `contentClassName` | `string` | — | Clases para el contenedor del contenido |
 | `onToggle` | `(isOpen: boolean) => void` | — | Callback al abrir/cerrar |
 
 ### AppLayout

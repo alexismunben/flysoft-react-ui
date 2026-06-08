@@ -599,6 +599,8 @@ interface AccordionProps {
   rightNode?: React.ReactNode;
   defaultOpen?: boolean;         // default: false
   className?: string;
+  headerClassName?: string;      // clases para el header (botón)
+  contentClassName?: string;     // clases para el contenedor del contenido
   variant?: "default" | "elevated" | "outlined";  // default: "default"
   onToggle?: (isOpen: boolean) => void;
 }

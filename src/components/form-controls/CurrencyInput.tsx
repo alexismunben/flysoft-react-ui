@@ -30,7 +30,7 @@ export interface CurrencyInputProps extends Omit<
 export const CurrencyInput = React.forwardRef<
   HTMLInputElement,
   CurrencyInputProps
->(({ value, onChange, onFocus, onBlur, ...props }, ref) => {
+>(({ value, onChange, onFocus, onBlur, onPaste, ...props }, ref) => {
   const [isFocused, setIsFocused] = useState(false);
   const [displayValue, setDisplayValue] = useState("");
 
@@ -76,6 +76,46 @@ export const CurrencyInput = React.forwardRef<
     // Reemplazamos la coma por punto para que parseFloat funcione correctamente
     const cleanValue = val.replace(/\./g, "").replace(",", ".");
     const numeric = parseFloat(cleanValue);
+    return isNaN(numeric) ? null : numeric;
+  }, []);
+
+  // Parsea un valor pegado que puede venir formateado desde otra aplicación.
+  // Detecta el separador decimal en base a la posición de puntos y comas,
+  // tratando el otro separador como separador de miles.
+  // Ej: "10.500,25" -> 10500.25 | "10,500.25" -> 10500.25 | "10500,25" -> 10500.25
+  const parsePastedNumber = useCallback((raw: string): number | null => {
+    let s = raw.trim().replace(/[^0-9.,-]/g, "");
+    if (!s) return null;
+
+    const lastComma = s.lastIndexOf(",");
+    const lastDot = s.lastIndexOf(".");
+
+    let decimalSep: "" | "," | "." = "";
+    if (lastComma > -1 && lastDot > -1) {
+      // Ambos presentes: el que aparece más a la derecha es el decimal
+      decimalSep = lastComma > lastDot ? "," : ".";
+    } else if (lastComma > -1) {
+      decimalSep = ",";
+    } else if (lastDot > -1) {
+      // Solo puntos: un único punto seguido de 1-2 dígitos es decimal,
+      // en cualquier otro caso se interpretan como separadores de miles (es-AR)
+      const onlyOneDot = s.indexOf(".") === lastDot;
+      const digitsAfter = s.length - lastDot - 1;
+      decimalSep = onlyOneDot && digitsAfter > 0 && digitsAfter <= 2 ? "." : "";
+    }
+
+    if (decimalSep === ".") {
+      // Puntos decimales: quitar comas (miles) y dejar el punto
+      s = s.replace(/,/g, "");
+    } else if (decimalSep === ",") {
+      // Comas decimales: quitar puntos (miles) y convertir coma en punto
+      s = s.replace(/\./g, "").replace(/,/g, ".");
+    } else {
+      // Sin decimales: quitar todos los separadores
+      s = s.replace(/[.,]/g, "");
+    }
+
+    const numeric = parseFloat(s);
     return isNaN(numeric) ? null : numeric;
   }, []);
 
@@ -142,6 +182,21 @@ export const CurrencyInput = React.forwardRef<
     setDisplayValue(val);
   };
 
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pasted = e.clipboardData.getData("text");
+    const numeric = parsePastedNumber(pasted);
+
+    // Si pudimos interpretar un número, tomamos el control del pegado
+    // para evitar que handleChange malinterprete los separadores de miles.
+    if (numeric !== null) {
+      e.preventDefault();
+      // Mientras tiene el foco mostramos sin separadores de miles (coma decimal)
+      setDisplayValue(formatToFocus(numeric));
+    }
+
+    if (onPaste) onPaste(e);
+  };
+
   return (
     <Input
       {...props}
@@ -151,6 +206,7 @@ export const CurrencyInput = React.forwardRef<
       onChange={handleChange}
       onFocus={handleFocus}
       onBlur={handleBlur}
+      onPaste={handlePaste}
     />
   );
 });

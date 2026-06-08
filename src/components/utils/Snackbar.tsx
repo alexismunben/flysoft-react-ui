@@ -21,43 +21,41 @@ export const Snackbar: React.FC<SnackbarProps> = React.memo(
     const remainingTimeRef = useRef<number>(duration);
     const closingRef = useRef(false);
 
-    // Mapeo de variantes a colores y clases
+    // Mapeo de variantes a colores y clases.
+    // Diseño "filled": fondo con el color sólido de la variante y texto con su
+    // color de contraste (blanco). Maximiza la legibilidad respecto del esquema
+    // anterior (fondo claro saturado + texto oscuro) sin salir del set de
+    // variables --color-{variant}* existente.
     const variantConfig = {
       primary: {
-        bg: "bg-[var(--color-primary-light)]",
-        border: "border-[var(--color-primary)]",
-        text: "text-gray-800",
-        progressColor: "var(--color-primary)",
+        bg: "bg-[var(--color-primary)]",
+        border: "border-[var(--color-primary-dark)]",
+        text: "text-[var(--color-primary-contrast)]",
       },
       secondary: {
-        bg: "bg-[var(--color-secondary-light)]",
-        border: "border-[var(--color-secondary)]",
-        text: "text-gray-800",
-        progressColor: "var(--color-secondary)",
+        bg: "bg-[var(--color-secondary)]",
+        border: "border-[var(--color-secondary-dark)]",
+        text: "text-[var(--color-secondary-contrast)]",
       },
       success: {
-        bg: "bg-[var(--color-success-light)]",
-        border: "border-[var(--color-success)]",
-        text: "text-gray-800",
-        progressColor: "var(--color-success)",
+        bg: "bg-[var(--color-success)]",
+        border: "border-[var(--color-success-dark)]",
+        text: "text-[var(--color-success-contrast)]",
       },
       warning: {
-        bg: "bg-[var(--color-warning-light)]",
-        border: "border-[var(--color-warning)]",
-        text: "text-gray-800",
-        progressColor: "var(--color-warning)",
+        bg: "bg-[var(--color-warning)]",
+        border: "border-[var(--color-warning-dark)]",
+        text: "text-[var(--color-warning-contrast)]",
       },
       danger: {
-        bg: "bg-[var(--color-danger-light)]",
-        border: "border-[var(--color-danger)]",
-        text: "text-gray-800",
-        progressColor: "var(--color-danger)",
+        bg: "bg-[var(--color-danger)]",
+        border: "border-[var(--color-danger-dark)]",
+        text: "text-[var(--color-danger-contrast)]",
       },
       info: {
-        bg: "bg-[var(--color-info-light)]",
-        border: "border-[var(--color-info)]",
-        text: "text-gray-800",
-        progressColor: "var(--color-info)",
+        bg: "bg-[var(--color-info)]",
+        border: "border-[var(--color-info-dark)]",
+        text: "text-[var(--color-info-contrast)]",
       },
     };
 
@@ -159,7 +157,7 @@ export const Snackbar: React.FC<SnackbarProps> = React.memo(
     return (
       <div
         className={`
-        relative w-[18rem] bg-white rounded-md shadow-lg border border-gray-200
+        relative w-[18rem] rounded-md shadow-lg border ${config.border}
         overflow-hidden transition-all duration-300 ease-in-out
         ${
           isClosing ? "opacity-0 translate-x-full" : "opacity-100 translate-x-0"
@@ -182,7 +180,7 @@ export const Snackbar: React.FC<SnackbarProps> = React.memo(
                 className="h-full transition-all duration-50 ease-linear"
                 style={{
                   width: `${progress}%`,
-                  backgroundColor: "#00000050",
+                  backgroundColor: "rgba(255, 255, 255, 0.55)",
                 }}
               />
             </div>
@@ -208,7 +206,7 @@ export const Snackbar: React.FC<SnackbarProps> = React.memo(
           {/* Botón de cerrar */}
           <button
             onClick={handleClose}
-            className="flex-shrink-0 ml-2 bg-transparent border-0 p-0 text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
+            className="flex-shrink-0 ml-2 bg-transparent border-0 p-0 opacity-80 hover:opacity-100 transition-opacity cursor-pointer"
             aria-label="Cerrar notificación"
             type="button"
           >

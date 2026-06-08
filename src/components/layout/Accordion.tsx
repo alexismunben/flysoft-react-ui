@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { twMerge } from "tailwind-merge";
 import { normalizeIconClass } from "../utils/iconUtils";
 import { compactDensity } from "../../contexts/presets";
 
@@ -28,6 +29,14 @@ export interface AccordionProps {
   rightNode?: React.ReactNode;
   defaultOpen?: boolean;
   className?: string;
+  /**
+   * Clases adicionales para el header (el botón que despliega/colapsa el acordeón).
+   */
+  headerClassName?: string;
+  /**
+   * Clases adicionales para el contenedor del contenido (children).
+   */
+  contentClassName?: string;
   variant?: "default" | "elevated" | "outlined";
   onToggle?: (isOpen: boolean) => void;
   compact?: boolean;
@@ -40,6 +49,8 @@ export const Accordion: React.FC<AccordionProps> = ({
   rightNode,
   defaultOpen = false,
   className = "",
+  headerClassName = "",
+  contentClassName = "",
   variant = "default",
   onToggle,
   compact = false,
@@ -122,7 +133,10 @@ export const Accordion: React.FC<AccordionProps> = ({
     >
       <button
         onClick={handleToggle}
-        className="w-full flex items-center justify-between px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-lg)] flysoft-button-reset bg-transparent border-none hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+        className={twMerge(
+          "w-full flex items-center justify-between px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-lg)] flysoft-button-reset bg-transparent border-none hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer",
+          headerClassName,
+        )}
         aria-expanded={isOpen}
       >
         <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -160,7 +174,12 @@ export const Accordion: React.FC<AccordionProps> = ({
           maxHeight: `${contentHeight}px`,
         }}
       >
-        <div className="px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-lg)] text-[var(--color-text-primary)]">
+        <div
+          className={twMerge(
+            "px-[var(--flysoft-density-padding-x-md)] py-[var(--flysoft-density-padding-y-lg)] text-[var(--color-text-primary)]",
+            contentClassName,
+          )}
+        >
           {children}
         </div>
       </div>

@@ -438,7 +438,7 @@ npm run lint
 | `TabsGroup` | tabs, paramName, headerNode, onChangeTab | Contenedor de pestañas |
 | `TabPanel` | tabId | Panel individual de pestaña |
 | `DataTable<T>` | columns, rows, isLoading, maxRows, **compact (override local de densidad → fuerza preset compact en `--flysoft-density-*` dentro de la tabla y sus DropdownMenu)**, locale | Tabla de datos density-aware con formateo y skeleton |
-| `Accordion` | title, icon, rightNode, defaultOpen, variant, onToggle | Sección colapsable |
+| `Accordion` | title, icon, rightNode, defaultOpen, variant, headerClassName, contentClassName, onToggle | Sección colapsable |
 | `Menu<T>` | options, onOptionSelected, getOptionLabel, renderOption | Lista de menú simple |
 | `DropdownMenu<T>` | options, onOptionSelected, renderNode, openOnHover | Dropdown portal con posicionamiento auto |
 | `DropdownPanel` | children, renderNode, openOnHover | Dropdown portal con contenido libre |

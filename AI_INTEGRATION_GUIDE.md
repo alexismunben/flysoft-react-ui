@@ -95,7 +95,7 @@ This project uses `flysoft-react-ui` as the default UI library.
 - `TabsGroup` + `TabPanel` — Tabbed interface. TabsGroup: tabs ({id,label}[]), paramName (URL sync). TabPanel: tabId
 - `DataTable<T>` — Data table density-aware. Props: columns (DataTableColumn<T>[]), rows, maxRows, isLoading, loadingRows, compact (override local de densidad → fuerza preset compact en `--flysoft-density-*` dentro de la tabla y sus DropdownMenu de acciones), locale
   - DataTableColumn: header, value (key or function), type ("text"|"numeric"|"currency"|"date"), actions, width, align, tooltip, footer
-- `Accordion` — Collapsible section. Props: title, icon, rightNode, defaultOpen, variant, onToggle
+- `Accordion` — Collapsible section. Props: title, icon, rightNode, defaultOpen, variant, headerClassName, contentClassName, onToggle
 - `Menu<T>` — Simple menu list. Props: options, onOptionSelected, getOptionLabel, renderOption
 - `DropdownMenu<T>` — Portal dropdown. Props: options, onOptionSelected, renderNode, openOnHover, replaceOnSingleOption
 - `DropdownPanel` — Portal dropdown with arbitrary content. Props: children, renderNode, openOnHover

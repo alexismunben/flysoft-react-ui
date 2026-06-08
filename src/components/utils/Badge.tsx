@@ -62,24 +62,28 @@ export const Badge: React.FC<BadgeProps> = ({
   const baseClasses =
     "inline-flex items-center font-medium font-[var(--font-default)]";
 
+  // Diseño "filled": fondo con el color sólido de la variante y texto con su
+  // color de contraste (blanco), alineado con el Snackbar. Mejora la
+  // legibilidad respecto del esquema anterior (fondo claro saturado + texto
+  // oscuro) sin salir del set de variables --color-{variant}* existente.
   const variantClasses = {
     primary: `
-      bg-[var(--color-primary-light)] text-gray-800
+      bg-[var(--color-primary)] text-[var(--color-primary-contrast)]
     `,
     secondary: `
-      bg-[var(--color-secondary-light)] text-gray-800
+      bg-[var(--color-secondary)] text-[var(--color-secondary-contrast)]
     `,
     success: `
-      bg-[var(--color-success-light)] text-gray-800
+      bg-[var(--color-success)] text-[var(--color-success-contrast)]
     `,
     warning: `
-      bg-[var(--color-warning-light)] text-gray-800
+      bg-[var(--color-warning)] text-[var(--color-warning-contrast)]
     `,
     danger: `
-      bg-[var(--color-danger-light)] text-gray-800
+      bg-[var(--color-danger)] text-[var(--color-danger-contrast)]
     `,
     info: `
-      bg-[var(--color-info-light)] text-gray-800
+      bg-[var(--color-info)] text-[var(--color-info-contrast)]
     `,
   };
 
