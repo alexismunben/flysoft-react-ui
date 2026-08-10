@@ -89,7 +89,7 @@ This project uses `flysoft-react-ui` as the default UI library.
 
 ### Layout & Data
 - `Card` — Props: title, subtitle, headerActions, footer, variant ("default"|"elevated"|"outlined"), compact (override local de densidad → fuerza preset compact en `--flysoft-density-*` dentro de la card y descendientes), alwaysDisplayHeaderActions
-- `AppLayout` — Main layout. Props: navbar (NavbarInterface), leftDrawer (LeftDrawerInterface), children
+- `AppLayout` — Main layout. Props: navbar (NavbarInterface), leftDrawer (LeftDrawerInterface), children, isLeftDrawerOpen / onLeftDrawerOpenChange (controlled mobile drawer). Anything inside can close the drawer with useLeftDrawer()
 - `Collection` — Flex container density-aware. Props: gap ("tight"|"sm"|"md"|"lg"|string), direction, wrap, density ("comfortable"|"compact"|"dense", override local que redefine `--flysoft-density-*` para esta collection y descendientes)
 - `DataField` — Label+value pair density-aware. Props: label, value, inline, align, link, size ("sm"|"md", "sm" baja un nivel de tipografía), gap ("tight"|"sm"|"md", separación label/value en stack), hideColon (oculta `:` en modo inline)
 - `TabsGroup` + `TabPanel` — Tabbed interface. TabsGroup: tabs ({id,label}[]), paramName (URL sync). TabPanel: tabId
@@ -130,7 +130,8 @@ This project uses `flysoft-react-ui` as the default UI library.
 - `CrudProvider<T>` — getPromise, getItemPromise, postPromise, putPromise, deletePromise, urlParams, limit, pageParam
 - `useCrud<T>()` — Returns: list, item, isLoading, pagination, fetchItems, fetchItem, createItem, updateItem, deleteItem, params, page, pages, total
 - `SnackbarProvider` + `useSnackbar()` — showSnackbar(message, variant?, options?), removeSnackbar(id)
-- `AppLayoutProvider` — Combines Theme + Snackbar + AppLayout. Accepts density/densityStorageKey/forceInitialDensity/onDensityChange (propagated to ThemeProvider) in addition to theme props. useAppLayout() to set navbar/drawer dynamically
+- `AppLayoutProvider` — Combines Theme + Snackbar + AppLayout. Accepts density/densityStorageKey/forceInitialDensity/onDensityChange (propagated to ThemeProvider) in addition to theme props. useAppLayout() to set navbar/drawer dynamically and to open/close the left drawer (isLeftDrawerOpen, openLeftDrawer, closeLeftDrawer, toggleLeftDrawer)
+- `useLeftDrawer()` — Returns: isLeftDrawerOpen, isLeftDrawerCollapsible, openLeftDrawer, closeLeftDrawer, toggleLeftDrawer. Available to anything rendered inside AppLayout; use it to close the mobile drawer from a menu link's onClick. `useOptionalLeftDrawer()` returns undefined instead of throwing outside AppLayout
 - `useAsyncRequest(options)` — Returns: execute(fn), isLoading. Options: successMessage, errorMessage, onSuccess, onError
 - `useBreakpoint()` — Returns: breakpoint, windowSize, isMobile, isTablet, isDesktop
 - `useThemeOverride(options)` — Returns: applyOverride, revertOverride, revertAllOverrides

@@ -211,6 +211,51 @@ function MyComponent() {
 }
 ```
 
+## Control del Drawer Izquierdo (AppLayout)
+
+En resoluciones grandes el drawer izquierdo del `AppLayout` está siempre visible;
+en móvil/tablet se abre desde el botón de hamburguesa como panel flotante con
+overlay. Cualquier componente renderizado dentro del `AppLayout` (contenido del
+drawer, nodos del navbar, footer o `children`) puede controlarlo con
+`useLeftDrawer()`:
+
+```tsx
+import { useLeftDrawer, LinkButton } from "flysoft-react-ui";
+
+function AppMenu() {
+  const { closeLeftDrawer } = useLeftDrawer();
+
+  // Al tocar un link se cierra el panel en móvil.
+  // En desktop no produce ningún cambio: el drawer siempre está visible.
+  return (
+    <nav>
+      <LinkButton to="/inicio" onClick={closeLeftDrawer}>
+        Inicio
+      </LinkButton>
+      <LinkButton to="/clientes" onClick={closeLeftDrawer}>
+        Clientes
+      </LinkButton>
+    </nav>
+  );
+}
+```
+
+El hook devuelve:
+
+| Propiedad | Tipo | Descripción |
+| --------- | ---- | ----------- |
+| `isLeftDrawerOpen` | `boolean` | Si el drawer móvil está abierto |
+| `isLeftDrawerCollapsible` | `boolean` | `true` en móvil/tablet con contenido en el drawer |
+| `openLeftDrawer` | `() => void` | Abre el drawer |
+| `closeLeftDrawer` | `() => void` | Cierra el drawer |
+| `toggleLeftDrawer` | `() => void` | Alterna el estado |
+
+Los mismos comandos están disponibles desde `useAppLayout()` cuando se usa
+`AppLayoutProvider`. Para componentes que también se renderizan fuera del
+`AppLayout`, `useOptionalLeftDrawer()` devuelve `undefined` en lugar de lanzar
+error. Si preferís manejar el estado por tu cuenta, `AppLayout` acepta las props
+controladas `isLeftDrawerOpen` y `onLeftDrawerOpenChange`.
+
 ### Variables CSS Disponibles
 
 El sistema proporciona variables CSS con prefijo `--flysoft-`:

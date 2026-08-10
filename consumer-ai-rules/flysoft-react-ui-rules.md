@@ -383,6 +383,18 @@ Layout principal con navbar responsive y sidebar drawer.
 **NavbarInterface**: `{ navBarLeftNode?, navBarRightNode?, fullWidthNavbar?, height? ("64px"), className? }`
 **LeftDrawerInterface**: `{ headerNode?, contentNode?, footerNode?, className?, width? ("256px") }`
 
+**Cerrar el drawer desde adentro**: cualquier componente renderizado dentro de `AppLayout` puede usar `useLeftDrawer()`:
+
+```tsx
+const { isLeftDrawerOpen, isLeftDrawerCollapsible, openLeftDrawer, closeLeftDrawer, toggleLeftDrawer } = useLeftDrawer();
+
+// Menú lateral: cerrar el panel al navegar (en desktop no hace nada, el drawer siempre está visible)
+<LinkButton to="/clientes" onClick={closeLeftDrawer}>Clientes</LinkButton>
+```
+
+Usá `useOptionalLeftDrawer()` (devuelve `undefined` en vez de lanzar error) en componentes que también se renderizan fuera del `AppLayout`.
+También podés controlar el drawer desde afuera con las props `isLeftDrawerOpen` / `onLeftDrawerOpenChange` de `AppLayout`.
+
 ### Collection
 
 Contenedor flex para agrupar elementos.
@@ -629,7 +641,10 @@ showSnackbar("Error", "danger", { duration: 5000 });
 Combina ThemeProvider + SnackbarProvider + AppLayout en un solo provider.
 
 ```tsx
-const { setNavBarLeftNode, setNavbarRightNode, setLeftDrawer, setTheme, isDark } = useAppLayout();
+const {
+  setNavBarLeftNode, setNavbarRightNode, setLeftDrawer, setTheme, isDark,
+  closeLeftDrawer, openLeftDrawer, toggleLeftDrawer, isLeftDrawerOpen,
+} = useAppLayout();
 ```
 
 ### useAsyncRequest

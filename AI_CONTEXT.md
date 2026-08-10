@@ -378,6 +378,8 @@ interface AppLayoutProps {
   contentFooter?: React.ReactNode;
   children: React.ReactNode;     // required
   className?: string;
+  isLeftDrawerOpen?: boolean;                        // controlled mobile drawer state
+  onLeftDrawerOpenChange?: (isOpen: boolean) => void;
 }
 
 interface NavbarInterface {
@@ -413,7 +415,37 @@ interface LeftDrawerInterface {
 </AppLayout>
 ```
 
-**Behaviors**: Navbar auto-hides/shows on scroll. Mobile drawer with overlay. Responsive breakpoints.
+**Behaviors**: Navbar auto-hides/shows on scroll. Mobile drawer with overlay. Responsive breakpoints. The mobile drawer closes automatically when switching to desktop.
+
+**Closing the drawer from inside**: any component rendered inside `AppLayout` (drawer content, navbar nodes, footer or `children`) can control the drawer with `useLeftDrawer()`:
+
+```typescript
+interface LeftDrawerContextType {
+  isLeftDrawerOpen: boolean;
+  isLeftDrawerCollapsible: boolean;  // true on mobile/tablet with drawer content
+  openLeftDrawer: () => void;
+  closeLeftDrawer: () => void;
+  toggleLeftDrawer: () => void;
+}
+
+const useLeftDrawer: () => LeftDrawerContextType;          // throws outside AppLayout
+const useOptionalLeftDrawer: () => LeftDrawerContextType | undefined;  // returns undefined
+```
+
+```tsx
+// Menú lateral: cerrar el panel al navegar
+const AppMenu = () => {
+  const { closeLeftDrawer } = useLeftDrawer();
+  return (
+    <nav>
+      <LinkButton to="/inicio" onClick={closeLeftDrawer}>Inicio</LinkButton>
+      <LinkButton to="/clientes" onClick={closeLeftDrawer}>Clientes</LinkButton>
+    </nav>
+  );
+};
+```
+
+Calling `closeLeftDrawer()` on desktop is safe — the drawer is always visible there, so nothing changes.
 
 ### Collection
 
@@ -1210,6 +1242,11 @@ interface AppLayoutContextType extends ThemeContextType {
   setClassName: (className: string) => void;
   setNavBarLeftNode: (node: ReactNode | undefined) => void;
   setNavbarRightNode: (node: ReactNode | undefined) => void;
+  // Left drawer commands (same state as useLeftDrawer())
+  isLeftDrawerOpen: boolean;
+  openLeftDrawer: () => void;
+  closeLeftDrawer: () => void;
+  toggleLeftDrawer: () => void;
 }
 ```
 
@@ -1228,6 +1265,10 @@ const { setNavBarLeftNode, setNavbarRightNode } = useAppLayout();
 useEffect(() => {
   setNavBarLeftNode(<h1>Dashboard</h1>);
 }, []);
+
+// Close the mobile drawer from anywhere inside the layout
+const { closeLeftDrawer } = useAppLayout();   // or useLeftDrawer()
+<LinkButton to="/clientes" onClick={closeLeftDrawer}>Clientes</LinkButton>
 ```
 
 ---

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback, useMemo } from "react";
 import { useBreakpoint } from "../../hooks";
 import { useElementScroll } from "../../hooks/useElementScroll";
 import { Button } from "../form-controls";
@@ -6,6 +6,10 @@ import type {
   NavbarInterface,
   LeftDrawerInterface,
 } from "../../contexts/AppLayoutContext";
+import {
+  LeftDrawerContext,
+  type LeftDrawerContextType,
+} from "../../contexts/LeftDrawerContext";
 
 export interface AppLayoutProps {
   navbar?: NavbarInterface;
@@ -13,6 +17,14 @@ export interface AppLayoutProps {
   contentFooter?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
+  /**
+   * Estado controlado del drawer móvil. Si se define, el AppLayout deja de
+   * manejar el estado internamente y hay que actualizarlo desde
+   * `onLeftDrawerOpenChange`.
+   */
+  isLeftDrawerOpen?: boolean;
+  /** Se dispara cada vez que el drawer móvil debe abrirse o cerrarse */
+  onLeftDrawerOpenChange?: (isOpen: boolean) => void;
 }
 
 export const AppLayout: React.FC<AppLayoutProps> = ({
@@ -21,6 +33,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   contentFooter,
   children,
   className = "",
+  isLeftDrawerOpen: controlledLeftDrawerOpen,
+  onLeftDrawerOpenChange,
 }) => {
   // Extract values from interfaces
   const navBarLeftNode = navbar?.navBarLeftNode;
@@ -36,7 +50,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const { isMobile, isTablet } = useBreakpoint();
   const contentRef = useRef<HTMLElement | null>(null);
   const { scrollY, scrollDirection } = useElementScroll(contentRef);
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [internalDrawerOpen, setInternalDrawerOpen] = useState(false);
+  const isLeftDrawerControlled = controlledLeftDrawerOpen !== undefined;
+  const isMobileDrawerOpen = isLeftDrawerControlled
+    ? controlledLeftDrawerOpen
+    : internalDrawerOpen;
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
   const isNavbarVisibleRef = useRef(isNavbarVisible);
   const isTransitioningRef = useRef(false);
@@ -127,13 +145,51 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     }
   }, [scrollDirection, scrollY]);
 
+  // Actualiza el estado del drawer respetando el modo controlado
+  const setLeftDrawerOpen = useCallback(
+    (isOpen: boolean) => {
+      if (!isLeftDrawerControlled) {
+        setInternalDrawerOpen(isOpen);
+      }
+      onLeftDrawerOpenChange?.(isOpen);
+    },
+    [isLeftDrawerControlled, onLeftDrawerOpenChange],
+  );
+
   const handleMobileDrawerToggle = () => {
-    setIsMobileDrawerOpen(!isMobileDrawerOpen);
+    setLeftDrawerOpen(!isMobileDrawerOpen);
   };
 
   const handleOverlayClick = () => {
-    setIsMobileDrawerOpen(false);
+    setLeftDrawerOpen(false);
   };
+
+  // Cerrar el drawer al pasar de móvil/tablet a desktop para que no quede
+  // abierto al volver a una resolución chica
+  React.useEffect(() => {
+    if (!shouldShowMobileDrawer && isMobileDrawerOpen) {
+      setLeftDrawerOpen(false);
+    }
+  }, [shouldShowMobileDrawer, isMobileDrawerOpen, setLeftDrawerOpen]);
+
+  // Comandos expuestos a los componentes renderizados dentro del layout
+  const leftDrawerContextValue = useMemo<LeftDrawerContextType>(
+    () => ({
+      isLeftDrawerOpen: isMobileDrawerOpen,
+      isLeftDrawerCollapsible: Boolean(
+        shouldShowMobileDrawer && hasLeftDrawerContent,
+      ),
+      openLeftDrawer: () => setLeftDrawerOpen(true),
+      closeLeftDrawer: () => setLeftDrawerOpen(false),
+      toggleLeftDrawer: () => setLeftDrawerOpen(!isMobileDrawerOpen),
+    }),
+    [
+      isMobileDrawerOpen,
+      shouldShowMobileDrawer,
+      hasLeftDrawerContent,
+      setLeftDrawerOpen,
+    ],
+  );
 
   // Clases base del layout
   const layoutClasses = `
@@ -290,168 +346,81 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   `;
 
   return (
-    <div className={layoutClasses}>
-      {fullWidthNavbar ? (
-        <>
-          {/* NavBar - Full Width */}
-          {shouldShowNavbar && (
-            <nav className={navbarClasses} style={navbarStyle}>
-              <div className={navbarContentClasses} style={navbarContentStyle}>
-                {/* Lado izquierdo del navbar */}
-                <div className={navbarLeftClasses}>
-                  {/* Botón de menú para móvil/tablet */}
-                  {shouldShowMobileDrawer && hasLeftDrawerContent && (
-                    <div className="pr-4 lg:px-4 md:px-3">
-                      <Button
-                        variant="ghost"
-                        icon="fa-bars"
-                        onClick={handleMobileDrawerToggle}
-                        aria-label="Abrir menú"
-                      />
-                    </div>
-                  )}
-
-                  {/* Contenido izquierdo del navbar */}
-                  {navBarLeftNode && (
-                    <div>
-                      {typeof navBarLeftNode === "string" ? (
-                        <span>{navBarLeftNode}</span>
-                      ) : (
-                        navBarLeftNode
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Lado derecho del navbar */}
-                {navBarRightNode && (
-                  <div className={navbarRightClasses}>
-                    {typeof navBarRightNode === "string" ? (
-                      <span>{navBarRightNode}</span>
-                    ) : (
-                      navBarRightNode
+    <LeftDrawerContext.Provider value={leftDrawerContextValue}>
+      <div className={layoutClasses}>
+        {fullWidthNavbar ? (
+          <>
+            {/* NavBar - Full Width */}
+            {shouldShowNavbar && (
+              <nav className={navbarClasses} style={navbarStyle}>
+                <div
+                  className={navbarContentClasses}
+                  style={navbarContentStyle}
+                >
+                  {/* Lado izquierdo del navbar */}
+                  <div className={navbarLeftClasses}>
+                    {/* Botón de menú para móvil/tablet */}
+                    {shouldShowMobileDrawer && hasLeftDrawerContent && (
+                      <div className="pr-4 lg:px-4 md:px-3">
+                        <Button
+                          variant="ghost"
+                          icon="fa-bars"
+                          onClick={handleMobileDrawerToggle}
+                          aria-label="Abrir menú"
+                        />
+                      </div>
                     )}
-                  </div>
-                )}
-              </div>
-            </nav>
-          )}
 
-          {/* Contenido principal */}
-          <div className={mainClasses} style={mainStyle}>
-            {/* Left Drawer - Desktop */}
-            {shouldShowDesktopDrawer && (
-              <aside className={leftDrawerClasses} style={leftDrawerStyle}>
-                {/* Header del drawer */}
-                {leftDrawerHeader && (
-                  <div className={leftDrawerHeaderClasses}>
-                    {leftDrawerHeader}
-                  </div>
-                )}
-                {/* Contenido scrolleable del drawer */}
-                {leftDrawerContent && (
-                  <div className={leftDrawerContentClasses}>
-                    {leftDrawerContent}
-                  </div>
-                )}
-                {/* Footer del drawer */}
-                {leftDrawerFooter && (
-                  <div className={leftDrawerFooterClasses}>
-                    {leftDrawerFooter}
-                  </div>
-                )}
-              </aside>
-            )}
-
-            {/* Contenido principal */}
-            <main
-              ref={contentRef}
-              className={contentClasses}
-              style={contentStyle}
-            >
-              <div className="flex-1">{children}</div>
-              {contentFooter && <div role="contentinfo">{contentFooter}</div>}
-            </main>
-          </div>
-        </>
-      ) : (
-        <>
-          {/* Layout cuando fullWidthNavbar es false */}
-          <div className={contentWrapperClasses}>
-            {/* Left Drawer - Desktop - Full Height */}
-            {shouldShowDesktopDrawer && (
-              <aside className={leftDrawerClasses} style={leftDrawerStyle}>
-                {/* Header del drawer */}
-                {leftDrawerHeader && (
-                  <div className={leftDrawerHeaderClasses}>
-                    {leftDrawerHeader}
-                  </div>
-                )}
-                {/* Contenido scrolleable del drawer */}
-                {leftDrawerContent && (
-                  <div className={leftDrawerContentClasses}>
-                    {leftDrawerContent}
-                  </div>
-                )}
-                {/* Footer del drawer */}
-                {leftDrawerFooter && (
-                  <div className={leftDrawerFooterClasses}>
-                    {leftDrawerFooter}
-                  </div>
-                )}
-              </aside>
-            )}
-
-            {/* Contenedor del navbar y contenido principal */}
-            <div
-              className={drawerAndContentClasses}
-              style={drawerAndContentStyle}
-            >
-              {/* NavBar - Solo ocupa el ancho del content */}
-              {shouldShowNavbar && (
-                <nav className={navbarClasses} style={navbarStyle}>
-                  <div
-                    className={navbarContentClasses}
-                    style={navbarContentStyle}
-                  >
-                    {/* Lado izquierdo del navbar */}
-                    <div className={navbarLeftClasses}>
-                      {/* Botón de menú para móvil/tablet */}
-                      {shouldShowMobileDrawer && hasLeftDrawerContent && (
-                        <div className="pr-4 px-2">
-                          <Button
-                            variant="ghost"
-                            icon="fa-bars"
-                            onClick={handleMobileDrawerToggle}
-                            aria-label="Abrir menú"
-                          />
-                        </div>
-                      )}
-
-                      {/* Contenido izquierdo del navbar */}
-                      {navBarLeftNode && (
-                        <div>
-                          {typeof navBarLeftNode === "string" ? (
-                            <span>{navBarLeftNode}</span>
-                          ) : (
-                            navBarLeftNode
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Lado derecho del navbar */}
-                    {navBarRightNode && (
-                      <div className={navbarRightClasses}>
-                        {typeof navBarRightNode === "string" ? (
-                          <span>{navBarRightNode}</span>
+                    {/* Contenido izquierdo del navbar */}
+                    {navBarLeftNode && (
+                      <div>
+                        {typeof navBarLeftNode === "string" ? (
+                          <span>{navBarLeftNode}</span>
                         ) : (
-                          navBarRightNode
+                          navBarLeftNode
                         )}
                       </div>
                     )}
                   </div>
-                </nav>
+
+                  {/* Lado derecho del navbar */}
+                  {navBarRightNode && (
+                    <div className={navbarRightClasses}>
+                      {typeof navBarRightNode === "string" ? (
+                        <span>{navBarRightNode}</span>
+                      ) : (
+                        navBarRightNode
+                      )}
+                    </div>
+                  )}
+                </div>
+              </nav>
+            )}
+
+            {/* Contenido principal */}
+            <div className={mainClasses} style={mainStyle}>
+              {/* Left Drawer - Desktop */}
+              {shouldShowDesktopDrawer && (
+                <aside className={leftDrawerClasses} style={leftDrawerStyle}>
+                  {/* Header del drawer */}
+                  {leftDrawerHeader && (
+                    <div className={leftDrawerHeaderClasses}>
+                      {leftDrawerHeader}
+                    </div>
+                  )}
+                  {/* Contenido scrolleable del drawer */}
+                  {leftDrawerContent && (
+                    <div className={leftDrawerContentClasses}>
+                      {leftDrawerContent}
+                    </div>
+                  )}
+                  {/* Footer del drawer */}
+                  {leftDrawerFooter && (
+                    <div className={leftDrawerFooterClasses}>
+                      {leftDrawerFooter}
+                    </div>
+                  )}
+                </aside>
               )}
 
               {/* Contenido principal */}
@@ -464,52 +433,148 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 {contentFooter && <div role="contentinfo">{contentFooter}</div>}
               </main>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        ) : (
+          <>
+            {/* Layout cuando fullWidthNavbar es false */}
+            <div className={contentWrapperClasses}>
+              {/* Left Drawer - Desktop - Full Height */}
+              {shouldShowDesktopDrawer && (
+                <aside className={leftDrawerClasses} style={leftDrawerStyle}>
+                  {/* Header del drawer */}
+                  {leftDrawerHeader && (
+                    <div className={leftDrawerHeaderClasses}>
+                      {leftDrawerHeader}
+                    </div>
+                  )}
+                  {/* Contenido scrolleable del drawer */}
+                  {leftDrawerContent && (
+                    <div className={leftDrawerContentClasses}>
+                      {leftDrawerContent}
+                    </div>
+                  )}
+                  {/* Footer del drawer */}
+                  {leftDrawerFooter && (
+                    <div className={leftDrawerFooterClasses}>
+                      {leftDrawerFooter}
+                    </div>
+                  )}
+                </aside>
+              )}
 
-      {/* Mobile Drawer Overlay */}
-      {shouldShowMobileDrawer && hasLeftDrawerContent && isMobileDrawerOpen && (
-        <div className={overlayClasses} onClick={handleOverlayClick} />
-      )}
+              {/* Contenedor del navbar y contenido principal */}
+              <div
+                className={drawerAndContentClasses}
+                style={drawerAndContentStyle}
+              >
+                {/* NavBar - Solo ocupa el ancho del content */}
+                {shouldShowNavbar && (
+                  <nav className={navbarClasses} style={navbarStyle}>
+                    <div
+                      className={navbarContentClasses}
+                      style={navbarContentStyle}
+                    >
+                      {/* Lado izquierdo del navbar */}
+                      <div className={navbarLeftClasses}>
+                        {/* Botón de menú para móvil/tablet */}
+                        {shouldShowMobileDrawer && hasLeftDrawerContent && (
+                          <div className="pr-4 px-2">
+                            <Button
+                              variant="ghost"
+                              icon="fa-bars"
+                              onClick={handleMobileDrawerToggle}
+                              aria-label="Abrir menú"
+                            />
+                          </div>
+                        )}
 
-      {/* Mobile Drawer */}
-      {shouldShowMobileDrawer && hasLeftDrawerContent && (
-        <aside
-          className={`${mobileDrawerBaseClasses} ${
-            isMobileDrawerOpen ? mobileDrawerOpenClasses : ""
-          }`}
-          style={mobileDrawerStyle}
-        >
-          {/* Header del drawer móvil - siempre mostrar para tener el botón de cerrar */}
-          <div className="flex-shrink-0 flex items-center justify-between">
-            {leftDrawerHeader ? (
-              <div className="flex-1">{leftDrawerHeader}</div>
-            ) : (
-              <div className="flex-1" />
+                        {/* Contenido izquierdo del navbar */}
+                        {navBarLeftNode && (
+                          <div>
+                            {typeof navBarLeftNode === "string" ? (
+                              <span>{navBarLeftNode}</span>
+                            ) : (
+                              navBarLeftNode
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Lado derecho del navbar */}
+                      {navBarRightNode && (
+                        <div className={navbarRightClasses}>
+                          {typeof navBarRightNode === "string" ? (
+                            <span>{navBarRightNode}</span>
+                          ) : (
+                            navBarRightNode
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </nav>
+                )}
+
+                {/* Contenido principal */}
+                <main
+                  ref={contentRef}
+                  className={contentClasses}
+                  style={contentStyle}
+                >
+                  <div className="flex-1">{children}</div>
+                  {contentFooter && (
+                    <div role="contentinfo">{contentFooter}</div>
+                  )}
+                </main>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Mobile Drawer Overlay */}
+        {shouldShowMobileDrawer &&
+          hasLeftDrawerContent &&
+          isMobileDrawerOpen && (
+            <div className={overlayClasses} onClick={handleOverlayClick} />
+          )}
+
+        {/* Mobile Drawer */}
+        {shouldShowMobileDrawer && hasLeftDrawerContent && (
+          <aside
+            className={`${mobileDrawerBaseClasses} ${
+              isMobileDrawerOpen ? mobileDrawerOpenClasses : ""
+            }`}
+            style={mobileDrawerStyle}
+          >
+            {/* Header del drawer móvil - siempre mostrar para tener el botón de cerrar */}
+            <div className="flex-shrink-0 flex items-center justify-between">
+              {leftDrawerHeader ? (
+                <div className="flex-1">{leftDrawerHeader}</div>
+              ) : (
+                <div className="flex-1" />
+              )}
+              {/* Botón de cerrar */}
+              <div className="absolute top-3 right-2">
+                <Button
+                  variant="ghost"
+                  icon="fa-times"
+                  onClick={handleMobileDrawerToggle}
+                  aria-label="Cerrar menú"
+                />
+              </div>
+            </div>
+            {/* Contenido scrolleable del drawer móvil */}
+            {leftDrawerContent && (
+              <div className={mobileDrawerContentClasses}>
+                {leftDrawerContent}
+              </div>
             )}
-            {/* Botón de cerrar */}
-            <div className="absolute top-3 right-2">
-              <Button
-                variant="ghost"
-                icon="fa-times"
-                onClick={handleMobileDrawerToggle}
-                aria-label="Cerrar menú"
-              />
-            </div>
-          </div>
-          {/* Contenido scrolleable del drawer móvil */}
-          {leftDrawerContent && (
-            <div className={mobileDrawerContentClasses}>
-              {leftDrawerContent}
-            </div>
-          )}
-          {/* Footer del drawer móvil */}
-          {leftDrawerFooter && (
-            <div className="flex-shrink-0">{leftDrawerFooter}</div>
-          )}
-        </aside>
-      )}
-    </div>
+            {/* Footer del drawer móvil */}
+            {leftDrawerFooter && (
+              <div className="flex-shrink-0">{leftDrawerFooter}</div>
+            )}
+          </aside>
+        )}
+      </div>
+    </LeftDrawerContext.Provider>
   );
 };

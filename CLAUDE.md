@@ -36,7 +36,7 @@ No test framework is configured — there are no test files or test runner.
 - `src/components/form-controls/` — Button, Input, AutocompleteInput, SearchSelectInput, DatePicker, DateInput, Checkbox, RadioButtonGroup, CurrencyInput, Pagination
 - `src/components/layout/` — Card, AppLayout, DataTable, TabsGroup, TabPanel, Accordion, Menu, DropdownMenu, DropdownPanel, Filter, Collection, DataField
 - `src/components/utils/` — Badge, Avatar, RoadMap, Dialog, Loader, FiltersDialog, Snackbar, SnackbarContainer, Skeleton
-- `src/contexts/` — ThemeContext, AuthContext, CrudContext (generic `<T>`), SnackbarContext, AppLayoutContext, presets, types
+- `src/contexts/` — ThemeContext, AuthContext, CrudContext (generic `<T>`), SnackbarContext, AppLayoutContext, LeftDrawerContext, presets, types
 - `src/hooks/` — useThemeOverride, useAsyncRequest, useBreakpoint, useElementScroll, useEnum, useGlobalThemeStyles
 - `src/services/apiClient.ts` — Axios-based HTTP client
 - `src/helpers/` — currencyFormat, getErrorMessage, getInitialLetters, queryStringToObject, objectToQueryString, regularExpressions, mappers
@@ -70,7 +70,7 @@ Card, AppLayout, Collection, DataField, TabsGroup, TabPanel, DataTable\<T\>, Acc
 Badge, Avatar, RoadMap, Dialog, Loader, FiltersDialog, Snackbar, SnackbarContainer, Skeleton, ThemeSwitcher
 
 ### Contexts
-ThemeProvider/useTheme, AuthProvider/AuthContext, CrudProvider\<T\>/useCrud\<T\>, SnackbarProvider/useSnackbar, AppLayoutProvider/useAppLayout
+ThemeProvider/useTheme, AuthProvider/AuthContext, CrudProvider\<T\>/useCrud\<T\>, SnackbarProvider/useSnackbar, AppLayoutProvider/useAppLayout, useLeftDrawer/useOptionalLeftDrawer (provisto por AppLayout)
 
 ### Hooks
 useThemeOverride, useTemporaryOverride, useGlobalThemeStyles, useBreakpoint, useElementScroll, useAsyncRequest, useEnum

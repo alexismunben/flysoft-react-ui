@@ -1,397 +1,122 @@
-import { Accordion, LinkButton } from "../index";
+import { Accordion, LinkButton, useLeftDrawer } from "../index";
+
+interface MenuSection {
+  title: string;
+  icon: string;
+  defaultOpen?: boolean;
+  links: { to: string; label: string }[];
+}
+
+const MENU_SECTIONS: MenuSection[] = [
+  {
+    title: "Form Controls",
+    icon: "fa-edit",
+    defaultOpen: true,
+    links: [
+      { to: "/docs/button", label: "Button" },
+      { to: "/docs/linkbutton", label: "LinkButton" },
+      { to: "/docs/input", label: "Input" },
+      { to: "/docs/autocomplete-input", label: "AutocompleteInput" },
+      { to: "/docs/currency-input", label: "CurrencyInput" },
+      { to: "/docs/search-select-input", label: "SearchSelectInput" },
+      { to: "/docs/datepicker", label: "DatePicker" },
+      { to: "/docs/dateinput", label: "DateInput" },
+      { to: "/docs/checkbox", label: "Checkbox" },
+      { to: "/docs/radiobuttongroup", label: "RadioButtonGroup" },
+      { to: "/docs/pagination", label: "Pagination" },
+    ],
+  },
+  {
+    title: "Layout",
+    icon: "fa-th-large",
+    links: [
+      { to: "/docs/card", label: "Card" },
+      { to: "/docs/datafield", label: "DataField" },
+      { to: "/docs/collection", label: "Collection" },
+      { to: "/docs/tabsgroup", label: "TabsGroup" },
+      { to: "/docs/datatable", label: "DataTable" },
+      { to: "/docs/accordion", label: "Accordion" },
+      { to: "/docs/menu", label: "Menu" },
+      { to: "/docs/dropdownmenu", label: "DropdownMenu" },
+      { to: "/docs/dropdownpanel", label: "DropdownPanel" },
+      { to: "/docs/filter", label: "Filter" },
+    ],
+  },
+  {
+    title: "Utils",
+    icon: "fa-tools",
+    links: [
+      { to: "/docs/badge", label: "Badge" },
+      { to: "/docs/avatar", label: "Avatar" },
+      { to: "/docs/roadmap", label: "RoadMap" },
+      { to: "/docs/dialog", label: "Dialog" },
+      { to: "/docs/loader", label: "Loader" },
+      { to: "/docs/skeleton", label: "Skeleton" },
+      { to: "/docs/snackbar", label: "Snackbar" },
+      { to: "/docs/theme", label: "ThemeSwitcher" },
+    ],
+  },
+  {
+    title: "Contexts",
+    icon: "fa-database",
+    links: [
+      { to: "/docs/auth", label: "AuthContext" },
+      { to: "/docs/listcrud", label: "CrudContext" },
+    ],
+  },
+  {
+    title: "Templates",
+    icon: "fa-file-alt",
+    links: [
+      { to: "/docs/templates/login-form", label: "LoginForm" },
+      { to: "/docs/templates/registration-form", label: "RegistrationForm" },
+      { to: "/docs/templates/contact-form", label: "ContactForm" },
+      { to: "/docs/templates/dashboard-layout", label: "DashboardLayout" },
+      { to: "/docs/templates/sidebar-layout", label: "SidebarLayout" },
+      { to: "/docs/templates/form-pattern", label: "FormPattern" },
+      { to: "/docs/templates/list-pattern", label: "ListPattern" },
+    ],
+  },
+  {
+    title: "Otros",
+    icon: "fa-folder",
+    links: [
+      { to: "/docs/example-form", label: "Formulario de Ejemplo" },
+      { to: "/docs/admin", label: "Admin (Mock Services)" },
+    ],
+  },
+];
 
 export const DocsMenu = () => {
+  // Comando del AppLayout para cerrar el drawer izquierdo en móvil/tablet
+  const { closeLeftDrawer } = useLeftDrawer();
+
   return (
     <div className="space-y-2 p-4 bg-gray-100 h-full">
-      <Accordion title="Form Controls" icon="fa-edit" defaultOpen>
-        <div className="space-y-2">
-          <LinkButton
-            to="/docs/button"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Button
-          </LinkButton>
-          <LinkButton
-            to="/docs/linkbutton"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            LinkButton
-          </LinkButton>
-          <LinkButton
-            to="/docs/input"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Input
-          </LinkButton>
-          <LinkButton
-            to="/docs/autocomplete-input"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            AutocompleteInput
-          </LinkButton>
-          <LinkButton
-            to="/docs/currency-input"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            CurrencyInput
-          </LinkButton>
-          <LinkButton
-            to="/docs/search-select-input"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            SearchSelectInput
-          </LinkButton>
-          <LinkButton
-            to="/docs/datepicker"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            DatePicker
-          </LinkButton>
-          <LinkButton
-            to="/docs/dateinput"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            DateInput
-          </LinkButton>
-          <LinkButton
-            to="/docs/checkbox"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Checkbox
-          </LinkButton>
-          <LinkButton
-            to="/docs/radiobuttongroup"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            RadioButtonGroup
-          </LinkButton>
-          <LinkButton
-            to="/docs/pagination"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Pagination
-          </LinkButton>
-        </div>
-      </Accordion>
-
-      <Accordion title="Layout" icon="fa-th-large">
-        <div className="space-y-2">
-          <LinkButton
-            to="/docs/card"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Card
-          </LinkButton>
-          <LinkButton
-            to="/docs/datafield"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            DataField
-          </LinkButton>
-          <LinkButton
-            to="/docs/collection"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Collection
-          </LinkButton>
-          <LinkButton
-            to="/docs/tabsgroup"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            TabsGroup
-          </LinkButton>
-          <LinkButton
-            to="/docs/datatable"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            DataTable
-          </LinkButton>
-          <LinkButton
-            to="/docs/accordion"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Accordion
-          </LinkButton>
-          <LinkButton
-            to="/docs/menu"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Menu
-          </LinkButton>
-          <LinkButton
-            to="/docs/dropdownmenu"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            DropdownMenu
-          </LinkButton>
-          <LinkButton
-            to="/docs/dropdownpanel"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            DropdownPanel
-          </LinkButton>
-          <LinkButton
-            to="/docs/filter"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Filter
-          </LinkButton>
-        </div>
-      </Accordion>
-
-      <Accordion title="Utils" icon="fa-tools">
-        <div className="space-y-2">
-          <LinkButton
-            to="/docs/badge"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Badge
-          </LinkButton>
-          <LinkButton
-            to="/docs/avatar"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Avatar
-          </LinkButton>
-          <LinkButton
-            to="/docs/roadmap"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            RoadMap
-          </LinkButton>
-          <LinkButton
-            to="/docs/dialog"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Dialog
-          </LinkButton>
-          <LinkButton
-            to="/docs/loader"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Loader
-          </LinkButton>
-          <LinkButton
-            to="/docs/skeleton"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Skeleton
-          </LinkButton>
-          <LinkButton
-            to="/docs/snackbar"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Snackbar
-          </LinkButton>
-          <LinkButton
-            to="/docs/theme"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            ThemeSwitcher
-          </LinkButton>
-        </div>
-      </Accordion>
-
-      <Accordion title="Contexts" icon="fa-database">
-        <div className="space-y-2">
-          <LinkButton
-            to="/docs/auth"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            AuthContext
-          </LinkButton>
-          <LinkButton
-            to="/docs/listcrud"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            CrudContext
-          </LinkButton>
-        </div>
-      </Accordion>
-
-      <Accordion title="Templates" icon="fa-file-alt">
-        <div className="space-y-2">
-          <LinkButton
-            to="/docs/templates/login-form"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            LoginForm
-          </LinkButton>
-          <LinkButton
-            to="/docs/templates/registration-form"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            RegistrationForm
-          </LinkButton>
-          <LinkButton
-            to="/docs/templates/contact-form"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            ContactForm
-          </LinkButton>
-          <LinkButton
-            to="/docs/templates/dashboard-layout"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            DashboardLayout
-          </LinkButton>
-          <LinkButton
-            to="/docs/templates/sidebar-layout"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            SidebarLayout
-          </LinkButton>
-          <LinkButton
-            to="/docs/templates/form-pattern"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            FormPattern
-          </LinkButton>
-          <LinkButton
-            to="/docs/templates/list-pattern"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            ListPattern
-          </LinkButton>
-        </div>
-      </Accordion>
-
-      <Accordion title="Otros" icon="fa-folder">
-        <div className="space-y-2">
-          <LinkButton
-            to="/docs/example-form"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Formulario de Ejemplo
-          </LinkButton>
-          <LinkButton
-            to="/docs/admin"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            color="secondary"
-          >
-            Admin (Mock Services)
-          </LinkButton>
-        </div>
-      </Accordion>
+      {MENU_SECTIONS.map((section) => (
+        <Accordion
+          key={section.title}
+          title={section.title}
+          icon={section.icon}
+          defaultOpen={section.defaultOpen}
+        >
+          <div className="space-y-2">
+            {section.links.map((link) => (
+              <LinkButton
+                key={link.to}
+                to={link.to}
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start"
+                color="secondary"
+                onClick={closeLeftDrawer}
+              >
+                {link.label}
+              </LinkButton>
+            ))}
+          </div>
+        </Accordion>
+      ))}
     </div>
   );
 };

@@ -468,8 +468,9 @@ npm run lint
 | CRUD | `CrudProvider<T>` | `useCrud<T>()` | Operaciones CRUD con paginación y sync URL |
 | Snackbar | `SnackbarProvider` | `useSnackbar()` | Notificaciones toast |
 | AppLayout | `AppLayoutProvider` | `useAppLayout()` | Combina Theme + Snackbar + Layout |
+| LeftDrawer | `AppLayout` (implícito) | `useLeftDrawer()` | Comandos para abrir/cerrar el drawer izquierdo |
 
-### Hooks (7)
+### Hooks (8)
 
 | Hook | Retorno | Descripción |
 |------|---------|-------------|
@@ -480,6 +481,7 @@ npm run lint
 | `useElementScroll` | scrollY, scrollDirection | Tracking de scroll con RAF |
 | `useAsyncRequest` | execute, isLoading, setLoading | Operaciones async con snackbar |
 | `useEnum` | getArray, getInstance | Enum a array para selects |
+| `useLeftDrawer` | isLeftDrawerOpen, isLeftDrawerCollapsible, openLeftDrawer, closeLeftDrawer, toggleLeftDrawer | Control del drawer izquierdo desde dentro del `AppLayout` (variante segura: `useOptionalLeftDrawer`) |
 
 ### Services
 

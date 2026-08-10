@@ -43,6 +43,12 @@ export interface AppLayoutContextType extends ThemeContextType {
   setClassName: (className: string) => void;
   setNavBarLeftNode: (node: string | ReactNode | undefined) => void;
   setNavbarRightNode: (node: string | ReactNode | undefined) => void;
+
+  // Left drawer commands (aplican al drawer colapsable de móvil/tablet)
+  isLeftDrawerOpen: boolean;
+  openLeftDrawer: () => void;
+  closeLeftDrawer: () => void;
+  toggleLeftDrawer: () => void;
 }
 
 const AppLayoutContext = createContext<AppLayoutContextType | undefined>(
@@ -99,6 +105,15 @@ const AppLayoutProviderInner: React.FC<{
     initialContentFooter,
   );
   const [className, setClassName] = useState<string>(initialClassName || "");
+  const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(false);
+
+  // Comandos del drawer izquierdo, disponibles también desde useLeftDrawer()
+  const openLeftDrawer = useCallback(() => setIsLeftDrawerOpen(true), []);
+  const closeLeftDrawer = useCallback(() => setIsLeftDrawerOpen(false), []);
+  const toggleLeftDrawer = useCallback(
+    () => setIsLeftDrawerOpen((prev) => !prev),
+    [],
+  );
 
   // Memoize setters to avoid unnecessary re-renders
   const handleSetNavbar = useCallback(
@@ -191,6 +206,11 @@ const AppLayoutProviderInner: React.FC<{
     setClassName: handleSetClassName,
     setNavBarLeftNode: handleSetNavBarLeftNode,
     setNavbarRightNode: handleSetNavbarRightNode,
+    // Left drawer commands
+    isLeftDrawerOpen,
+    openLeftDrawer,
+    closeLeftDrawer,
+    toggleLeftDrawer,
   };
 
   return (
@@ -200,6 +220,8 @@ const AppLayoutProviderInner: React.FC<{
         leftDrawer={leftDrawer}
         contentFooter={contentFooter}
         className={className}
+        isLeftDrawerOpen={isLeftDrawerOpen}
+        onLeftDrawerOpenChange={setIsLeftDrawerOpen}
       >
         {children}
       </AppLayout>
