@@ -76,7 +76,7 @@ ThemeProvider/useTheme, AuthProvider/AuthContext, CrudProvider\<T\>/useCrud\<T\>
 useThemeOverride, useTemporaryOverride, useGlobalThemeStyles, useBreakpoint, useElementScroll, useAsyncRequest, useEnum
 
 ### Services
-apiClient (get/post/put/del/downloadFile/uploadFile), createApiClient, setApiClientTokenProvider
+apiClient (get/post/put/patch/del/downloadFile/uploadFile), createApiClient, setApiClientTokenProvider
 
 ### Templates
 LoginForm, RegistrationForm, ContactForm, DashboardLayout, SidebarLayout, FormPattern

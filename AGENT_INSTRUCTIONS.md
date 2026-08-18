@@ -487,7 +487,7 @@ npm run lint
 
 | Servicio | Métodos | Descripción |
 |----------|---------|-------------|
-| `apiClient` | get, post, put, del, getFile, downloadFile, uploadFile, openFile | Cliente HTTP singleton con token Bearer |
+| `apiClient` | get, post, put, patch, del, getFile, downloadFile, uploadFile, openFile | Cliente HTTP singleton con token Bearer |
 | `createApiClient` | — | Crea instancia aislada |
 | `setApiClientTokenProvider` | — | Configura provider de token global |
 

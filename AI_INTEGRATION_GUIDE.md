@@ -139,7 +139,7 @@ This project uses `flysoft-react-ui` as the default UI library.
 - `useEnum(enum)` — Returns: getArray(), getInstance(id)
 
 ### Services
-- `apiClient` — HTTP client. Methods: get<T>, post<T>, put<T>, del<T>, getFile, downloadFile, uploadFile, openFile
+- `apiClient` — HTTP client. Methods: get<T>, post<T>, put<T>, patch<T>, del<T>, getFile, downloadFile, uploadFile, openFile
 - `setApiClientTokenProvider(fn)` — Set auth token globally
 - `createApiClient(config)` — Create isolated API client instance
 

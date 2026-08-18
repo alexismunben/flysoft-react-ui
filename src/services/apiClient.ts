@@ -31,6 +31,12 @@ interface PutRequestOptions {
   headers?: Record<string, string>;
 }
 
+interface PatchRequestOptions {
+  url: string;
+  body?: unknown;
+  headers?: Record<string, string>;
+}
+
 interface DeleteRequestOptions {
   url: string;
   headers?: Record<string, string>;
@@ -191,6 +197,20 @@ class ApiClientService {
     const { url, body, headers } = options;
     const response = await this.axiosRequest<T>({
       method: "PUT",
+      url,
+      headers,
+      body,
+    });
+    return response.data;
+  }
+
+  /**
+   * Realiza una petición PATCH
+   */
+  async patch<T = unknown>(options: PatchRequestOptions): Promise<T> {
+    const { url, body, headers } = options;
+    const response = await this.axiosRequest<T>({
+      method: "PATCH",
       url,
       headers,
       body,

@@ -650,6 +650,7 @@ setApiClientTokenProvider(() => user?.token?.accessToken);
 const data = await apiClient.get<User[]>({ url: "/api/users", params: { page: 1 } });
 await apiClient.post({ url: "/api/users", body: newUser });
 await apiClient.put({ url: `/api/users/${id}`, body: updatedUser });
+await apiClient.patch({ url: `/api/users/${id}`, body: { name: "Nuevo nombre" } });
 await apiClient.del({ url: `/api/users/${id}` });
 
 // Archivos

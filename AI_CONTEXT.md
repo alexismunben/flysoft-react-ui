@@ -1395,6 +1395,7 @@ Singleton HTTP client (Axios-based) with automatic Bearer token injection.
 apiClient.get<T>(options: { url: string; params?: Record<string, unknown>; headers?: Record<string, string> }): Promise<T>;
 apiClient.post<T>(options: { url: string; body?: unknown; headers?: Record<string, string> }): Promise<T>;
 apiClient.put<T>(options: { url: string; body?: unknown; headers?: Record<string, string> }): Promise<T>;
+apiClient.patch<T>(options: { url: string; body?: unknown; headers?: Record<string, string> }): Promise<T>;
 apiClient.del<T>(options: { url: string; headers?: Record<string, string> }): Promise<T>;
 
 // File operations
