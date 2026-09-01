@@ -350,6 +350,3 @@ del tema.
 - **`NavbarInterface.fullWidthNavbar` es requerida**, no opcional.
 - **`Collection` es `direction="column"` por defecto**, no `row`.
 - **`SnackbarContainer` es `position="top-right"` por defecto.**
-- **`--color-primary-soft` se usa en `Filter` y `AutocompleteInput` pero no está
-  definida** en el `@theme` de la librería. Si necesitás ese fondo, definila en
-  tu app.

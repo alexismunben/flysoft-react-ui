@@ -30,6 +30,12 @@
   --flysoft-primary-contrast: #ffffff;
   --flysoft-primary-dark: #0064d1;
   --flysoft-primary-light: #4da6ff;
+  /*
+    Tinte del primary para fondos de item seleccionado (opción resaltada en
+    Filter y AutocompleteInput). Se deriva del primary activo con color-mix, así
+    que sigue al tema sin tener que agregarlo a Theme.colors ni a los presets.
+  */
+  --flysoft-primary-soft: color-mix(in srgb, var(--flysoft-primary) 12%, transparent);
 
   /* Secondary colors */
   --flysoft-secondary: #6b7280;
@@ -129,6 +135,7 @@
   --color-primary-contrast: var(--flysoft-primary-contrast);
   --color-primary-dark: var(--flysoft-primary-dark);
   --color-primary-light: var(--flysoft-primary-light);
+  --color-primary-soft: var(--flysoft-primary-soft);
 
   /* Secondary colors */
   --color-secondary: var(--flysoft-secondary);

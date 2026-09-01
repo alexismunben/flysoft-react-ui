@@ -12,7 +12,7 @@ Hay dos namespaces y no son intercambiables:
 - **`--flysoft-*`** — lo que `ThemeProvider` escribe en `document.documentElement` en runtime cuando cambiás de tema o de densidad.
 - **`--color-*`, `--shadow-*`, `--radius-*`, `--spacing-*`, `--font-*`** — los tokens de Tailwind v4 declarados en el `@theme`, cada uno apuntando a su `--flysoft-*`. **Estos son los que se usan en `className`**, por ejemplo `text-[var(--color-text-primary)]`.
 
-## Tokens de Tailwind (65)
+## Tokens de Tailwind (66)
 
 | Token | Apunta a |
 |---|---|
@@ -23,6 +23,7 @@ Hay dos namespaces y no son intercambiables:
 | `--color-primary-contrast` | `var(--flysoft-primary-contrast)` |
 | `--color-primary-dark` | `var(--flysoft-primary-dark)` |
 | `--color-primary-light` | `var(--flysoft-primary-light)` |
+| `--color-primary-soft` | `var(--flysoft-primary-soft)` |
 | `--color-secondary` | `var(--flysoft-secondary)` |
 | `--color-secondary-contrast` | `var(--flysoft-secondary-contrast)` |
 | `--color-secondary-dark` | `var(--flysoft-secondary-dark)` |
