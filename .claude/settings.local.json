@@ -4,6 +4,9 @@
       "Bash(npm run:*)",
       "Bash(npx tsc:*)",
       "Bash(grep:*)"
+    ],
+    "additionalDirectories": [
+      "D:\\development\\osocna\\aqualis-base-app"
     ]
   }
 }
