@@ -12,11 +12,33 @@ desde el paquete raíz — nunca desde rutas internas:
 import { Card, DataTable, Input, Button, useAsyncRequest } from "flysoft-react-ui";
 ```
 
-Los estilos entran una sola vez, en el entry de la app:
+## Cómo entran los estilos
 
-```tsx
-import "flysoft-react-ui/styles";
+Los estilos entran una sola vez. **Importalos desde el CSS de la app, dentro de
+una capa**, no con un `import "flysoft-react-ui/styles"` en el entry de JS:
+
+```css
+/* index.css de la app — el orden de capas va antes que cualquier @import */
+@layer flysoft, base, components, utilities;
+
+@import "flysoft-react-ui/styles" layer(flysoft);
+@import "tailwindcss";
 ```
+
+El motivo importa, porque el modo de fallar es silencioso. La librería importa
+`tailwindcss/theme` y `tailwindcss/utilities` por separado para saltear
+Preflight, y al hacerlo pierde la asignación de capa que Tailwind hace en su
+`index.css`: **sus utilities se publican sin capa**. En CSS, lo que no está en
+ninguna capa le gana a todo lo que sí — así que sin este `layer(flysoft)` los
+estilos de la librería pisan los de la app aunque la app tenga más
+especificidad, y no hay forma de ganarles salvo con `!important`.
+
+Declarando `flysoft` como la primera capa, la librería queda con la prioridad
+más baja y la app la puede sobreescribir normalmente.
+
+Si la app no usa capas para nada, `import "flysoft-react-ui/styles"` en el entry
+alcanza. En cuanto la app pone algo en una capa —lo hace cualquier proyecto con
+Tailwind v4— necesita la forma de arriba.
 
 Los componentes se pintan con variables CSS del tema (`--color-*`, `--radius-*`)
 y escalan con la densidad activa. No lleva colores hardcodeados y no hace falta

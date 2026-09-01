@@ -5,6 +5,19 @@
 
 Los nombres de las variables CSS salen del bloque `@theme` de `src/index.css` y de los mapas de tokens de `src/contexts/`, no de los tipos.
 
+## Cómo se importa la hoja de estilos
+
+Desde el CSS de la app y **dentro de una capa**:
+
+```css
+@layer flysoft, base, components, utilities;
+
+@import "flysoft-react-ui/styles" layer(flysoft);
+@import "tailwindcss";
+```
+
+La librería importa `tailwindcss/theme` y `tailwindcss/utilities` por separado para saltear Preflight, y con eso pierde la asignación de capa que Tailwind hace en su `index.css`: sus utilities se publican **sin capa**, y en CSS lo que no está en ninguna capa le gana a todo lo que sí. Sin `layer(flysoft)`, los estilos de la librería pisan los de la app. Ver `../SKILL.md` para el detalle.
+
 ## Cómo leer las variables
 
 Hay dos namespaces y no son intercambiables:
