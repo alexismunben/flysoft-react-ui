@@ -351,7 +351,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 };
 
 // Hook to use theme context
-// eslint-disable-next-line react-refresh/only-export-components
+ 
 export const useTheme = (): ThemeContextType => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
@@ -361,7 +361,7 @@ export const useTheme = (): ThemeContextType => {
 };
 
 // Hook to check if theme context is available
-// eslint-disable-next-line react-refresh/only-export-components
+ 
 export const useThemeContext = () => {
   const context = useContext(ThemeContext);
   return context !== undefined;

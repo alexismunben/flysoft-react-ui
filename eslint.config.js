@@ -6,7 +6,10 @@ import tseslint from 'typescript-eslint'
 import { globalIgnores } from 'eslint/config'
 
 export default tseslint.config([
-  globalIgnores(['dist']),
+  // `examples/`, `templates/` y `docs/` son material de referencia y scaffolding:
+  // no entran al paquete (ver `files` en package.json) y su ruido tapaba los
+  // problemas reales de `src/`.
+  globalIgnores(['dist', 'examples', 'templates', 'docs']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -22,6 +25,14 @@ export default tseslint.config([
     rules: {
       // Permitir el uso explícito de 'any' cuando sea necesario
       '@typescript-eslint/no-explicit-any': 'off',
+      /*
+        Esto es una librería, no una app. Exportar `useTabsContext` al lado de
+        `TabsGroup`, o el contexto al lado de su provider, es la API que queremos
+        y no un descuido. La regla sólo protege la granularidad del Fast Refresh
+        en el playground de `npm run dev`, que no justifica partir la API pública
+        en archivos extra.
+      */
+      'react-refresh/only-export-components': 'off',
     },
   },
 ])

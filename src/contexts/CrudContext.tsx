@@ -513,7 +513,7 @@ export function CrudProvider<T>({
 }
 
 // Hook to use Crud context
-// eslint-disable-next-line react-refresh/only-export-components
+ 
 export function useCrud<T>(): CrudContextType<T> {
   const context = useContext(CrudContext);
   if (context === undefined) {

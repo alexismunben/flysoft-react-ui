@@ -282,7 +282,7 @@ export const AppLayoutProvider: React.FC<AppLayoutProviderProps> = ({
 };
 
 // Hook to use AppLayout context
-// eslint-disable-next-line react-refresh/only-export-components
+ 
 export const useAppLayout = (): AppLayoutContextType => {
   const context = useContext(AppLayoutContext);
   if (context === undefined) {
@@ -292,7 +292,7 @@ export const useAppLayout = (): AppLayoutContextType => {
 };
 
 // Hook to check if AppLayout context is available
-// eslint-disable-next-line react-refresh/only-export-components
+ 
 export const useAppLayoutContext = () => {
   const context = useContext(AppLayoutContext);
   return context !== undefined;
