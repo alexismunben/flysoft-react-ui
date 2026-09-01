@@ -45,6 +45,7 @@
   },
   "files": [
     "dist",
+    "claude",
     "styles.d.ts",
     "README.md",
     "AI_CONTEXT.md",
