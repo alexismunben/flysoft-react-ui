@@ -1,4 +1,4 @@
-<!-- Generado desde los tipos de flysoft-react-ui@1.4.1. No editar a mano. -->
+<!-- Generado desde los tipos de flysoft-react-ui@1.4.2. No editar a mano. -->
 <!-- Regenerar con: npm run docs:skill -->
 
 # apiClient, helpers e interfaces
