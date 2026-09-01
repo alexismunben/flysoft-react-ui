@@ -17,6 +17,8 @@ export interface CollectionProps {
    * - "sm"    → var(--flysoft-density-gap-sm)
    * - "md"    → var(--flysoft-density-gap-md) (default)
    * - "lg"    → var(--flysoft-density-gap-lg)
+   *
+   * @default "md"
    */
   gap?: CollectionGap;
   direction?: "column" | "row";

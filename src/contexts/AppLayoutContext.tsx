@@ -17,16 +17,29 @@ export interface NavbarInterface {
   navBarLeftNode?: string | ReactNode;
   navBarRightNode?: string | ReactNode;
   fullWidthNavbar: boolean;
-  height?: string; // Default: "64px"
-  className?: string; // Classes for the navbar container (including the button)
+  /**
+   * Altura del navbar.
+   *
+   * @default "64px"
+   */
+  height?: string;
+  /** Clases del contenedor del navbar (incluye el botón). */
+  className?: string;
 }
 
 export interface LeftDrawerInterface {
   headerNode?: ReactNode;
   contentNode?: ReactNode;
   footerNode?: ReactNode;
-  className?: string; // Classes for the left drawer container (header, content, footer)
-  width?: string; // Width that overrides any width classes in className (default: "256px" / "w-64")
+  /** Clases del contenedor del drawer (header, contenido y footer). */
+  className?: string;
+  /**
+   * Ancho del drawer. Pisa cualquier clase de ancho que venga en `className`.
+   * Si no se pasa, el drawer usa la clase `w-64`.
+   *
+   * @default "16rem"
+   */
+  width?: string;
 }
 
 export interface AppLayoutContextType extends ThemeContextType {
