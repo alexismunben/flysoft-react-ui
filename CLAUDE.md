@@ -112,6 +112,32 @@ Place new components in the correct category folder (`form-controls/`, `layout/`
 
 After changes, run: `npm run validate-docs && npm run update-docs && npm run lint`
 
+## Claude Code Skill (`claude/skills/flysoft-ui/`)
+
+The package ships a Claude Code skill so consumer apps get the API reference by
+updating the dependency instead of maintaining their own copy. It has two halves
+with different rules:
+
+- **`references/*.md` — generated. Never edit by hand.** Produced by
+  `scripts/generate-skill-refs.js` from the types in `src/`, via the TypeScript
+  compiler API. If a table is wrong, the type is wrong — fix the type. Runs
+  automatically as the last step of `npm run build`; `npm run docs:skill:check`
+  fails if the committed files don't match a clean run.
+- **`SKILL.md` and `patterns.md` — written and reviewed by hand.** Index, when to
+  use what, design decisions, page patterns. The generator never touches them.
+
+The generator **fails the build** if an exported component has no resolvable
+`XProps`, if a props interface is empty, or if a new export isn't assigned to a
+family. When adding a component, add it to the `COMPONENTS` map in
+`scripts/generate-skill-refs.js` — otherwise the build stops.
+
+Defaults are read from the destructuring in the `.tsx`. If a default is resolved
+in the component body instead (e.g. `Collection.gap` via `resolveGap()`), declare
+it with a `@default` JSDoc tag or it won't appear in the table.
+
+`claude/install-skill.mjs` ships with the package and copies the skill into a
+consumer app's `.claude/skills/`. The copy is destructive and complete.
+
 ## AI Documentation Files
 
 - `AI_CONTEXT.md` — Complete API reference with all prop interfaces, types, and usage examples (source of truth for AI models)
