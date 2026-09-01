@@ -528,11 +528,11 @@ Las contribuciones son bienvenidas. Por favor, abre un issue o un pull request.
 ## 🔧 Scripts de Mantenimiento
 
 ```bash
-# Actualizar documentación automáticamente
-npm run update-docs
+# Regenerar la referencia de API de la skill desde los tipos
+npm run docs:skill
 
-# Validar que toda la documentación esté sincronizada
-npm run validate-docs
+# Validar que la referencia commiteada esté al día
+npm run docs:skill:check
 
 # Ver ejemplos completos
 npm run dev

@@ -65,11 +65,7 @@
     "version": "npm run docs:skill && git add claude",
     "publish:patch": "npm version patch && npm publish",
     "publish:minor": "npm version minor && npm publish",
-    "publish:major": "npm version major && npm publish",
-    "update-docs": "node scripts/update-docs.js",
-    "validate-docs": "node scripts/validate-docs.js",
-    "docs:update": "npm run update-docs",
-    "docs:validate": "npm run validate-docs"
+    "publish:major": "npm version major && npm publish"
   },
   "peerDependencies": {
     "dayjs": "^1.11.0",

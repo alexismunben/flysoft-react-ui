@@ -378,11 +378,11 @@ export const COMPONENT_METADATA = {
 Ejecutar estos scripts después de cambios:
 
 ```bash
-# Validar documentación
-npm run validate-docs
+# Regenerar la referencia de API de la skill desde los tipos
+npm run docs:skill
 
-# Actualizar documentación
-npm run update-docs
+# Validar que la referencia commiteada esté al día
+npm run docs:skill:check
 
 # Verificar linting
 npm run lint

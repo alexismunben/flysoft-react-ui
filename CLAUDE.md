@@ -13,8 +13,8 @@ npm run dev            # Dev server on port 3112
 npm run build          # Clean dist, Vite build, then emit TS declarations
 npm run build:types    # Emit type declarations only (tsc -p tsconfig.lib.json)
 npm run lint           # ESLint (v9 flat config)
-npm run validate-docs  # Validate docs consistency
-npm run update-docs    # Auto-update documentation from component metadata
+npm run docs:skill        # Regenerate the skill API reference from the types
+npm run docs:skill:check  # Fail if the committed reference is out of date
 npm run publish:patch  # Bump patch version and publish to npm
 npm run publish:minor  # Bump minor version and publish to npm
 ```
@@ -110,7 +110,11 @@ After creating a new component, update all of these:
 
 Place new components in the correct category folder (`form-controls/`, `layout/`, or `utils/`). Include a `COMPONENT_METADATA` export and JSDoc with `@example`. Always use theme CSS variables, never hardcoded colors.
 
-After changes, run: `npm run validate-docs && npm run update-docs && npm run lint`
+After changes, run: `npm run docs:skill:check && npm run lint`
+
+Items 2–9 are maintained by hand and are **not** verified by any script. The
+generated skill reference under `claude/skills/flysoft-ui/references/` is the
+only part that stays in sync on its own.
 
 ## Claude Code Skill (`claude/skills/flysoft-ui/`)
 
